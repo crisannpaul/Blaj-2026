@@ -1,0 +1,12 @@
+# Explicit, because the CLI's fallback to .gitignore is not something to rely on
+# when the downside is uploading the answers.
+#
+# Treasurehunt.docx contains the ANSWER to every task in the hunt.
+# It must never reach a build container, a public repo or a client bundle.
+# SPEC section 13.
+docs/
+
+# Not part of the build — just weight on the upload.
+legacy/
+.claude/
+SPEC.md

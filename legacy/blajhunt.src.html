@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ghidul traseului Blajhunt — cele 10 opriri, regulile jocului și harta. Întâlnirea Tineretului Greco-Catolic, Blaj, 19 septembrie 2026.">
+<meta name="theme-color" content="#F5EFE1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181511" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Blajhunt · Ghidul traseului">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='%23B8862F'%3E%3Crect x='14' y='3' width='4' height='27'/%3E%3Crect x='10' y='6' width='12' height='2.4'/%3E%3Crect x='6' y='12' width='20' height='3'/%3E%3Crect x='10' y='21' width='12' height='2.4'/%3E%3C/g%3E%3C/svg%3E">
+<title>Blajhunt · Ghidul traseului</title>
+<style>
+  :root{
+    --paper:#F5EFE1; --paper-2:#EFE7D5; --panel:#FBF7EE;
+    --ink:#24211C; --ink-soft:#5B5344; --ink-faint:#8A806B;
+    --gold:#B8862F; --gold-deep:#8E6620; --gold-soft:#E3C77D;
+    --oxblood:#7A2E2E; --line:#D8CCB0; --line-2:#E6DCC5;
+    --shadow:rgba(36,33,28,.14);
+    --serif-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --serif-body:"Hoefler Text",Constantia,"Palatino Linotype",Georgia,"Times New Roman",serif;
+    --sans:ui-sans-serif,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --maxw:1120px;
+    --step: clamp(1rem,.92rem + .4vw,1.15rem);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#181511; --paper-2:#1F1B15; --panel:#211D16;
+      --ink:#EEE5D2; --ink-soft:#C3B79C; --ink-faint:#8C816B;
+      --gold:#D6A64C; --gold-deep:#B9863A; --gold-soft:#4a3f2c;
+      --oxblood:#CB6B52; --line:#3A3127; --line-2:#2C2620;
+      --shadow:rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#181511; --paper-2:#1F1B15; --panel:#211D16;
+    --ink:#EEE5D2; --ink-soft:#C3B79C; --ink-faint:#8C816B;
+    --gold:#D6A64C; --gold-deep:#B9863A; --gold-soft:#4a3f2c;
+    --oxblood:#CB6B52; --line:#3A3127; --line-2:#2C2620;
+    --shadow:rgba(0,0,0,.5);
+  }
+  :root[data-theme="light"]{
+    --paper:#F5EFE1; --paper-2:#EFE7D5; --panel:#FBF7EE;
+    --ink:#24211C; --ink-soft:#5B5344; --ink-faint:#8A806B;
+    --gold:#B8862F; --gold-deep:#8E6620; --gold-soft:#E3C77D;
+    --oxblood:#7A2E2E; --line:#D8CCB0; --line-2:#E6DCC5;
+    --shadow:rgba(36,33,28,.14);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--serif-body); font-size:var(--step); line-height:1.65;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  /* paper grain */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
+  }
+  :root[data-theme="dark"] body::before{mix-blend-mode:screen; opacity:.35}
+  @media (prefers-color-scheme: dark){ body::before{mix-blend-mode:screen; opacity:.35} }
+  main,header,footer{position:relative; z-index:1}
+
+  .wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:clamp(1.1rem,4vw,2.5rem)}
+  a{color:inherit}
+  ::selection{background:var(--gold-soft); color:#24211C}
+
+  /* ---- typographic atoms ---- */
+  .eyebrow{
+    font-family:var(--sans); text-transform:uppercase; letter-spacing:.24em;
+    font-size:.72rem; font-weight:600; color:var(--gold-deep);
+  }
+  h1,h2,h3{font-family:var(--serif-display); font-weight:600; text-wrap:balance; line-height:1.08; margin:0}
+  .rule{height:1px; background:linear-gradient(90deg,transparent,var(--line),transparent); border:0; margin:0}
+  .ornament{display:block; margin:0 auto; color:var(--gold)}
+
+  /* ---- header ---- */
+  header{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(1.1) blur(8px);
+    background:color-mix(in srgb, var(--paper) 82%, transparent);
+    border-bottom:1px solid var(--line-2);
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; gap:1rem; padding-block:.7rem}
+  .brand{font-family:var(--serif-display); font-weight:600; font-size:1.15rem; letter-spacing:.01em; display:flex; align-items:center; gap:.55rem}
+  .brand .dot{width:.5rem; height:.5rem; background:var(--gold); border-radius:50%; box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 22%,transparent)}
+  .nav-links{display:flex; align-items:center; gap:1.6rem; font-family:var(--sans); font-size:.82rem; letter-spacing:.06em; text-transform:uppercase}
+  .nav-links a{text-decoration:none; color:var(--ink-soft); transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{
+    font-family:var(--sans); font-size:.8rem; letter-spacing:.05em; text-transform:uppercase;
+    text-decoration:none; color:var(--paper); background:var(--ink);
+    padding:.55rem .95rem; border-radius:2px; border:1px solid var(--ink);
+    transition:transform .15s, background .2s; white-space:nowrap;
+  }
+  .btn:hover{background:var(--oxblood); border-color:var(--oxblood); transform:translateY(-1px)}
+  .btn.gold{background:var(--gold-deep); border-color:var(--gold-deep)}
+  .btn.gold:hover{background:var(--oxblood); border-color:var(--oxblood)}
+  @media(max-width:720px){ .nav-links{display:none} }
+
+  /* ---- hero ---- */
+  .hero{padding-block:clamp(3.5rem,9vw,7rem) clamp(2.5rem,6vw,4.5rem); text-align:center}
+  .hero .eyebrow{display:block; margin-bottom:1.4rem}
+  .hero h1{
+    font-size:clamp(3.6rem,15vw,9rem); letter-spacing:-.01em; line-height:.92;
+    margin-block:.2rem; font-weight:600;
+  }
+  .hero .sub{font-family:var(--sans); letter-spacing:.35em; text-transform:uppercase; font-size:.8rem; color:var(--ink-soft); margin-top:1.2rem}
+  .hero .lead{
+    max-width:40ch; margin:2rem auto 0; font-size:clamp(1.15rem,1rem + 1vw,1.5rem);
+    color:var(--ink-soft); font-style:italic;
+  }
+  .hero .challenge{margin-top:.6rem; font-family:var(--serif-display); font-size:1.3rem; color:var(--oxblood)}
+  .hero-actions{display:flex; gap:.9rem; justify-content:center; flex-wrap:wrap; margin-top:2.4rem}
+  .hero .flourish{margin-bottom:2.2rem}
+
+  /* ---- generic section ---- */
+  section{padding-block:clamp(3rem,7vw,5.5rem)}
+  .sec-head{max-width:60ch; margin-bottom:2.6rem}
+  .sec-head.center{margin-inline:auto; text-align:center}
+  .sec-head h2{font-size:clamp(2rem,1.4rem + 2.4vw,3.2rem); margin-top:.5rem}
+  .sec-head p{color:var(--ink-soft); margin-top:1rem; font-size:1.1rem}
+
+  /* ---- intro strip ---- */
+  .intro{background:var(--paper-2); border-block:1px solid var(--line-2)}
+  .intro .quote{
+    font-family:var(--serif-display); font-size:clamp(1.5rem,1.1rem + 2vw,2.6rem);
+    line-height:1.3; max-width:22ch; text-wrap:balance;
+  }
+  .intro-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(2rem,5vw,4rem); align-items:center}
+  .intro-grid .body p{color:var(--ink-soft)}
+  .intro-grid .body p + p{margin-top:1rem}
+  .stat-row{display:flex; gap:2.2rem; margin-top:2rem; flex-wrap:wrap}
+  .stat{display:flex; flex-direction:column}
+  .stat b{font-family:var(--serif-display); font-size:2.4rem; color:var(--gold-deep); line-height:1}
+  .stat span{font-family:var(--sans); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem; color:var(--ink-faint); margin-top:.35rem}
+  @media(max-width:720px){ .intro-grid{grid-template-columns:1fr} }
+
+  /* ---- route map ---- */
+  .route-frame{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:3px; padding:clamp(1rem,3vw,2rem); box-shadow:0 20px 50px -30px var(--shadow);
+    position:relative;
+  }
+  .route-frame .start-tag{
+    font-family:var(--sans); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .map-img{border:1px solid var(--line); border-radius:3px; overflow:hidden; background:var(--paper-2); margin-top:1rem}
+  .map-img img{display:block; width:100%; height:auto; filter:sepia(.12) saturate(.92) contrast(1.02)}
+  :root[data-theme="dark"] .map-img img{filter:sepia(.18) saturate(.85) brightness(.82) contrast(1.04)}
+  @media (prefers-color-scheme: dark){ .map-img img{filter:sepia(.18) saturate(.85) brightness(.82) contrast(1.04)} }
+  .map-live{display:block; width:100%; height:480px; border:0; border-radius:3px}
+  .map-foot{display:flex; align-items:center; justify-content:space-between; gap:1rem 1.4rem; flex-wrap:wrap; margin-top:1.1rem}
+  .route-hint{font-family:var(--sans); font-size:.78rem; color:var(--ink-faint); letter-spacing:.03em; margin:0; max-width:52ch}
+  .map-open{align-self:center}
+  .route-index{list-style:none; margin:2.2rem 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.4rem}
+  .route-index li{margin:0}
+  .route-index button{
+    width:100%; text-align:left; display:flex; align-items:center; gap:.85rem;
+    background:transparent; border:1px solid transparent; border-bottom:1px solid var(--line-2);
+    padding:.7rem .65rem; cursor:pointer; font-family:var(--serif-body); font-size:1rem; color:var(--ink);
+    border-radius:3px; transition:background .2s, border-color .2s, transform .15s;
+  }
+  .route-index button:hover{background:var(--panel); border-color:var(--line); transform:translateX(3px)}
+  .ri-num{font-family:var(--serif-display); color:var(--gold-deep); font-size:.95rem; min-width:2.4ch; text-align:center; letter-spacing:.05em}
+  @media(max-width:560px){ .map-foot{flex-direction:column; align-items:flex-start} .map-open{align-self:stretch; text-align:center} }
+
+  /* ---- carousel ---- */
+  .carousel{position:relative}
+  .carousel-top{display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:1.6rem}
+  .counter{font-family:var(--serif-display); font-size:1.05rem; color:var(--ink-soft)}
+  .counter b{color:var(--gold-deep); font-size:1.5rem}
+  .arrows{display:flex; gap:.6rem}
+  .arrow{
+    width:2.9rem; height:2.9rem; border-radius:50%; border:1px solid var(--line);
+    background:var(--panel); color:var(--ink); cursor:pointer; font-size:1.1rem;
+    display:grid; place-items:center; transition:transform .15s, background .2s, border-color .2s;
+  }
+  .arrow:hover{background:var(--gold-deep); color:#fff; border-color:var(--gold-deep); transform:translateY(-1px)}
+  .arrow:disabled{opacity:.35; cursor:not-allowed; transform:none; background:var(--panel); color:var(--ink)}
+  .track{
+    display:flex; gap:clamp(1rem,2.5vw,1.6rem); overflow-x:auto; scroll-snap-type:x mandatory;
+    padding:.4rem .2rem 1.4rem; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .track::-webkit-scrollbar{display:none}
+  .card{
+    scroll-snap-align:center; flex:0 0 min(90%,560px);
+    background:var(--panel); border:1px solid var(--line); border-radius:4px;
+    padding:clamp(1.5rem,3vw,2.4rem); display:flex; flex-direction:column; gap:1.1rem;
+    box-shadow:0 24px 60px -40px var(--shadow); position:relative; overflow:hidden;
+  }
+  .card::after{content:""; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg,var(--gold),transparent)}
+  .card-num{font-family:var(--serif-display); font-size:.95rem; letter-spacing:.2em; color:var(--gold-deep); text-transform:uppercase}
+  .card h3{font-size:clamp(1.5rem,1.2rem + 1.2vw,2.1rem)}
+  .card .place{font-family:var(--sans); font-size:.76rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-top:-.5rem}
+  .card .desc{color:var(--ink-soft)}
+  .tags{display:flex; flex-wrap:wrap; gap:.5rem; align-items:center}
+  .tag{
+    display:inline-flex; align-items:center; gap:.4rem; font-family:var(--sans);
+    font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:.35rem .7rem;
+  }
+  .tag svg{width:14px; height:14px; stroke:var(--gold-deep); fill:none; stroke-width:1.6}
+  .points{margin-left:auto; font-family:var(--serif-display); font-weight:600; color:var(--oxblood); font-size:1.05rem; white-space:nowrap}
+  .clue{
+    border-left:2px solid var(--gold); background:var(--paper-2);
+    padding:.9rem 1.1rem; font-style:italic; color:var(--ink-soft); border-radius:0 3px 3px 0;
+    font-size:.98rem;
+  }
+  .clue .clue-label{
+    display:block; font-family:var(--sans); font-style:normal; font-size:.66rem; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--gold-deep); margin-bottom:.4rem;
+  }
+  .card figure{margin:0; border:1px solid var(--line); border-radius:3px; overflow:hidden; background:var(--paper-2)}
+  .card figure img{display:block; width:100%; height:auto; filter:sepia(.15)}
+  .card figure figcaption{font-family:var(--sans); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); padding:.5rem .7rem; border-top:1px solid var(--line)}
+
+  .dots{display:flex; gap:.5rem; justify-content:center; margin-top:.4rem; flex-wrap:wrap}
+  .dots button{width:9px; height:9px; padding:0; border-radius:50%; border:1px solid var(--gold-deep); background:transparent; cursor:pointer; transition:background .2s, transform .2s}
+  .dots button.on{background:var(--gold-deep); transform:scale(1.25)}
+
+  /* ---- rules ---- */
+  .rules{background:var(--paper-2); border-block:1px solid var(--line-2)}
+  .rules-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1.4rem; margin-top:2.4rem}
+  .rule-item{border-top:2px solid var(--gold); padding-top:1rem}
+  .rule-item h4{font-family:var(--serif-display); font-weight:600; font-size:1.2rem; margin:0 0 .4rem}
+  .rule-item p{margin:0; color:var(--ink-soft); font-size:.98rem}
+
+  /* ---- footer ---- */
+  footer{padding-block:clamp(3rem,6vw,4.5rem); border-top:1px solid var(--line); text-align:center}
+  footer .fmark{font-family:var(--serif-display); font-size:2rem; margin-bottom:.6rem}
+  footer p{color:var(--ink-soft); margin:.3rem 0}
+  footer .plat{margin-top:1.6rem}
+  footer small{display:block; margin-top:1.8rem; color:var(--ink-faint); font-family:var(--sans); font-size:.72rem; letter-spacing:.06em}
+
+  /* reveal */
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1; transform:none; transition:none}
+    .route-path.draw{animation:none; stroke-dashoffset:0}
+    *{scroll-behavior:auto !important}
+  }
+  :focus-visible{outline:2px solid var(--oxblood); outline-offset:3px; border-radius:2px}
+  .brand{text-decoration:none}
+  .brand .back{color:var(--ink-faint); font-family:var(--sans); font-size:.95rem; line-height:1; transition:color .2s}
+  .brand:hover .back{color:var(--gold-deep)}
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="Înapoi la Blaj 2026"><span class="back">←</span><span class="dot"></span>Blajhunt</a>
+    <nav class="nav-links">
+      <a href="#provocarea">Provocarea</a>
+      <a href="#traseul">Traseul</a>
+      <a href="#opriri">Cele 10 opriri</a>
+      <a href="#reguli">Reguli</a>
+    </nav>
+    <a class="btn gold" href="https://blajhunt.prietenicuistoria.ro/" target="_blank" rel="noopener">Intră în joc ↗</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero wrap">
+    <svg class="ornament flourish" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M23 3 V43 M3 23 H43" stroke-width="1"/>
+        <circle cx="23" cy="23" r="9"/>
+        <path d="M23 3 l3 6 -3 3 -3-3z" fill="currentColor" stroke="none"/>
+      </g>
+    </svg>
+    <span class="eyebrow">Întâlnirea Inter-eparhială a Tineretului Greco-Catolic</span>
+    <h1>Blajhunt</h1>
+    <div class="sub">Blaj &middot; 19 septembrie 2026</div>
+    <p class="lead">„Crezi că știi Blajul? Ia-ți gașca și descoperă orașul așa cum nu l-ai mai văzut.”</p>
+    <p class="challenge">Tu accepți provocarea?</p>
+    <div class="hero-actions">
+      <a class="btn gold" href="#traseul">Descoperă traseul ↓</a>
+      <a class="btn" href="#opriri">Vezi cele 10 opriri</a>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="intro" id="provocarea">
+    <div class="wrap intro-grid reveal">
+      <p class="quote">De la Catedrală până pe Câmpia Libertății, fiecare oprire vă aduce mai aproape de victorie.</p>
+      <div class="body">
+        <p>Urmează indicii, caută detalii ascunse, descifrează mesaje, descoperă povești și rezolvă provocările care te așteaptă pe traseu prin „Mica Romă”.</p>
+        <p>Blajhunt nu e doar despre cel mai mare punctaj — e despre echipă, despre oraș și despre istoria Bisericii Române Unite cu Roma, Greco-Catolică. Descoperiți locul, găsiți indiciul, rezolvați proba, trimiteți dovada.</p>
+        <div class="stat-row">
+          <div class="stat"><b>10</b><span>opriri de descoperit</span></div>
+          <div class="stat"><b>1000</b><span>puncte în joc</span></div>
+          <div class="stat"><b>6</b><span>membri / echipă</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROUTE -->
+  <section id="traseul">
+    <div class="wrap">
+      <div class="sec-head center reveal">
+        <span class="eyebrow">Traseul</span>
+        <h2>Din curtea Seminarului, prin inima Blajului</h2>
+        <p>Zece opriri, un singur drum — de la Seminarul Teologic până pe Câmpia Libertății.</p>
+      </div>
+      <div class="route-frame reveal">
+        <div class="start-tag">◆ Start — Seminarul Teologic</div>
+        <!-- ===== HARTĂ =====
+             ÎN PREVIZUALIZAREA CLAUDE se afișează imaginea statică a traseului (mai jos).
+             PENTRU DOMENIUL PROPRIU (blajhunt.prietenicuistoria.ro) înlocuiește tot
+             blocul <div class="map-img">…</div> cu embed-ul tău Google My Maps:
+
+             <iframe class="map-live"
+               src="https://www.google.com/maps/d/embed?mid=MID-UL_TAU_AICI"
+               loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+             (MID-ul îl iei din Google My Maps → Partajare → „Încorporează pe site-ul meu”.)
+        -->
+        <div class="map-img">
+          <img src="__ROUTEMAP_DATAURI__" alt="Traseul Blajhunt pe hartă — de la Seminarul Teologic, prin centrul Blajului, până pe Câmpia Libertății">
+        </div>
+        <div class="map-foot">
+          <p class="route-hint">Hartă reconstituită cu Google My Maps. În previzualizare este statică; pe site devine interactivă.</p>
+          <a class="btn gold map-open" href="https://www.google.com/maps/dir/Seminarul+Teologic+Greco-Catolic+Blaj/C%C3%A2mpia+Libert%C4%83%C8%9Bii+Blaj/" target="_blank" rel="noopener">Deschide harta interactivă ↗</a>
+        </div>
+      </div>
+
+      <ol class="route-index reveal" aria-label="Cele 10 opriri, în ordine">
+        <li><button type="button" data-go="0"><span class="ri-num">I</span> Catedrala „Sfânta Treime”</button></li>
+        <li><button type="button" data-go="1"><span class="ri-num">II</span> Liceul „Ștefan Manciulea” &amp; Grădina Botanică</button></li>
+        <li><button type="button" data-go="2"><span class="ri-num">III</span> Biserica Grecilor</button></li>
+        <li><button type="button" data-go="3"><span class="ri-num">IV</span> Castelul Mitropolitan</button></li>
+        <li><button type="button" data-go="4"><span class="ri-num">V</span> Casa Maniu</button></li>
+        <li><button type="button" data-go="5"><span class="ri-num">VI</span> Muzeul Curiei</button></li>
+        <li><button type="button" data-go="6"><span class="ri-num">VII</span> Magazinul Gostat</button></li>
+        <li><button type="button" data-go="7"><span class="ri-num">VIII</span> Casa Ioan Suciu</button></li>
+        <li><button type="button" data-go="8"><span class="ri-num">IX</span> Colegiul „I. M. Clain”</button></li>
+        <li><button type="button" data-go="9"><span class="ri-num">X</span> Câmpia Libertății</button></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- OBJECTIVES -->
+  <section id="opriri">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Cele 10 opriri</span>
+        <h2>Fiecare loc, o poveste și o probă</h2>
+        <p>Glisează prin opriri sau folosește săgețile. Indiciile te orientează — răspunsurile le găsești pe teren.</p>
+      </div>
+    </div>
+    <div class="carousel reveal">
+      <div class="wrap carousel-top">
+        <div class="counter"><b id="curNum">01</b> / 10 — <span id="curName">Catedrala „Sfânta Treime”</span></div>
+        <div class="arrows">
+          <button class="arrow" id="prev" aria-label="Oprirea anterioară">‹</button>
+          <button class="arrow" id="next" aria-label="Oprirea următoare">›</button>
+        </div>
+      </div>
+      <div class="track wrap" id="track" tabindex="0" aria-label="Carusel cu cele 10 opriri">
+
+        <!-- 1 -->
+        <article class="card" id="stop-1">
+          <div class="card-num">Oprirea I</div>
+          <h3>Catedrala Arhiepiscopală Majoră „Sfânta Treime”</h3>
+          <div class="place">Startul spiritual</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>Răspuns</span>
+            <span class="tag"><svg viewBox="0 0 24 24"><path d="M3 8h4l2-2h6l2 2h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>Fotografie</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Inima Blajului greco-catolic. Sub bolțile ei, iconostasul păstrează culori și simboluri pe care puțini le observă din prima privire.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„Priviți cu atenție detaliile iconostasului și căutați momentul în care cerul atinge pământul. Deasupra peisajului plutește arma unui păzitor ceresc, semn al luptei împotriva răului. Nu căutați un chip, ci un simbol!”</div>
+        </article>
+
+        <!-- 2 -->
+        <article class="card" id="stop-2">
+          <div class="card-num">Oprirea II</div>
+          <h3>Liceul „Ștefan Manciulea” &amp; Grădina Botanică</h3>
+          <div class="place">Fântâni ale darurilor</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>Răspuns</span>
+            <span class="tag"><svg viewBox="0 0 24 24"><path d="M3 8h4l2-2h6l2 2h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>Fotografie</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Locul primei școli cu predare sistematică în limba română din Transilvania — și o grădină ce poartă un stejar cu poveste.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„În vremea când limba română își căuta încă locul în școală, un ierarh cu două nume de apostoli a deschis la Blaj «fântâni ale darurilor» pentru fiii poporului. Căutați clădirea primei școli și, apoi, în grădină, Stejarul Unirii.”</div>
+        </article>
+
+        <!-- 3 -->
+        <article class="card" id="stop-3">
+          <div class="card-num">Oprirea III</div>
+          <h3>Biserica Grecilor</h3>
+          <div class="place">Somnul de veci</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>Răspuns</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">O bisericuță cu un cimitir tăcut, unde odihnește un canonic ce a cerut, pentru sine, o simplă cruce de lemn.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„În cimitirul bisericuței grecilor își doarme somnul de veci canonicul care a cerut o simplă cruce de lemn. Care este numele său?”</div>
+        </article>
+
+        <!-- 4 -->
+        <article class="card" id="stop-4">
+          <div class="card-num">Oprirea IV</div>
+          <h3>Castelul Mitropolitan</h3>
+          <div class="place">Mesajul în cinci plicuri</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg>Reconstituire</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Ziduri în care s-au scris pagini de istorie. Aici, un mesaj destinat tinerilor așteaptă să fie reîntregit din bucăți.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„Se spune că aici a fost ascuns un mesaj destinat tinerilor. A fost despărțit în cinci plicuri pe care trebuie să le găsiți în curtea castelului. Așezați textele în ordinea corectă și reconstruiți mesajul complet.”</div>
+        </article>
+
+        <!-- 5 -->
+        <article class="card" id="stop-5">
+          <div class="card-num">Oprirea V</div>
+          <h3>Casa Maniu</h3>
+          <div class="place">Piața 1848</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><path d="M3 8h4l2-2h6l2 2h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>Fotografie</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">În Piața 1848 se ascunde casa în care a locuit Iuliu Maniu, unul dintre cei mai importanți oameni politici ai României.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„Panoul de pe fațadă vă va confirma că ați găsit locul potrivit. Căutați o cale de intrare în casă, ridicați privirea și descoperiți tavanul pictat.”</div>
+        </article>
+
+        <!-- 6 -->
+        <article class="card" id="stop-6">
+          <div class="card-num">Oprirea VI</div>
+          <h3>Muzeul Curiei</h3>
+          <div class="place">Urmele unui episcop</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>Răspuns</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">În muzeul Curiei se păstrează mărturii ale episcopilor și ale credinței lor — printre ele, o reverendă cu o poveste aparte.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„Aici se ascunde o reverendă purtată de un episcop care obișnuia să joace fotbal. A scris, a predicat, a fost alături de turma sa și a suferit pentru credință. Descoperiți numele celui care a purtat-o.”</div>
+        </article>
+
+        <!-- 7 -->
+        <article class="card" id="stop-7">
+          <div class="card-num">Oprirea VII</div>
+          <h3>Magazinul Gostat</h3>
+          <div class="place">Vechea „prăvălie”</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>Răspuns</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Pe locul unei vechi prăvălii de lângă Seminar — cea din „Arhanghelii” lui Agârbiceanu — o carte ascunsă păstrează un verset.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„Un student teolog caută un dar pentru iubita sa. Urmați drumul spre piața alimentară și Câmpia Libertății, cercetați exteriorul magazinului și găsiți cartea ascunsă lângă un perete. Introduceți primul verset pe care îl găsiți.”</div>
+        </article>
+
+        <!-- 8 -->
+        <article class="card" id="stop-8">
+          <div class="card-num">Oprirea VIII</div>
+          <h3>Casa Ioan Suciu</h3>
+          <div class="place">Anii de formare</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>Răspuns</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Casa care păstrează o urmă discretă din anii de formare ai episcopului Ioan Suciu, înainte de a deveni preot și episcop.</p>
+          <div class="clue"><span class="clue-label">Indiciu</span>„În această casă se păstrează copia diplomei care consemnează rezultatul obținut la examenul de bacalaureat. Găsiți camera episcopului și identificați documentul.”</div>
+        </article>
+
+        <!-- 9 -->
+        <article class="card" id="stop-9">
+          <div class="card-num">Oprirea IX</div>
+          <h3>Colegiul Național „Inochentie Micu Clain”</h3>
+          <div class="place">Fostul Institut al Recunoștinței</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><path d="M3 8h4l2-2h6l2 2h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>Fotografie</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Un palat ridicat pentru educație între 1924–1929, din contribuțiile foștilor elevi. Refaceți o fotografie de epocă, din același unghi.</p>
+          <figure>
+            <img src="__POSTCARD_DATAURI__" alt="Fotografie de epocă: intrarea principală în Institutul Recunoștinței, Blaj" loading="lazy">
+            <figcaption>Fotografia de epocă — intrarea profesorală de refăcut</figcaption>
+          </figure>
+          <div class="clue"><span class="clue-label">Indiciu</span>„Întrebați localnicii unde se află Podul Minciunilor. Căutați cea mai mare și impunătoare clădire pe care o vedeți, apoi intrarea cu arcadă semicirculară. Fotografiați-o din unghiul imaginii vechi.”</div>
+        </article>
+
+        <!-- 10 -->
+        <article class="card" id="stop-10">
+          <div class="card-num">Oprirea X</div>
+          <h3>Câmpia Libertății</h3>
+          <div class="place">Finalul traseului</div>
+          <div class="tags">
+            <span class="tag"><svg viewBox="0 0 24 24"><path d="M4 4l14 8-14 8z"/></svg>Videoclip</span>
+            <span class="points">100 p</span>
+          </div>
+          <p class="desc">Locul unde, în 1848, o comunitate întreagă și-a făcut auzite speranțele. Aici, transmiteți mai departe spiritul lor.</p>
+          <div class="clue"><span class="clue-label">Proba finală</span>Realizați, în echipă, un videoclip de 1–2 minute la întrebarea: „Ce înseamnă libertatea pentru un tânăr de astăzi?”. Toți membrii apar în cadru, echipa are un semn distinctiv, iar finalul se rostește împreună: „Cu drag, din Blaj!”.</div>
+        </article>
+
+      </div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section class="rules" id="reguli">
+    <div class="wrap">
+      <div class="sec-head center reveal">
+        <span class="eyebrow">Cum funcționează</span>
+        <h2>Regulile jocului, pe scurt</h2>
+      </div>
+      <div class="rules-grid reveal">
+        <div class="rule-item"><h4>Echipa</h4><p>Maxim 6 persoane, un nume și un căpitan. Căpitanul trimite răspunsurile pe platformă. Parcurgeți traseul împreună.</p></div>
+        <div class="rule-item"><h4>Punctajul</h4><p>1000 de puncte în total, 100 per oprire. Unele opriri au două probe a câte 50 de puncte fiecare.</p></div>
+        <div class="rule-item"><h4>Indiciile</h4><p>Maxim 3 indicii pe tot parcursul, disponibile după 10 minute de blocaj. Fiecare indiciu costă 20 de puncte.</p></div>
+        <div class="rule-item"><h4>Fără scurtături</h4><p>Căutarea răspunsurilor pe internet și copierea de la alte echipe sunt interzise. Fotografiile se fac în timpul activității.</p></div>
+        <div class="rule-item"><h4>Siguranța întâi</h4><p>Siguranța are prioritate față de punctaj. Traversați strada prin locurile permise. Nicio probă nu cere cățărare sau risc.</p></div>
+        <div class="rule-item"><h4>Clasamentul</h4><p>Câștigă cel mai mare punctaj; la egalitate, cel mai mic timp total, apoi proba de pe Câmpia Libertății.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fmark">Cu drag, din Blaj!</div>
+    <p>Blajhunt — Întâlnirea Inter-eparhială a Tineretului Greco-Catolic</p>
+    <p>Blaj &middot; 19 septembrie 2026</p>
+    <div class="plat"><a class="btn gold" href="https://blajhunt.prietenicuistoria.ro/" target="_blank" rel="noopener">Deschide platforma jocului ↗</a></div>
+    <small>Ghid pentru participanți · răspunsurile probelor se trimit exclusiv pe platformă</small>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- reveal on scroll ---------- */
+  var revs = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window && !reduce){
+    var ro = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); ro.unobserve(e.target); } });
+    },{threshold:.15});
+    revs.forEach(function(el){ ro.observe(el); });
+  } else { revs.forEach(function(el){ el.classList.add("in"); }); }
+
+  /* ---------- route index -> carousel ---------- */
+  var routeIndexBtns=document.querySelectorAll(".route-index button");
+  var opririSec=document.getElementById("opriri");
+  routeIndexBtns.forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var i=parseInt(btn.getAttribute("data-go"),10)||0;
+      if(opririSec) opririSec.scrollIntoView({behavior:reduce?"auto":"smooth", block:"start"});
+      goTo(i,true);
+    });
+  });
+
+  /* ---------- carousel ---------- */
+  var track=document.getElementById("track");
+  var cards=track?Array.prototype.slice.call(track.querySelectorAll(".card")):[];
+  var prev=document.getElementById("prev");
+  var next=document.getElementById("next");
+  var dotsWrap=document.getElementById("dots");
+  var curNum=document.getElementById("curNum");
+  var curName=document.getElementById("curName");
+  var names=["Catedrala „Sfânta Treime”","Liceul & Grădina Botanică","Biserica Grecilor","Castelul Mitropolitan","Casa Maniu","Muzeul Curiei","Magazinul Gostat","Casa Ioan Suciu","Colegiul I. M. Clain","Câmpia Libertății"];
+  var roman=["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+  var current=0;
+
+  if(dotsWrap){
+    cards.forEach(function(_,i){
+      var b=document.createElement("button");
+      b.setAttribute("aria-label","Sari la oprirea "+(i+1));
+      b.addEventListener("click",function(){ goTo(i,true); });
+      dotsWrap.appendChild(b);
+    });
+  }
+  var dotBtns=dotsWrap?dotsWrap.querySelectorAll("button"):[];
+
+  function setActive(i){
+    current=i;
+    if(curNum) curNum.textContent=(i+1<10?"0":"")+(i+1);
+    if(curName) curName.textContent=names[i]||"";
+    for(var d=0; d<dotBtns.length; d++){ dotBtns[d].classList.toggle("on", d===i); }
+    if(prev) prev.disabled = (i===0);
+    if(next) next.disabled = (i===cards.length-1);
+  }
+  function goTo(i,smooth){
+    i=Math.max(0,Math.min(cards.length-1,i));
+    var card=cards[i]; if(!card) return;
+    var left=card.offsetLeft-(track.clientWidth-card.clientWidth)/2;
+    track.scrollTo({left:left, behavior:(smooth&&!reduce)?"smooth":"auto"});
+    setActive(i);
+  }
+  if(prev) prev.addEventListener("click",function(){ goTo(current-1,true); });
+  if(next) next.addEventListener("click",function(){ goTo(current+1,true); });
+
+  // update active on manual scroll
+  var raf=null;
+  if(track){
+    track.addEventListener("scroll",function(){
+      if(raf) return;
+      raf=requestAnimationFrame(function(){
+        raf=null;
+        var center=track.scrollLeft+track.clientWidth/2, best=0, bd=1e9;
+        cards.forEach(function(c,i){
+          var cc=c.offsetLeft+c.clientWidth/2, dd=Math.abs(cc-center);
+          if(dd<bd){ bd=dd; best=i; }
+        });
+        if(best!==current) setActive(best);
+      });
+    },{passive:true});
+    track.addEventListener("keydown",function(ev){
+      if(ev.key==="ArrowRight"){ ev.preventDefault(); goTo(current+1,true); }
+      if(ev.key==="ArrowLeft"){ ev.preventDefault(); goTo(current-1,true); }
+    });
+  }
+  setActive(0);
+})();
+</script>
+</body>
+</html>

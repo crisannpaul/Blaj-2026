@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="ro" data-palette="blaj">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blaj 2026 · Întâlnirea Tineretului Greco-Catolic</title>
+<meta name="description" content="Întâlnirea Inter-eparhială a Tineretului Greco-Catolic — Blaj, 19 septembrie 2026. Ateliere, galerie și competiția Blajhunt prin Mica Romă.">
+<meta name="theme-color" content="#F5EFE1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181511" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Blaj 2026 · Întâlnirea Tineretului Greco-Catolic">
+<meta property="og:description" content="Blaj, 19 septembrie 2026. Ateliere, galerie și competiția Blajhunt.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='%23B8862F'%3E%3Crect x='14' y='3' width='4' height='27'/%3E%3Crect x='10' y='6' width='12' height='2.4'/%3E%3Crect x='6' y='12' width='20' height='3'/%3E%3Crect x='10' y='21' width='12' height='2.4'/%3E%3C/g%3E%3C/svg%3E">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. THEME TOKENS  —  THE ONLY PLACE COLORS LIVE.
+   ───────────────────────────────────────────────────────────────────────────
+   Every palette is ONE block below. It declares the light values (--x) and the
+   dark values (--d-x) side by side. The generic dark mapping at the end of this
+   section swaps them; you never touch it when adding a palette.
+
+   Switch palette:  <html data-palette="sunlit-sky">   ... or ?palette=sunlit-sky
+   Force scheme:    <html data-theme="dark">           (otherwise follows the OS)
+
+   NO RAW HEX IS ALLOWED BELOW SECTION 1. Components only ever read tokens.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── palette: blaj ── warm paper, gold, oxblood. Matches blajhunt.html. ───── */
+:root,
+:root[data-palette="blaj"]{
+  /* light */
+  --bg:#F5EFE1;          --bg-2:#EFE7D5;         --surface:#FBF7EE;
+  --text:#24211C;        --text-2:#5B5344;       --text-3:#8A806B;
+  --accent:#B8862F;      --accent-strong:#8E6620; --accent-tint:#E3C77D;
+  --accent-2:#7A2E2E;    --on-accent:#FFFFFF;
+  --line:#D8CCB0;        --line-2:#E6DCC5;       --shadow:36,33,28;
+  /* dark */
+  --d-bg:#181511;        --d-bg-2:#1F1B15;       --d-surface:#211D16;
+  --d-text:#EEE5D2;      --d-text-2:#C3B79C;     --d-text-3:#8C816B;
+  --d-accent:#D6A64C;    --d-accent-strong:#E0B667; --d-accent-tint:#4A3F2C;
+  --d-accent-2:#CB6B52;  --d-on-accent:#181511;
+  --d-line:#3A3127;      --d-line-2:#2C2620;     --d-shadow:0,0,0;
+  /* shape + type */
+  --radius:3px;          --radius-lg:4px;
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:"Hoefler Text",Constantia,"Palatino Linotype",Georgia,"Times New Roman",serif;
+  --font-ui:ui-sans-serif,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --display-tracking:-0.01em;
+  --grain:.5;
+}
+
+/* ── palette: sunlit-sky ── 21st.dev / @serafimcloud. Sky-400 + yellow-400 on
+     a neutral scale, geometric sans, soft radii. Values read off the official
+     theme preview; paste the exact shadcn token dump here if you get it. ──── */
+:root[data-palette="sunlit-sky"]{
+  /* light */
+  --bg:#FFFFFF;          --bg-2:#F5F5F5;         --surface:#FFFFFF;
+  --text:#0A0A0A;        --text-2:#525252;       --text-3:#8A8A8A;
+  --accent:#00BCFF;      --accent-strong:#0093C7; --accent-tint:#CFF2FF;
+  --accent-2:#FDC700;    --on-accent:#04212C;
+  --line:#E5E5E5;        --line-2:#F0F0F0;       --shadow:9,9,11;
+  /* dark */
+  --d-bg:#09090B;        --d-bg-2:#121214;       --d-surface:#18181B;
+  --d-text:#FAFAFA;      --d-text-2:#A1A1AA;     --d-text-3:#71717A;
+  --d-accent:#00BCFF;    --d-accent-strong:#5BD3FF; --d-accent-tint:#0B3140;
+  --d-accent-2:#FDC700;  --d-on-accent:#04212C;
+  --d-line:#27272A;      --d-line-2:#1C1C1F;     --d-shadow:0,0,0;
+  /* shape + type */
+  --radius:8px;          --radius-lg:14px;
+  --font-display:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-body:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-ui:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --display-tracking:-0.03em;
+  --grain:0;
+}
+
+/* ── generic dark mapping — shared by ALL palettes, never edit per palette ── */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:var(--d-bg); --bg-2:var(--d-bg-2); --surface:var(--d-surface);
+    --text:var(--d-text); --text-2:var(--d-text-2); --text-3:var(--d-text-3);
+    --accent:var(--d-accent); --accent-strong:var(--d-accent-strong);
+    --accent-tint:var(--d-accent-tint); --accent-2:var(--d-accent-2);
+    --on-accent:var(--d-on-accent);
+    --line:var(--d-line); --line-2:var(--d-line-2); --shadow:var(--d-shadow);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:var(--d-bg); --bg-2:var(--d-bg-2); --surface:var(--d-surface);
+  --text:var(--d-text); --text-2:var(--d-text-2); --text-3:var(--d-text-3);
+  --accent:var(--d-accent); --accent-strong:var(--d-accent-strong);
+  --accent-tint:var(--d-accent-tint); --accent-2:var(--d-accent-2);
+  --on-accent:var(--d-on-accent);
+  --line:var(--d-line); --line-2:var(--d-line-2); --shadow:var(--d-shadow);
+}
+
+/* ── layout scale (palette-independent) ─────────────────────────────────── */
+:root{
+  --maxw:1120px;
+  --gap:clamp(1.15rem,5vw,2.5rem);
+  --step:clamp(1rem,.95rem + .35vw,1.12rem);
+  --header-h:3.5rem;
+}
+
+/* ═══ 2. BASE ══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--font-body); font-size:var(--step); line-height:1.6;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+/* paper grain — only for palettes that ask for it (--grain:0 turns it off) */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  opacity:var(--grain); mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>");
+}
+@media (prefers-color-scheme: dark){ body::before{mix-blend-mode:screen; opacity:calc(var(--grain) * .7)} }
+:root[data-theme="dark"] body::before{mix-blend-mode:screen; opacity:calc(var(--grain) * .7)}
+
+img{max-width:100%; height:auto; display:block}
+a{color:inherit}
+::selection{background:var(--accent-tint); color:var(--text)}
+:focus-visible{outline:2px solid var(--accent-2); outline-offset:3px; border-radius:2px}
+
+main,header,footer{position:relative; z-index:1}
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gap)}
+section{scroll-margin-top:calc(var(--header-h) + .5rem)}
+
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; line-height:1.1; margin:0; text-wrap:balance}
+p{margin:0}
+
+.eyebrow{
+  font-family:var(--font-ui); text-transform:uppercase; letter-spacing:.2em;
+  font-size:.68rem; font-weight:600; color:var(--accent-strong); display:block;
+}
+.sec{padding-block:clamp(3rem,10vw,5.5rem)}
+.sec-head{max-width:60ch; margin-bottom:clamp(1.8rem,6vw,2.8rem)}
+.sec-head.center{margin-inline:auto; text-align:center}
+.sec-head h2{font-size:clamp(1.85rem,1.3rem + 2.6vw,3rem); margin-top:.55rem; letter-spacing:var(--display-tracking)}
+.sec-head p{color:var(--text-2); margin-top:.9rem}
+.tint{background:var(--bg-2); border-block:1px solid var(--line-2)}
+
+/* chip marking provisional copy — delete along with the placeholders */
+.prov{
+  display:inline-block; font-family:var(--font-ui); font-size:.6rem; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--accent-2);
+  border:1px dashed var(--accent-2); border-radius:999px; padding:.15rem .5rem;
+  vertical-align:middle;
+}
+
+/* ── buttons ─────────────────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
+  font-family:var(--font-ui); font-size:.82rem; font-weight:600; letter-spacing:.05em;
+  text-transform:uppercase; text-decoration:none; white-space:nowrap;
+  padding:.85rem 1.25rem; border-radius:var(--radius); border:1px solid var(--text);
+  background:var(--text); color:var(--bg); cursor:pointer;
+  min-height:44px;
+  transition:transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn:hover{background:var(--accent-2); border-color:var(--accent-2); color:var(--on-accent); transform:translateY(-1px)}
+.btn--accent{background:var(--accent-strong); border-color:var(--accent-strong); color:var(--on-accent)}
+.btn--ghost{background:transparent; color:var(--text); border-color:var(--line)}
+.btn--ghost:hover{background:var(--surface); color:var(--text); border-color:var(--text)}
+.btn--light{background:#ffffff; border-color:#ffffff; color:#1a1611}
+.btn--light:hover{background:var(--accent-2); border-color:var(--accent-2); color:var(--on-accent)}
+.btn--outline-light{background:transparent; border-color:rgba(255,255,255,.5); color:#ffffff}
+.btn--outline-light:hover{background:rgba(255,255,255,.14); border-color:#ffffff; color:#ffffff}
+.btn[aria-disabled="true"]{opacity:.45; cursor:not-allowed; transform:none}
+
+/* ═══ 3. HEADER ════════════════════════════════════════════════════════════ */
+.hdr{
+  position:sticky; top:0; z-index:70;
+  background:var(--bg);
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:saturate(1.1) blur(10px);
+  border-bottom:1px solid var(--line-2);
+}
+.hdr-in{display:flex; align-items:center; justify-content:space-between; gap:1rem; height:var(--header-h)}
+.brand{display:flex; align-items:center; gap:.5rem; text-decoration:none; font-family:var(--font-display); font-weight:600; font-size:1.05rem; letter-spacing:var(--display-tracking)}
+.brand svg{width:15px; height:15px; fill:var(--accent); flex:none}
+.hdr-nav{display:none}
+.hdr .btn{display:none}
+.burger{display:grid; place-items:center; width:44px; height:44px; margin-right:-.55rem; background:none; border:0; color:var(--text); cursor:pointer}
+.burger svg{width:22px; height:22px; stroke:currentColor; stroke-width:1.6; fill:none}
+.burger .ico-x{display:none}
+.hdr[data-open="true"] .burger .ico-x{display:block}
+.hdr[data-open="true"] .burger .ico-m{display:none}
+
+.menu{display:none; position:fixed; inset:var(--header-h) 0 0; z-index:65; background:var(--bg); padding:var(--gap); flex-direction:column}
+.menu[data-open="true"]{display:flex}
+.menu a{font-family:var(--font-display); font-size:1.55rem; text-decoration:none; color:var(--text); padding:.75rem 0; border-bottom:1px solid var(--line-2)}
+.menu .btn{margin-top:1.4rem; font-size:.9rem}
+
+@media (min-width:48em){
+  :root{--header-h:4rem}
+  .burger{display:none}
+  .menu{display:none !important}
+  .hdr .btn{display:inline-flex; padding:.6rem 1rem; min-height:0}
+  .hdr-nav{display:flex; align-items:center; gap:1.5rem; font-family:var(--font-ui); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase}
+  .hdr-nav a{text-decoration:none; color:var(--text-2); transition:color .2s}
+  .hdr-nav a:hover{color:var(--text)}
+}
+
+/* ═══ 4. HERO ══════════════════════════════════════════════════════════════ */
+.hero{
+  position:relative; isolation:isolate; overflow:hidden; color:#ffffff;
+  min-height:78vh; min-height:78svh;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding-block:clamp(4rem,18vw,7rem) clamp(2.5rem,10vw,4rem);
+}
+/* PLACEHOLDER backdrop. To use a real photo, delete the gradients and set:
+     .hero-media{background:url("assets/foto/hero.jpg") 50% 35%/cover no-repeat}
+   Later: this is where the diagonal marquee of past-meeting photos goes (see SPEC 6.1). */
+.hero-media{
+  position:absolute; inset:0; z-index:-2;
+  background:
+    radial-gradient(90% 70% at 78% 12%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(120% 90% at 12% 100%, rgba(0,0,0,.55), transparent 65%),
+    linear-gradient(155deg, var(--accent-strong) 0%, #2b2118 55%, #14110d 100%);
+}
+:root[data-palette="sunlit-sky"] .hero-media{
+  background:
+    radial-gradient(90% 70% at 78% 12%, rgba(253,199,0,.55), transparent 58%),
+    radial-gradient(120% 90% at 10% 100%, rgba(0,0,0,.5), transparent 62%),
+    linear-gradient(155deg, #00bcff 0%, #0b5f81 52%, #06141c 100%);
+}
+.hero-media::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(10,8,6,.84) 0%, rgba(10,8,6,.36) 46%, rgba(10,8,6,.14) 100%);
+}
+.hero-in{position:relative; width:100%}
+.hero .eyebrow{color:var(--accent-tint); margin-bottom:.9rem}
+.hero h1{font-size:clamp(3.2rem,17vw,7.5rem); line-height:.92; letter-spacing:var(--display-tracking); margin-block:.1rem}
+.hero .sub{font-family:var(--font-ui); font-size:.74rem; letter-spacing:.26em; text-transform:uppercase; color:rgba(255,255,255,.85); margin-top:1rem}
+.hero .lead{max-width:34ch; margin-top:1.4rem; color:rgba(255,255,255,.9); font-size:clamp(1.05rem,.95rem + .7vw,1.3rem)}
+.hero-actions{display:flex; flex-direction:column; gap:.7rem; margin-top:1.9rem}
+.hero-actions .btn{width:100%}
+@media (min-width:30em){
+  .hero-actions{flex-direction:row; flex-wrap:wrap}
+  .hero-actions .btn{width:auto}
+}
+@media (min-width:48em){
+  .hero{min-height:88vh; min-height:88svh}
+  .hero .lead{max-width:44ch}
+}
+
+/* ═══ 5. GALLERY CAROUSEL ══════════════════════════════════════════════════ */
+.gal-top{display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:1.1rem}
+.gal-count{font-family:var(--font-ui); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-3)}
+.gal-count b{color:var(--accent-strong); font-size:1rem; letter-spacing:0}
+.gal-arrows{display:none; gap:.5rem}
+.arrow{
+  width:2.75rem; height:2.75rem; border-radius:999px; border:1px solid var(--line);
+  background:var(--surface); color:var(--text); cursor:pointer; font-size:1.05rem;
+  display:grid; place-items:center; transition:background .2s, color .2s, border-color .2s, transform .15s;
+}
+.arrow:hover:not(:disabled){background:var(--accent-strong); border-color:var(--accent-strong); color:var(--on-accent); transform:translateY(-1px)}
+.arrow:disabled{opacity:.3; cursor:not-allowed}
+@media (min-width:48em){ .gal-arrows{display:flex} }
+
+.gal-track{
+  display:flex; gap:.85rem; overflow-x:auto; overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  padding-inline:max(var(--gap), calc((100% - var(--maxw)) / 2)); padding-block:.25rem 1rem;
+  scroll-padding-inline-start:max(var(--gap), calc((100% - var(--maxw)) / 2));
+  scrollbar-width:none;
+}
+.gal-track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 82%; max-width:520px; scroll-snap-align:start}
+@media (min-width:48em){ .slide{flex-basis:min(44%,480px)} .gal-track{gap:1.1rem} }
+@media (min-width:64em){ .slide{flex-basis:min(32%,400px)} }
+
+.frame{
+  position:relative; aspect-ratio:4/5; overflow:hidden;
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--bg-2); box-shadow:0 18px 40px -30px rgba(var(--shadow),.5);
+}
+@media (min-width:48em){ .frame{aspect-ratio:3/4} }
+.frame img{width:100%; height:100%; object-fit:cover}
+/* PLACEHOLDER fill — replace the whole .ph div with <img src="assets/foto/01.jpg" alt="..."> */
+.ph{
+  position:absolute; inset:0; display:grid; place-items:center; text-align:center; gap:.5rem;
+  background:
+    radial-gradient(110% 80% at 30% 12%, var(--accent-tint), transparent 62%),
+    linear-gradient(160deg, var(--bg-2), var(--surface) 48%, var(--bg-2));
+}
+.ph::before{
+  content:""; position:absolute; inset:0; opacity:.45;
+  background:repeating-linear-gradient(45deg, transparent 0 10px, var(--line) 10px 11px);
+}
+.slide:nth-child(2n) .ph{background:radial-gradient(110% 80% at 72% 84%, var(--accent-tint), transparent 60%), linear-gradient(200deg, var(--surface), var(--bg-2))}
+.slide:nth-child(3n) .ph{background:radial-gradient(120% 90% at 50% 0%, var(--accent-tint), transparent 58%), linear-gradient(140deg, var(--bg-2), var(--surface))}
+.ph-inner{position:relative; display:grid; gap:.45rem; justify-items:center; padding:1rem}
+.ph-num{font-family:var(--font-display); font-size:2.4rem; color:var(--accent-strong); line-height:1; letter-spacing:.06em}
+.ph-file{font-family:var(--font-ui); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-3)}
+.cap{margin-top:.7rem; font-family:var(--font-ui); font-size:.76rem; color:var(--text-2); line-height:1.45}
+.cap b{display:block; font-weight:600; color:var(--text)}
+
+.dots{display:flex; gap:.35rem; justify-content:center; margin-top:.2rem; flex-wrap:wrap; padding-inline:var(--gap)}
+.dots button{width:1.5rem; height:4px; padding:0; border:0; border-radius:999px; background:var(--line); cursor:pointer; transition:background .25s, width .25s}
+.dots button.on{background:var(--accent-strong); width:2.5rem}
+
+/* ═══ 6. WORKSHOPS ═════════════════════════════════════════════════════════ */
+.ws-note{
+  display:flex; align-items:flex-start; gap:.6rem; margin-bottom:1.5rem;
+  padding:.85rem 1rem; border-radius:var(--radius);
+  border:1px solid var(--line); background:var(--surface);
+  font-family:var(--font-ui); font-size:.82rem; color:var(--text-2);
+}
+.ws-note svg{width:18px; height:18px; flex:none; stroke:var(--accent-strong); fill:none; stroke-width:1.7; margin-top:.1rem}
+.ws-grid{display:grid; gap:.9rem; grid-template-columns:1fr}
+@media (min-width:40em){ .ws-grid{grid-template-columns:repeat(2,1fr); gap:1.1rem} }
+@media (min-width:64em){ .ws-grid{grid-template-columns:repeat(3,1fr)} }
+
+.ws{
+  display:flex; flex-direction:column; gap:.7rem; position:relative; overflow:hidden;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:1.2rem 1.1rem 1.1rem;
+  box-shadow:0 20px 45px -38px rgba(var(--shadow),.6);
+}
+.ws::after{content:""; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg,var(--accent),transparent)}
+.ws-num{font-family:var(--font-ui); font-size:.66rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-strong)}
+.ws h3{font-size:1.25rem; letter-spacing:var(--display-tracking)}
+.ws-meta{display:flex; flex-wrap:wrap; gap:.4rem}
+.chip{
+  display:inline-flex; align-items:center; gap:.35rem;
+  font-family:var(--font-ui); font-size:.68rem; letter-spacing:.05em;
+  color:var(--text-2); background:var(--bg-2); border:1px solid var(--line-2);
+  border-radius:999px; padding:.3rem .6rem;
+}
+.chip svg{width:12px; height:12px; stroke:var(--accent-strong); fill:none; stroke-width:1.8}
+.ws details{border-top:1px solid var(--line-2); padding-top:.7rem; margin-top:.1rem}
+.ws summary{
+  cursor:pointer; list-style:none; font-family:var(--font-ui); font-size:.76rem;
+  font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-strong);
+  display:flex; align-items:center; justify-content:space-between; gap:.5rem; min-height:28px;
+}
+.ws summary::-webkit-details-marker{display:none}
+.ws summary::after{content:"+"; font-size:1.1rem; line-height:1}
+.ws details[open] summary::after{content:"–"}
+.ws details p{margin-top:.6rem; color:var(--text-2); font-size:.95rem}
+.ws .btn{margin-top:auto; width:100%}
+
+/* ═══ 7. BLAJHUNT BAND ═════════════════════════════════════════════════════ */
+.hunt{position:relative; overflow:hidden; color:#ffffff; padding-block:clamp(3.2rem,12vw,5.5rem)}
+.hunt::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    radial-gradient(80% 60% at 85% 0%, rgba(255,255,255,.14), transparent 60%),
+    linear-gradient(165deg, #2a2119 0%, #171310 60%, #100d0a 100%);
+}
+:root[data-palette="sunlit-sky"] .hunt::before{
+  background:
+    radial-gradient(80% 60% at 85% 0%, rgba(0,188,255,.35), transparent 60%),
+    linear-gradient(165deg, #101418 0%, #0b0d10 60%, #09090b 100%);
+}
+.hunt .eyebrow{color:var(--accent-tint)}
+.hunt h2{font-size:clamp(2.4rem,1.5rem + 5vw,4.2rem); margin-top:.5rem; letter-spacing:var(--display-tracking)}
+.hunt .quote{
+  margin-top:1.1rem; max-width:32ch; font-size:clamp(1.05rem,.95rem + .7vw,1.3rem);
+  color:rgba(255,255,255,.9); font-style:italic;
+}
+.hunt .ask{margin-top:.6rem; font-family:var(--font-display); font-size:1.15rem; color:var(--accent-tint)}
+.hunt-stats{display:flex; gap:1.6rem; flex-wrap:wrap; margin-top:1.8rem}
+.hunt-stats div{display:flex; flex-direction:column}
+.hunt-stats b{font-family:var(--font-display); font-size:2.1rem; line-height:1; color:var(--accent-tint)}
+.hunt-stats span{font-family:var(--font-ui); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-top:.3rem}
+.hunt-actions{display:flex; flex-direction:column; gap:.7rem; margin-top:2rem}
+.hunt-actions .btn{width:100%}
+@media (min-width:30em){ .hunt-actions{flex-direction:row; flex-wrap:wrap} .hunt-actions .btn{width:auto} }
+
+/* ═══ 8. INFO ══════════════════════════════════════════════════════════════ */
+.info-grid{display:grid; gap:0; grid-template-columns:1fr}
+@media (min-width:40em){ .info-grid{grid-template-columns:repeat(2,1fr); gap:0 2.5rem} }
+@media (min-width:64em){ .info-grid{grid-template-columns:repeat(4,1fr)} }
+.info-item{padding-block:1.1rem; border-top:1px solid var(--line-2)}
+.info-item:first-child{border-top:2px solid var(--accent)}
+@media (min-width:64em){ .info-item{border-top:2px solid var(--accent)} }
+.info-item dt{font-family:var(--font-ui); font-size:.66rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--text-3)}
+.info-item dd{margin:.4rem 0 0; font-family:var(--font-display); font-size:1.15rem; color:var(--text)}
+.info-item .sm{font-family:var(--font-body); font-size:.9rem; color:var(--text-2); margin-top:.25rem}
+
+/* ═══ 9. FOOTER ════════════════════════════════════════════════════════════ */
+footer{padding-block:clamp(2.5rem,9vw,4rem) calc(clamp(2.5rem,9vw,4rem) + 4.5rem); border-top:1px solid var(--line); text-align:center}
+@media (min-width:48em){ footer{padding-bottom:clamp(2.5rem,9vw,4rem)} }
+.fmark{font-family:var(--font-display); font-size:1.8rem; color:var(--text)}
+footer p{color:var(--text-2); margin-top:.4rem; font-size:.95rem}
+footer small{display:block; margin-top:1.6rem; color:var(--text-3); font-family:var(--font-ui); font-size:.68rem; letter-spacing:.06em}
+
+/* ═══ 10. STICKY MOBILE ACTION BAR ═════════════════════════════════════════ */
+.actionbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; gap:.5rem;
+  padding:.55rem var(--gap) calc(.55rem + env(safe-area-inset-bottom, 0px));
+  background:var(--bg);
+  background:color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter:blur(10px); border-top:1px solid var(--line-2);
+  transform:translateY(130%); transition:transform .35s ease;
+}
+.actionbar.show{transform:none}
+.actionbar .btn{flex:1; padding-inline:.6rem; font-size:.74rem}
+@media (min-width:48em){ .actionbar{display:none} }
+
+/* ═══ 11. MOTION ═══════════════════════════════════════════════════════════ */
+.reveal{opacity:0; transform:translateY(16px); transition:opacity .7s ease, transform .7s ease}
+.reveal.in{opacity:1; transform:none}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1; transform:none; transition:none}
+  .actionbar{transition:none}
+  *{animation:none !important}
+}
+</style>
+</head>
+<body id="top">
+
+<header class="hdr" id="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="14" y="3" width="4" height="27"/><rect x="10" y="6" width="12" height="2.4"/><rect x="6" y="12" width="20" height="3"/><rect x="10" y="21" width="12" height="2.4"/></svg>
+      Blaj 2026
+    </a>
+    <nav class="hdr-nav" aria-label="Navigare principală">
+      <a href="#galerie">Galerie</a>
+      <a href="#ateliere">Ateliere</a>
+      <a href="#blajhunt">Blajhunt</a>
+      <a href="#info">Info</a>
+    </nav>
+    <a class="btn btn--accent" href="#ateliere">Ateliere</a>
+    <button class="burger" id="burger" type="button" aria-label="Deschide meniul" aria-expanded="false" aria-controls="menu">
+      <svg class="ico-m" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="menu" id="menu" aria-label="Meniu">
+  <a href="#galerie">Galerie</a>
+  <a href="#ateliere">Ateliere</a>
+  <a href="#blajhunt">Blajhunt</a>
+  <a href="#info">Info</a>
+  <a class="btn btn--accent" href="./blajhunt.html">Ghidul Blajhunt</a>
+</nav>
+
+<main>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-media" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <span class="eyebrow">Întâlnirea Inter-eparhială a Tineretului Greco-Catolic</span>
+      <h1>Blaj 2026</h1>
+      <div class="sub">19 septembrie &middot; Mica Romă</div>
+      <!-- PLACEHOLDER: de confirmat cu organizatorii (SPEC A5) -->
+      <p class="lead">O zi la Blaj pentru tinerii din toate eparhiile greco-catolice: ateliere, prieteni noi și o competiție prin oraș.</p>
+      <div class="hero-actions">
+        <a class="btn btn--light" href="#ateliere">Vezi atelierele</a>
+        <a class="btn btn--outline-light" href="#blajhunt">Blajhunt</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ GALERIE ═══ -->
+  <section class="sec" id="galerie">
+    <div class="wrap sec-head reveal">
+      <span class="eyebrow">Galerie</span>
+      <h2>Din întâlnirile de până acum</h2>
+      <p>Fotografii de la edițiile trecute și de la întâlnirile tinerilor din eparhii. <span class="prov">foto provizorii</span></p>
+    </div>
+
+    <div class="wrap gal-top reveal">
+      <div class="gal-count"><b id="galNum">01</b> / 06</div>
+      <div class="gal-arrows">
+        <button class="arrow" id="galPrev" type="button" aria-label="Fotografia anterioară">&lsaquo;</button>
+        <button class="arrow" id="galNext" type="button" aria-label="Fotografia următoare">&rsaquo;</button>
+      </div>
+    </div>
+
+    <!-- Pentru fiecare slide: înlocuiește <div class="ph">…</div> cu
+         <img src="assets/foto/01.jpg" alt="descriere" loading="lazy" width="1200" height="1500"> -->
+    <div class="gal-track" id="galTrack" tabindex="0" role="group" aria-roledescription="carusel" aria-label="Fotografii din întâlnirile trecute">
+
+      <figure class="slide">
+        <div class="frame"><div class="ph" role="img" aria-label="Loc rezervat pentru fotografia 1"><span class="ph-inner"><span class="ph-num">I</span><span class="ph-file">assets/foto/01.jpg</span></span></div></div>
+        <figcaption class="cap"><b>Întâlnirea Tineretului &middot; [loc]</b>[an] &middot; [scurtă descriere]</figcaption>
+      </figure>
+
+      <figure class="slide">
+        <div class="frame"><div class="ph" role="img" aria-label="Loc rezervat pentru fotografia 2"><span class="ph-inner"><span class="ph-num">II</span><span class="ph-file">assets/foto/02.jpg</span></span></div></div>
+        <figcaption class="cap"><b>Întâlnirea Tineretului &middot; [loc]</b>[an] &middot; [scurtă descriere]</figcaption>
+      </figure>
+
+      <figure class="slide">
+        <div class="frame"><div class="ph" role="img" aria-label="Loc rezervat pentru fotografia 3"><span class="ph-inner"><span class="ph-num">III</span><span class="ph-file">assets/foto/03.jpg</span></span></div></div>
+        <figcaption class="cap"><b>Întâlnirea Tineretului &middot; [loc]</b>[an] &middot; [scurtă descriere]</figcaption>
+      </figure>
+
+      <figure class="slide">
+        <div class="frame"><div class="ph" role="img" aria-label="Loc rezervat pentru fotografia 4"><span class="ph-inner"><span class="ph-num">IV</span><span class="ph-file">assets/foto/04.jpg</span></span></div></div>
+        <figcaption class="cap"><b>Întâlnirea Tineretului &middot; [loc]</b>[an] &middot; [scurtă descriere]</figcaption>
+      </figure>
+
+      <figure class="slide">
+        <div class="frame"><div class="ph" role="img" aria-label="Loc rezervat pentru fotografia 5"><span class="ph-inner"><span class="ph-num">V</span><span class="ph-file">assets/foto/05.jpg</span></span></div></div>
+        <figcaption class="cap"><b>Întâlnirea Tineretului &middot; [loc]</b>[an] &middot; [scurtă descriere]</figcaption>
+      </figure>
+
+      <figure class="slide">
+        <div class="frame"><div class="ph" role="img" aria-label="Loc rezervat pentru fotografia 6"><span class="ph-inner"><span class="ph-num">VI</span><span class="ph-file">assets/foto/06.jpg</span></span></div></div>
+        <figcaption class="cap"><b>Întâlnirea Tineretului &middot; [loc]</b>[an] &middot; [scurtă descriere]</figcaption>
+      </figure>
+
+    </div>
+    <div class="dots" id="galDots" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══ ATELIERE ═══ -->
+  <section class="sec tint" id="ateliere">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Ateliere</span>
+        <h2>Alege-ți atelierul</h2>
+        <p>Fiecare participant se înscrie la un singur atelier, iar locurile sunt limitate. <span class="prov">conținut provizoriu</span></p>
+      </div>
+
+      <div class="ws-note reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+        <span>Descrierile, orele și numărul de locuri se completează după confirmarea organizatorilor. Înscrierile se deschid în curând.</span>
+      </div>
+
+      <!-- PLACEHOLDER: 6 carduri-șablon. Un atelier real = titlu, susținător, descriere, loc, oră, capacitate (SPEC A3). -->
+      <div class="ws-grid reveal">
+
+        <article class="ws">
+          <div class="ws-num">Atelier I</div>
+          <h3>[Titlul atelierului]</h3>
+          <div class="ws-meta">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>[oră]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>[loc]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M17 8a3 3 0 010 6"/></svg>[N] locuri</span>
+          </div>
+          <details><summary>Detalii</summary><p>[Descrierea atelierului — două-trei rânduri despre ce se întâmplă acolo și cine îl susține.]</p></details>
+          <span class="btn btn--ghost" aria-disabled="true">Înscriere &mdash; în curând</span>
+        </article>
+
+        <article class="ws">
+          <div class="ws-num">Atelier II</div>
+          <h3>[Titlul atelierului]</h3>
+          <div class="ws-meta">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>[oră]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>[loc]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M17 8a3 3 0 010 6"/></svg>[N] locuri</span>
+          </div>
+          <details><summary>Detalii</summary><p>[Descrierea atelierului — două-trei rânduri despre ce se întâmplă acolo și cine îl susține.]</p></details>
+          <span class="btn btn--ghost" aria-disabled="true">Înscriere &mdash; în curând</span>
+        </article>
+
+        <article class="ws">
+          <div class="ws-num">Atelier III</div>
+          <h3>[Titlul atelierului]</h3>
+          <div class="ws-meta">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>[oră]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>[loc]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M17 8a3 3 0 010 6"/></svg>[N] locuri</span>
+          </div>
+          <details><summary>Detalii</summary><p>[Descrierea atelierului — două-trei rânduri despre ce se întâmplă acolo și cine îl susține.]</p></details>
+          <span class="btn btn--ghost" aria-disabled="true">Înscriere &mdash; în curând</span>
+        </article>
+
+        <article class="ws">
+          <div class="ws-num">Atelier IV</div>
+          <h3>[Titlul atelierului]</h3>
+          <div class="ws-meta">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>[oră]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>[loc]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M17 8a3 3 0 010 6"/></svg>[N] locuri</span>
+          </div>
+          <details><summary>Detalii</summary><p>[Descrierea atelierului — două-trei rânduri despre ce se întâmplă acolo și cine îl susține.]</p></details>
+          <span class="btn btn--ghost" aria-disabled="true">Înscriere &mdash; în curând</span>
+        </article>
+
+        <article class="ws">
+          <div class="ws-num">Atelier V</div>
+          <h3>[Titlul atelierului]</h3>
+          <div class="ws-meta">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>[oră]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>[loc]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M17 8a3 3 0 010 6"/></svg>[N] locuri</span>
+          </div>
+          <details><summary>Detalii</summary><p>[Descrierea atelierului — două-trei rânduri despre ce se întâmplă acolo și cine îl susține.]</p></details>
+          <span class="btn btn--ghost" aria-disabled="true">Înscriere &mdash; în curând</span>
+        </article>
+
+        <article class="ws">
+          <div class="ws-num">Atelier VI</div>
+          <h3>[Titlul atelierului]</h3>
+          <div class="ws-meta">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>[oră]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>[loc]</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5M17 8a3 3 0 010 6"/></svg>[N] locuri</span>
+          </div>
+          <details><summary>Detalii</summary><p>[Descrierea atelierului — două-trei rânduri despre ce se întâmplă acolo și cine îl susține.]</p></details>
+          <span class="btn btn--ghost" aria-disabled="true">Înscriere &mdash; în curând</span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ BLAJHUNT ═══ -->
+  <section class="hunt" id="blajhunt">
+    <div class="wrap reveal">
+      <span class="eyebrow">Competiție</span>
+      <h2>Blajhunt</h2>
+      <p class="quote">„Crezi că știi Blajul? Ia-ți gașca și descoperă orașul așa cum nu l-ai mai văzut.”</p>
+      <p class="ask">Tu accepți provocarea?</p>
+      <div class="hunt-stats">
+        <div><b>10</b><span>opriri</span></div>
+        <div><b>1000</b><span>puncte</span></div>
+        <div><b>6</b><span>membri / echipă</span></div>
+      </div>
+      <div class="hunt-actions">
+        <a class="btn btn--light" href="./blajhunt.html">Descoperă traseul</a>
+        <a class="btn btn--outline-light" href="https://blajhunt.prietenicuistoria.ro/" target="_blank" rel="noopener">Platforma jocului ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ INFO ═══ -->
+  <section class="sec" id="info">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Info</span>
+        <h2>Ce trebuie să știi</h2>
+      </div>
+      <dl class="info-grid reveal">
+        <div class="info-item">
+          <dt>Data</dt>
+          <dd>19 septembrie 2026</dd>
+          <p class="sm">Programul complet urmează. <span class="prov">de completat</span></p>
+        </div>
+        <div class="info-item">
+          <dt>Locul</dt>
+          <dd>Blaj, jud. Alba</dd>
+          <p class="sm">Start din curtea Seminarului Teologic.</p>
+        </div>
+        <div class="info-item">
+          <dt>Cine</dt>
+          <dd>Tinerii greco-catolici</dd>
+          <p class="sm">Din toate eparhiile. <span class="prov">de confirmat</span></p>
+        </div>
+        <div class="info-item">
+          <dt>Contact</dt>
+          <dd>[nume organizator]</dd>
+          <p class="sm">[telefon] &middot; [email] <span class="prov">de completat</span></p>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fmark">Cu drag, din Blaj!</div>
+    <p>Întâlnirea Inter-eparhială a Tineretului Greco-Catolic</p>
+    <p>Blaj &middot; 19 septembrie 2026</p>
+    <small>Pagină în lucru &middot; textul dintre paranteze drepte este provizoriu</small>
+  </div>
+</footer>
+
+<div class="actionbar" id="actionbar">
+  <a class="btn btn--accent" href="#ateliere">Ateliere</a>
+  <a class="btn btn--ghost" href="./blajhunt.html">Blajhunt</a>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- palette override for quick previews: ?palette=sunlit-sky ---- */
+  try{
+    var p = new URLSearchParams(location.search).get("palette");
+    if(p) document.documentElement.setAttribute("data-palette", p);
+  }catch(e){}
+
+  /* ---- mobile menu ---- */
+  var hdr = document.getElementById("hdr");
+  var burger = document.getElementById("burger");
+  var menu = document.getElementById("menu");
+  function setMenu(open){
+    hdr.setAttribute("data-open", open ? "true" : "false");
+    menu.setAttribute("data-open", open ? "true" : "false");
+    burger.setAttribute("aria-expanded", open ? "true" : "false");
+    burger.setAttribute("aria-label", open ? "Închide meniul" : "Deschide meniul");
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+  if(burger){
+    burger.addEventListener("click", function(){
+      setMenu(hdr.getAttribute("data-open") !== "true");
+    });
+  }
+  if(menu){
+    menu.addEventListener("click", function(ev){
+      if(ev.target.closest && ev.target.closest("a")) setMenu(false);
+    });
+  }
+  document.addEventListener("keydown", function(ev){
+    if(ev.key === "Escape" && hdr.getAttribute("data-open") === "true") setMenu(false);
+  });
+
+  /* ---- reveal on scroll ---- */
+  var revs = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window && !reduce){
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add("in"); ro.unobserve(e.target); }
+      });
+    }, {threshold:.12});
+    revs.forEach(function(el){ ro.observe(el); });
+  } else {
+    revs.forEach(function(el){ el.classList.add("in"); });
+  }
+
+  /* ---- sticky mobile action bar: appears once the hero is out of view ---- */
+  var bar = document.getElementById("actionbar");
+  var hero = document.querySelector(".hero");
+  if(bar && hero && "IntersectionObserver" in window){
+    new IntersectionObserver(function(entries){
+      bar.classList.toggle("show", !entries[0].isIntersecting);
+    }, {threshold:0}).observe(hero);
+  }
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var track = document.getElementById("galTrack");
+  if(!track) return;
+  var slides = Array.prototype.slice.call(track.querySelectorAll(".slide"));
+  if(!slides.length) return;
+
+  var dotsWrap = document.getElementById("galDots");
+  var numEl = document.getElementById("galNum");
+  var prevBtn = document.getElementById("galPrev");
+  var nextBtn = document.getElementById("galNext");
+  var current = 0, timer = null, userTook = false;
+
+  slides.forEach(function(_, i){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", "Fotografia " + (i + 1));
+    b.addEventListener("click", function(){ stopAuto(); goTo(i, true); });
+    dotsWrap.appendChild(b);
+  });
+  var dots = dotsWrap.querySelectorAll("button");
+
+  function setActive(i){
+    current = i;
+    if(numEl) numEl.textContent = (i + 1 < 10 ? "0" : "") + (i + 1);
+    for(var d = 0; d < dots.length; d++) dots[d].classList.toggle("on", d === i);
+    if(prevBtn) prevBtn.disabled = (i === 0);
+    if(nextBtn) nextBtn.disabled = (i === slides.length - 1);
+  }
+  function goTo(i, smooth){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    var s = slides[i];
+    if(!s) return;
+    track.scrollTo({left: s.offsetLeft - track.offsetLeft, behavior: (smooth && !reduce) ? "smooth" : "auto"});
+    setActive(i);
+  }
+  function tick(){ goTo(current >= slides.length - 1 ? 0 : current + 1, true); }
+  function startAuto(){ if(!timer && !userTook && !reduce) timer = setInterval(tick, 5000); }
+  function pauseAuto(){ if(timer){ clearInterval(timer); timer = null; } }
+  function stopAuto(){ userTook = true; pauseAuto(); }
+
+  if(prevBtn) prevBtn.addEventListener("click", function(){ stopAuto(); goTo(current - 1, true); });
+  if(nextBtn) nextBtn.addEventListener("click", function(){ stopAuto(); goTo(current + 1, true); });
+
+  var raf = null;
+  track.addEventListener("scroll", function(){
+    if(raf) return;
+    raf = requestAnimationFrame(function(){
+      raf = null;
+      var edge = track.scrollLeft, best = 0, bd = Infinity;
+      slides.forEach(function(s, i){
+        var d = Math.abs((s.offsetLeft - track.offsetLeft) - edge);
+        if(d < bd){ bd = d; best = i; }
+      });
+      if(best !== current) setActive(best);
+    });
+  }, {passive:true});
+
+  track.addEventListener("keydown", function(ev){
+    if(ev.key === "ArrowRight"){ ev.preventDefault(); stopAuto(); goTo(current + 1, true); }
+    if(ev.key === "ArrowLeft"){ ev.preventDefault(); stopAuto(); goTo(current - 1, true); }
+  });
+
+  track.addEventListener("pointerdown", stopAuto, {passive:true});
+  track.addEventListener("mouseenter", pauseAuto);
+  track.addEventListener("mouseleave", startAuto);
+  track.addEventListener("focusin", stopAuto);
+
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ startAuto(); } else { pauseAuto(); } });
+    }, {threshold:.35}).observe(track);
+  } else {
+    startAuto();
+  }
+
+  setActive(0);
+})();
+</script>
+</body>
+</html>

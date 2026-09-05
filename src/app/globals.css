@@ -1,26 +1,374 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOKENS — the only place colour, type and radius live.
+   ───────────────────────────────────────────────────────────────────────────
+   Light theme only, on purpose (see SPEC §6). There is no .dark block and no
+   `dark:` variant in this codebase; adding one is a decision, not a tweak.
+
+   The contract is shadcn's so anything pulled from 21st.dev or ui.shadcn.com
+   drops in already themed. To reskin the whole site, edit :root below.
+
+   A raw colour value outside this file is a defect.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* brand layer — what shadcn has no name for */
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-text: var(--brand-text);
+  /* The workshops stage. Light, like everything else — it used to be the one
+     dark surface here and was changed because the luminance flip broke the
+     site's continuity. Its own tokens so it can carry a faint sky cast that
+     --background does not. */
+  --color-stage: var(--stage);
+  --color-on-stage: var(--on-stage);
+
+  --color-contrast: var(--contrast);
+  --color-contrast-text: var(--contrast-text);
+  --color-scrim: var(--scrim);
+
+  --shadow-card: 0 1px 2px rgb(var(--scrim) / 0.07), 0 10px 30px -14px rgb(var(--scrim) / 0.22);
+
+  /* Fonts. NOTE the indirection: a `--font-*` key here may not reference a
+     `--font-*` variable, that is a cycle Tailwind resolves to nothing and no
+     error is raised. next/font writes --font-eb-garamond / --font-inter; the
+     palette re-exports them as --face-*. Do not collapse these two names. */
+  --font-display: var(--face-display);
+  --font-body: var(--face-body);
+  --font-ui: var(--face-ui);
+  --font-sans: var(--face-ui);
+
+  /* type ramp — exactly five steps, ratio ~1.3. Adding a sixth is a defect. */
+  --text-display: clamp(2.75rem, 11vw, 5.5rem);
+  --text-h2: clamp(1.75rem, 1.2rem + 2.6vw, 2.75rem);
+  --text-h3: 1.25rem;
+  --text-body: 1rem;
+  --text-ui: 0.8125rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── palette: Sunlit Sky ── 21st.dev/@serafimcloud. Sky-400 + yellow-400 on a
+   neutral scale. The one palette; there is no second. ── */
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+
+  /* Sky-400 is bright: white on it is 2.18:1. Its foreground must be INK. */
+  --primary: #00bcff;
+  --primary-foreground: #04212c;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #525252;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #e7000b;
+
+  /* --border is a hairline divider (1.26:1, decorative); --border-strong
+     (3.36:1) is the one that may carry a component edge. */
+  --border: #e5e5e5;
+  --border-strong: #8c8c8c;
+  --input: #d4d4d4;
+  /* NOT --primary. A sky ring around a sky button is 1.00:1 against its own
+     fill and 2.18:1 against the page — an indicator you cannot see. Ink is
+     16.68:1 on the page and 7.65:1 on the button. */
+  --ring: #04212c;
+
+  /* Accent economy: sky is accent one, yellow is accent two. Three accent
+     moments per screen is the ceiling (GUIDELINES section 5). */
+  /* Workshops stage. A hair of sky in the white so the page reads as related
+     to the landing rather than identical to it. Ink is --foreground: on a light
+     stage dark type is the EASY direction — it needs backdrop luminance >= 0.19,
+     where near-white ink needed <= 0.17. Those never overlapped, which is why a
+     bright backdrop and white text could not both be had. */
+  --stage: #f4fafe;
+  --on-stage: #0a0a0a;
+
+  --brand: #00bcff;
+  --brand-strong: #0099d6;  /* pressed state — ink still reads 5.18:1 on it */
+  --brand-text: #00698f;
+  --contrast: #fdc700;
+  --contrast-text: #6f5600;
+
+  /* The generated sky field behind the Blajhunt hero, bottom stop to top stop.
+     Read at runtime by adisyon-shader.tsx and painted verbatim by the
+     `field-fallback` utility below, so the WebGL field and its no-WebGL
+     stand-in are the same four colours and both are themed from here.
+
+     Every stop is deliberately pale. Near-black ink sits directly on this
+     field, and that needs a backdrop luminance of >= 0.19 (SPEC 6.1b); the
+     darkest stop here, --field-3, is 0.58. Darkening any of these is the same
+     decision as flipping a surface's ink, not a colour tweak. */
+  --field-0: #fff4d1;
+  --field-1: #ffffff;
+  --field-2: #e0f3fe;
+  --field-3: #86d5fd;
+
+  /* Shadow tint, unwrapped rgb so it can take an alpha. Pulled toward the sky
+     hue rather than neutral grey — Vercel Design, "hue consistency". */
+  --scrim: 10 20 28;
+
+  --radius: 0.625rem;
+
+  --face-display: var(--font-outfit), "Segoe UI", system-ui, sans-serif;
+  --face-body: var(--font-inter), system-ui, sans-serif;
+  --face-ui: var(--font-inter), system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    /* Kill the 300ms double-tap delay and the grey flash on tap. */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    scroll-margin-top: 5rem;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: var(--primary-foreground);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE SKY FIELD  (see --field-* above)
+   `field-fallback` is what the Blajhunt hero shows when WebGL is missing, the
+   shader fails to link, or the canvas has not painted yet. It is the same ramp
+   in the same direction, so the fallback is not a degraded state that looks
+   broken — it is the same picture without the waves. Paint it BEHIND the
+   canvas, never instead of it.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@utility field-fallback {
+  background-image: linear-gradient(
+    to top,
+    var(--field-0) 0%,
+    var(--field-1) 34%,
+    var(--field-2) 68%,
+    var(--field-3) 100%
+  );
+}
+
+/* `trail-field` carries the sky PAST the fold. The hero's field used to stop
+   dead at the trail, which landed on a flat --stage for 4000px — the page went
+   from alive to inert exactly where the reader starts scrolling. This picks the
+   ramp back up where the hero leaves it and keeps moving: it starts on
+   --field-0, the same warm gold the hero's own bottom edge ends on, so there is
+   no seam to hide, and then CYCLES gold -> white -> sky -> stage three times
+   over the ~4000px of trail before settling on --background for the section
+   that follows.
+
+   Thirteen stops, not four, and that is the point. The first version walked the
+   ramp once, which over 4000px changes about one step of luminance per
+   screenful — so little that it read as a flat tint. FREQUENCY is what makes a
+   field feel alive, not saturation. This varies often and stays pale; reaching
+   for stronger colour instead is the move that breaks the ink rule below.
+
+   Every stop is a continuation of the SAME four field colours. It is not a
+   second palette, and it must not become one.
+
+   The luminance rule (SPEC 6.1b) is what bounds this: near-black ink sits
+   directly on it, so every stop has to stay >= 0.19. The darkest here is
+   --field-2 at 0.87 — this ramp has a lot of headroom, and that is deliberate.
+   Deepening any stop is the same decision as flipping a surface's ink. */
+@utility trail-field {
+  background-image: linear-gradient(
+    to bottom,
+    var(--field-0) 0%,
+    var(--field-1) 7%,
+    var(--field-2) 15%,
+    var(--stage) 23%,
+    var(--field-0) 33%,
+    var(--field-1) 41%,
+    var(--field-2) 51%,
+    var(--stage) 59%,
+    var(--field-0) 68%,
+    var(--field-2) 79%,
+    var(--field-1) 88%,
+    var(--field-2) 94%,
+    var(--background) 100%
+  );
+}
+
+/* The hero's last 112px. It fades the shader down onto --field-0 so the canvas
+   hands over to `trail-field` on the same colour. Reaches transparent inside
+   its own box at the top; a gradient still opaque at the edge of its box draws
+   a hard line across the page, which has shipped twice here. */
+@utility field-seam {
+  background-image: linear-gradient(to bottom, transparent, var(--field-0));
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   THE TRAIL
+   The route on /blajhunt is an inline SVG per row, not a CSS background — see
+   the geometry note at the top of `how-it-works.tsx`. It WAS a
+   `repeating-linear-gradient` on a 2px-wide box, which is a thing a straight
+   line can be and a curve cannot. Nothing here styles it any more: the stroke
+   lives on the paths and its colour comes from `text-border-strong`.
+
+   It is DELIBERATELY still. The 21st.dev original looped its dash offset
+   forever; on a page whose whole job is being read that is motion competing
+   with the text, and it would be a third WCAG 2.2.2 deviation (see SPEC D10)
+   bought for nothing.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MARQUEE
+   The 21st.dev original shipped these keyframes in a <style> tag injected with
+   dangerouslySetInnerHTML on every mount. They live here instead: same rules,
+   parsed once, and reduced-motion can reach them.
+
+   Each animated track is two identical halves, so translating it by exactly
+   -50% lands copy 2 where copy 1 started and the loop is seamless. One half
+   must be WIDER THAN THE ROW or the seam shows as a gap.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+.animate-marquee-left,
+.animate-marquee-right {
+  will-change: transform;
+  animation-duration: var(--speed, 120s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.animate-marquee-left  { animation-name: marquee-left; }
+.animate-marquee-right { animation-name: marquee-right; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation-play-state: paused;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   VIEW TRANSITIONS
+   React's <ViewTransition> drives these; Next 16 needs no config for it.
+   Timing is asymmetric on purpose: the old page leaves fast so it stops
+   competing for attention, the new one arrives slower so it can be read.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --duration-exit: 160ms;
+  --duration-enter: 260ms;
+  --duration-move: 460ms;
+}
+
+::view-transition-old(.nav-forward) {
+  animation:
+    var(--duration-exit) ease-out both vt-fade reverse,
+    var(--duration-exit) ease-out both vt-push-left;
+}
+
+::view-transition-new(.nav-forward) {
+  animation:
+    var(--duration-enter) ease-in var(--duration-exit) both vt-fade,
+    var(--duration-move) cubic-bezier(0.22, 1, 0.36, 1) both vt-rise;
+}
+
+::view-transition-old(.nav-back) {
+  animation: var(--duration-exit) ease-out both vt-fade reverse;
+}
+
+::view-transition-new(.nav-back) {
+  animation:
+    var(--duration-enter) ease-in var(--duration-exit) both vt-fade,
+    var(--duration-move) cubic-bezier(0.22, 1, 0.36, 1) both vt-drop;
+}
+
+@keyframes vt-fade {
+  from { opacity: 0; filter: blur(4px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+@keyframes vt-push-left {
+  from { transform: none; }
+  to   { transform: translateY(-2%); }
+}
+
+@keyframes vt-rise {
+  from { transform: translateY(14px); }
+  to   { transform: none; }
+}
+
+@keyframes vt-drop {
+  from { transform: translateY(-10px); }
+  to   { transform: none; }
+}
+
+/* A transition is motion like any other. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

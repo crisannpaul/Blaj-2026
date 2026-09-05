@@ -15,6 +15,10 @@
 
 # next.js
 /.next/
+# TEMPORARY, with the D14 /blajhunt-swipe run — parallel variants each build to
+# their own dist dir so they cannot serve each other mixed content. Remove this
+# line together with the distDir hook in next.config.ts.
+/.next-*/
 /out/
 
 # production
@@ -39,3 +43,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Event source documents: Treasurehunt.docx contains the ANSWERS to every task.
+# Never let it reach a public repo or a client bundle (SPEC section 13.9).
+# Remove this line only if the repo is private and you have decided that is fine.
+docs/
+
+.vercel
+.env*

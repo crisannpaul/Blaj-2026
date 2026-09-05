@@ -1,0 +1,1 @@
+Following the dotted line downward, each objective has a respective image which is displayed in the background, maybe blurred, maybe gradiented somehow, and the transition in between them is as seamless as scrolling to the next one or to the previous one - might fuck up color palette.
