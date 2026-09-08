@@ -42,8 +42,18 @@ export interface HeroCarouselItem {
   id?: string | number;
   /** Headline for the active slide. `\n` becomes separate reveal lines. */
   title: string;
-  /** Image URL, used both in the card and as the graded background. */
+  /** Image URL for the card in the strip. */
   image: string;
+  /**
+   * Tiny stand-in for the graded background, if the card image should not be
+   * enlarged into it. The backdrop paints this image full-bleed at 1.28 scale,
+   * which at 1440 is a ~2.5x enlargement of a 720px card — enough to make any
+   * lettering inside a source legible behind the copy. A 120px-wide file
+   * upscaled by the browser is the same field with the detail gone, and no
+   * runtime `filter` to re-rasterise during the 6s scale.
+   * Falls back to `image`. @default undefined
+   */
+  backdropImage?: string;
   /** Byline printed beside the headline, e.g. "CU PR. ANDREI". @default undefined */
   credit?: string;
   /** Right-aligned facts, e.g. ["90 MIN", "20 LOCURI"]. @default undefined */
@@ -83,6 +93,12 @@ export interface HeroCarouselProps {
   autoplay?: boolean;
   /** Milliseconds between autoplay steps. @default 4000 */
   autoplayDelay?: number;
+  /**
+   * Mirror the focused card into the URL hash (`#<id>`) and read it back on
+   * mount, so a link out and back lands on the card it left from. Needs item
+   * ids. Uncontrolled mode only. @default false
+   */
+  syncHash?: boolean;
   /** Extra classes for the stage. @default undefined */
   className?: string;
 }
@@ -143,6 +159,7 @@ export function HeroCarousel({
   label: regionLabel = "Carusel",
   autoplay = false,
   autoplayDelay = 4000,
+  syncHash = false,
   className,
 }: HeroCarouselProps) {
   const stageRef = React.useRef<HTMLDivElement>(null);
@@ -163,6 +180,37 @@ export function HeroCarousel({
     },
     [controlled, index, last, onIndexChange],
   );
+
+  // The URL reflects the focused card (Vercel baseline, State & Navigation).
+  // `#<id>` is read once, before first paint, so coming back from a detail
+  // page lands on the card that was left; it is written with replaceState so
+  // a swipe does not grow the history stack, and with the router's own state
+  // object preserved so Next's bookkeeping survives the write.
+  React.useLayoutEffect(() => {
+    if (!syncHash || controlled !== undefined) return;
+    const read = () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      if (!id) return;
+      const i = items.findIndex((it) => String(it.id) === id);
+      if (i >= 0) setUncontrolled(i);
+    };
+    read();
+    // A same-document hash change (a link to `/ateliere#slug` from a page
+    // that is already `/ateliere`) does not remount, so listen as well. No
+    // loop: replaceState below never fires hashchange.
+    window.addEventListener("hashchange", read);
+    return () => window.removeEventListener("hashchange", read);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
+    if (!syncHash) return;
+    const id = items[index]?.id;
+    if (id === undefined) return;
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `#${encodeURIComponent(String(id))}`,
+    );
+  }, [syncHash, index, items]);
 
   // One observer feeds every measurement below.
   React.useEffect(() => {
@@ -271,6 +319,31 @@ export function HeroCarousel({
   const lines = active.title.split("\n");
   const accent = active.accent ?? "#8a8a8a";
 
+  // The headline box is STRIP_TOP of the stage and everything in it is
+  // bottom-anchored, so a title that does not fit overflows UPWARD, under the
+  // top bar — flex-end does not clamp. Size from the ratio, then cap by what
+  // actually fits above the credit and meta lines. The cap only binds on very
+  // short stages: at 320x568 a three-line title is 27px against a 33px ratio
+  // size; at 390x844 the ratio gives 49 and the room is 59, so nothing moves.
+  // Credit and meta share the headline's row above `narrow`, so they only
+  // count against the height when stacked — at the body's 1.6 line-height,
+  // which they inherit, plus the column's 8px gap each. Measured, not
+  // guessed: 1.25 here put the title's box flush against the bar at 320.
+  const topBar = Math.max(12, box.h * 0.024) + 44;
+  const stacked = narrow
+    ? (active.credit ? label * 1.6 + 8 : 0) +
+      (active.meta?.length ? label * 1.6 + 8 : 0)
+    : 0;
+  const room =
+    box.h * R.STRIP_TOP - topBar - stacked - Math.round(box.h * 0.028) - 4;
+  const titleSize = Math.max(
+    24,
+    Math.min(
+      Math.max(28, Math.round(box.h * R.TITLE)),
+      Math.floor(room / (lines.length * 0.9)),
+    ),
+  );
+
   return (
     <div
       ref={stageRef}
@@ -310,7 +383,7 @@ export function HeroCarousel({
           transition={swing}
         >
           <motion.img
-            src={active.image}
+            src={active.backdropImage ?? active.image}
             alt=""
             aria-hidden
             draggable={false}
@@ -424,7 +497,7 @@ export function HeroCarousel({
             <motion.h2
               key={index}
               className="font-display font-semibold leading-[0.9] tracking-[-0.03em]"
-              style={{ fontSize: Math.max(28, Math.round(box.h * R.TITLE)) }}
+              style={{ fontSize: titleSize }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.18 } }}
@@ -526,9 +599,19 @@ export function HeroCarousel({
               transition={spring}
             >
               {/* The focused card is exactly 3:4, so object-position does
-                  nothing to it - it only picks which band of the portrait the
-                  half-height neighbours keep. Anchored just above centre so a
-                  clipped card still shows a face, not a forehead. */}
+                  nothing to it — it only picks which band of the portrait the
+                  half-height neighbours keep.
+
+                  TOP, not just above centre. It was 50% 26%, which is the
+                  right answer for a photograph of a person: the band lands on
+                  a face rather than a forehead. These cards are not that. They
+                  are artwork and collages that are composed from the top down
+                  — a title, then the subject — so a band taken from the middle
+                  is the one part that identifies nothing, and the clipped
+                  neighbours all read as an anonymous smear of texture. From
+                  the top, a half-height card is the top half of its own
+                  picture, which is what a filmstrip of cropped frames should
+                  be. Revisit if the set ever becomes portraits of people. */}
               <img
                 src={item.image}
                 alt=""
@@ -536,7 +619,7 @@ export function HeroCarousel({
                 width={750}
                 height={1000}
                 className="h-full w-full object-cover"
-                style={{ objectPosition: "50% 26%" }}
+                style={{ objectPosition: "50% 0%" }}
               />
               {/* Unfocused cards wash toward the stage, so they recede on a
                   light field the way the black overlay did on a dark one. */}
@@ -595,6 +678,7 @@ export function HeroCarousel({
                   {active.ctaHref ? (
                     <Link
                       href={active.ctaHref}
+                      transitionTypes={["nav-forward"]}
                       className="bg-primary text-primary-foreground active:bg-brand-strong focus-visible:ring-ring focus-visible:ring-offset-stage shadow-card font-ui inline-flex min-h-12 items-center rounded-full px-6 font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
                       style={{ fontSize: Math.max(15, body) }}
                     >

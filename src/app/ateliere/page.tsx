@@ -3,91 +3,57 @@ import {
   HeroCarousel,
   type HeroCarouselItem,
 } from "@/components/ui/hero-carousel";
+import { ATELIERE, atelierNo } from "@/lib/ateliere";
 
 export const metadata = { title: "Ateliere" };
 
 /**
- * PLACEHOLDER WORKSHOPS. Every name, leader, duration, capacity, description
- * and photograph here is invented to make the layout real — none of it is
- * confirmed (SPEC A3, and D4 for whether capacities exist at all). Photos are
- * Unsplash stand-ins in public/ateliere/.
+ * The seven workshops the organizers delivered on 8 Sep, from
+ * `src/lib/ateliere.ts` — titles, numbers, durations, seats and the hooks are
+ * theirs. The stage shows one card per workshop and the copy band carries a
+ * two-sentence hook; everything longer waits for `/ateliere/[slug]`.
  *
- * `accent` is the hue the whole backdrop grades to when a card takes focus.
- * These alternate sky and yellow — the site's two accents, straight from the
- * palette. They can be this bright because the stage is light and the ink is
- * dark: the grade washes toward --stage, so the backdrop's luminance floor does
- * not depend on the accent being dark. (It did when the stage was dark and the
- * type was white — yellow-400 put an 11px label at 1.63:1 back then.)
- * Verify any new accent with the glyph-mask pass in SPEC 6.2 regardless.
+ * Numbers are the organizers' own, gaps included: A1 is the hunt and there is
+ * no A8, so the strip reads 02 … 09. Renumbering would put the site at odds
+ * with every printed sheet on the day.
+ *
+ * The photographs are the organizers' too, cropped to the card's 3:4 by
+ * `scripts/ateliere-photos.js`. A7 has none yet and sits on a stock frame,
+ * which its credit line says out loud rather than hides.
+ *
+ * `accent` alternates the site's two accents, sky and gold, as CSS variables
+ * rather than hex — the palette lives in globals.css and nowhere else. They
+ * can be this bright because the stage is light and the ink is dark: the
+ * grade washes toward --stage, so the luminance floor does not depend on the
+ * accent (SPEC 6.1b). Verify any new accent with ink.js regardless.
  */
-const WORKSHOPS: HeroCarouselItem[] = [
-  {
-    id: "icoane",
-    title: "Icoane pe\nsticlă",
-    image: "/ateliere/1.jpg",
-    credit: "ATELIER 01",
-    meta: ["90 MIN", "20 LOCURI"],
-    description:
-      "Tehnica pe care Blajul o ține vie de două secole. Pleci cu icoana ta, pictată de la prima linie.",
-    ctaLabel: "Înscrieri în curând",
-    accent: "#00bcff",
-  },
-  {
-    id: "cor",
-    title: "Cor și\nmuzică",
-    image: "/ateliere/2.jpg",
-    credit: "ATELIER 02",
-    meta: ["120 MIN", "30 LOCURI"],
-    description:
-      "Repetiție deschisă pentru cei care vor să cânte la Liturghia de seară. Nu ai nevoie de experiență.",
-    ctaLabel: "Înscrieri în curând",
-    accent: "#fdc700",
-  },
-  {
-    id: "foto",
-    title: "Foto și\npovestire",
-    image: "/ateliere/3.jpg",
-    credit: "ATELIER 03",
-    meta: ["90 MIN", "15 LOCURI"],
-    description:
-      "Fotografiezi întâlnirea din interior, cu telefonul din buzunar. Cele mai bune cadre ajung în albumul zilei.",
-    ctaLabel: "Înscrieri în curând",
-    accent: "#0099d6",
-  },
-  {
-    id: "teatru",
-    title: "Teatru\nbiblic",
-    image: "/ateliere/4.jpg",
-    credit: "ATELIER 04",
-    meta: ["120 MIN", "25 LOCURI"],
-    description:
-      "O pildă, repetată de dimineață și jucată seara în fața tuturor. Roluri pentru oricine vrea unul.",
-    ctaLabel: "Înscrieri în curând",
-    accent: "#ffdf20",
-  },
-  {
-    id: "slujire",
-    title: "Voluntariat\nși slujire",
-    image: "/ateliere/5.jpg",
-    credit: "ATELIER 05",
-    meta: ["90 MIN", "40 LOCURI"],
-    description:
-      "Ieșim în oraș, la oamenii pe lângă care trecem în fiecare zi. Mai puțin discuție, mai mult făcut.",
-    ctaLabel: "Înscrieri în curând",
-    accent: "#7cd4fd",
-  },
-  {
-    id: "rugaciune",
-    title: "Rugăciune\nși tăcere",
-    image: "/ateliere/6.jpg",
-    credit: "ATELIER 06",
-    meta: ["60 MIN", "20 LOCURI"],
-    description:
-      "O oră fără telefon, în catedrală. Ghidată, pentru cine nu a făcut asta niciodată singur.",
-    ctaLabel: "Înscrieri în curând",
-    accent: "#e8b400",
-  },
-];
+const ACCENT = { sky: "var(--brand)", gold: "var(--contrast)" } as const;
+
+const WORKSHOPS: HeroCarouselItem[] = ATELIERE.map((a) => ({
+  id: a.slug,
+  title: a.cardTitle,
+  image: a.image,
+  // The stage paints the card image a second time as the full-bleed field, so
+  // a card cut from a collage or a poster puts its own lettering across the
+  // fold at 1440. `scripts/ateliere-photos.js` emits a 120px-wide sibling for
+  // that job, one per workshop — including the one still on a stock frame,
+  // because six soft fields and one sharp photograph reads as a bug.
+  // Keyed off the SLUG, not the image path: the stock card is a .jpg and a
+  // derivation by extension silently handed that slide its sharp original.
+  backdropImage: `/ateliere/${a.slug}-bg.webp`,
+  credit: a.imagePlaceholder
+    ? `Atelier ${atelierNo(a)} · foto în curând`
+    : `Atelier ${atelierNo(a)}`,
+  meta: [`${a.durationMin} min`, `${a.seats} locuri`],
+  description: a.hook,
+  // Each card opens its own page; the not-yet signup control lives there.
+  ctaLabel: "Detalii",
+  ctaHref: `/ateliere/${a.slug}`,
+  accent: ACCENT[a.accent],
+}));
+
+/** Open on the middle card so the strip visibly continues both ways. */
+const DEFAULT_INDEX = Math.floor(WORKSHOPS.length / 2);
 
 export default function Ateliere() {
   return (
@@ -107,11 +73,12 @@ export default function Ateliere() {
       <main className="h-[100svh]">
         <HeroCarousel
           items={WORKSHOPS}
-          defaultIndex={2}
+          defaultIndex={DEFAULT_INDEX}
           brand="Blaj 2026"
           backHref="/"
           backLabel="Acasă"
           label="Atelierele întâlnirii"
+          syncHash
         />
       </main>
     </ViewTransition>
