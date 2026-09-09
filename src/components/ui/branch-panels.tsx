@@ -123,7 +123,7 @@ export type BranchPanel = {
   /** The word. It is the link's accessible name and the expanded label. */
   label: string;
   image: string;
-  tint: "sky" | "gold";
+  tint: "lapis" | "gold";
 };
 
 /**
@@ -140,8 +140,8 @@ export type BranchPanel = {
  * So the picture is now a plain `grayscale` layer at full opacity — a real
  * photograph, in its own tonal range — and the accent sits above it at
  * `mix-blend-multiply` with alpha 30%. A partial multiply keeps the neutral
- * channel alive instead of crushing it: gold at 30% multiplies the blue channel
- * by 0.65 rather than to 0, which is exactly the difference between "tinted
+ * channel alive instead of crushing it: lapis at 30% multiplies the red channel
+ * by 0.74 rather than to 0.14, which is exactly the difference between "tinted
  * photograph" and "colour chip". ONE DIAL — `veil` — now controls how coloured
  * the pair is, and it does not fight the ink.
  *
@@ -150,7 +150,16 @@ export type BranchPanel = {
  * near-solid `--contrast` rectangle and the buildings disappeared. Under the
  * veil the parchment reads as parchment and the linework survives.
  *
- * **The ink's floor is still the scrim, not the veil.** Sized per state: a
+ * **The ink's floor is the cover, not the veil — and the cover is the PAGE
+ * COLOUR, not the accent.** It used to be the accent at these same alphas, and
+ * that worked only because sky-400 was brighter than most of the photograph:
+ * laid over the picture it LIFTED the backdrop under the ink. Lapis and gilt
+ * are both darker than the picture, so the same layer painted with them can
+ * only sink it — on the first lapis build the open "Ateliere" label measured
+ * 4.50:1 and the gilt spine 5.35:1, down from the sky numbers. A cover that
+ * has to protect dark ink must be light (SPEC 6.1b), and `--background` is
+ * the right light: the foot of an open panel fades toward the page it sits on
+ * rather than toward a third colour. Sized per state: a
  * gradient over the bottom 3/5 when the panel is open and its label sits at the
  * foot, and a FLAT wash over the whole spine, because the vertical stack runs
  * well above the 3/5 line — exactly where a bottom-up gradient has faded to
@@ -158,33 +167,43 @@ export type BranchPanel = {
  * a scrim still opaque at its own edge draws a hard line across the layout, and
  * that has shipped three times in this project.
  *
- * **THE SPINE WASH IS 75%, AND IT IS NOT A PLACE TO SAVE COLOUR.** It went to
+ * **THE SPINE WASH IS 75%, AND IT IS NOT A PLACE TO SAVE COVER.** It went to
  * 36% in the same pass that cut everything else, and the next photograph broke
  * it: the workshops art delivered 9 Sep has two figures in black habits dead
  * centre, and a spine keeps only the middle ~30% of the frame, so the vertical
- * mark landed on near-black — 2.36:1 against a backdrop of L=0.075, a real
- * failure on a real build. A sweep put the threshold at 68% (4.66:1, L=0.197),
- * which clears the 0.19 floor by 0.007 and would not survive the next
- * re-encode, let alone the next photograph. 75% measures 5.44:1 at L=0.232.
+ * mark landed on near-black — 2.36:1 against a backdrop of L=0.075 under the
+ * sky wash, a real failure on a real build. A sweep put the sky threshold at
+ * 68% (4.66:1, L=0.197), which clears the 0.19 floor by 0.007 and would not
+ * survive the next re-encode, let alone the next photograph; 75% measured
+ * 5.44:1 at L=0.232. The number was kept when the wash became bone: bone lifts
+ * harder than sky did, so the same 75% now puts the spine letters at 12.5:1
+ * over the same black habits — and a floor set from the artwork currently in
+ * the folder is still not a floor.
  *
- * Both tints carry it, though gold measured fine at 36% — the map is light. A
- * floor set from the artwork currently in the folder is not a floor, and gold
- * art will not always be parchment. The open card keeps the reduced values,
- * because that is the state the "too coloured" complaint was actually about; a
- * spine is 76-115px of colour chip with a word on it and has, as the note above
- * says, almost no photograph to lose.
+ * Both tints carry it, though gold measured fine at 36% — the map is light.
+ * Gold art will not always be parchment. The open card keeps the reduced
+ * values, because that is the state the "too coloured" complaint was actually
+ * about; a spine is 76-115px of chip with a word on it and has, as the note
+ * above says, almost no photograph to lose. Under a 75% bone wash the spine
+ * reads as pale paper carrying the veil's tint, which is the hierarchy the
+ * pair wants: the open panel is the picture, the spine is the label.
  *
  * MEASURED, not computed — glyph-core rendered ink (SPEC 6.2) over the real
- * artwork, both panels, both states, at 320/390/1440. Worst per state:
+ * artwork, both panels, both states, at 320/390/1440, with the open panel
+ * forced through ink.js's `INK_TABTO` / `INK_HOVER` so the state is a fact and
+ * not a race against the 1.5s auto-swap. Worst per state, lapis + gilt with
+ * the bone cover, on the second workshops photograph (9 Sep):
  *
- *   open sky 5.53:1 · sky spine 5.44:1 · open gold 6.89:1 · gold spine 11.20:1
+ *   open lapis 6.19:1 · lapis spine 12.50:1 · open gilt 6.88:1 · gilt spine 13.18:1
  *
- * darkest backdrop under any glyph L=0.232, against the 0.19 floor (SPEC 6.1b).
- * Re-measured 9 Sep against the second workshops photograph; the first one read
- * a full 3 points higher on the sky panel, which is the clearest statement
- * available that these numbers describe ARTWORK and not this file. 1440 binds on
- * both panels: the open one is widest there so `object-cover` crops least, and
- * the spine is widest there too, so it admits most of the frame's dark centre.
+ * Under Sunlit Sky's accent cover the same photograph read 5.53 / 5.44 / 6.89
+ * / 11.20, and the first photograph a full 3 points higher on the sky panel —
+ * the clearest statement available that these numbers describe ARTWORK and
+ * not this file. 1440 binds on both open panels: they are widest there, so
+ * `object-cover` crops least and the label meets the most of the frame. With
+ * the accent cover under lapis, before the bone cover, the open "Ateliere"
+ * label had measured 4.50:1 — the cover's colour, not its alpha, was the
+ * whole difference.
  *
  * That margin is LARGER than the duotone's was, which is the counter-intuitive
  * part and worth stating plainly: a hand-computed worst case for this stack said
@@ -197,18 +216,15 @@ export type BranchPanel = {
  * changes; do not assume these numbers travel.
  */
 const TINT = {
-  sky: {
-    field: "bg-primary",
-    veil: "bg-primary/30",
-    scrim: "from-primary/42 via-primary/20",
-    wash: "bg-primary/75",
-  },
-  gold: {
-    field: "bg-contrast",
-    veil: "bg-contrast/30",
-    scrim: "from-contrast/42 via-contrast/20",
-    wash: "bg-contrast/75",
-  },
+  lapis: { field: "bg-primary", veil: "bg-primary/30" },
+  gold: { field: "bg-contrast", veil: "bg-contrast/30" },
+} as const;
+
+/* The text's cover, shared by both tints — see the block above for why it is
+   the page colour and not the accent, and why the spine's is 75%. */
+const COVER = {
+  scrim: "from-background/42 via-background/20",
+  wash: "bg-background/75",
 } as const;
 
 export function BranchPanels({
@@ -363,8 +379,8 @@ export function BranchPanels({
                 aria-hidden="true"
                 className={
                   open
-                    ? `absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t ${tint.scrim} to-transparent`
-                    : `absolute inset-0 ${tint.wash}`
+                    ? `absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t ${COVER.scrim} to-transparent`
+                    : `absolute inset-0 ${COVER.wash}`
                 }
               />
 

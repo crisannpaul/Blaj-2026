@@ -9,6 +9,10 @@
  * backdrop at those exact coordinates.
  *
  *   node .claude/skills/web-verify/ink.js <url> <width> <height> [scrollY]
+ *   INK_HOVER="<selector>" node ... — hover that element first, for states
+ *                                     that only exist under the pointer
+ *   INK_TABTO="<selector>" node ... — Tab to that element first, for states
+ *                                     that open on :focus-visible
  *
  * The 98% glyph-core cutoff below is calibrated, not a guess. If you ever
  * change it, re-calibrate against a control whose two colours are flat and
@@ -144,6 +148,27 @@ const MEASURE = async ({ pngA, pngB, items, dpr }) => {
   });
   await page.goto(url, { waitUntil: "networkidle" });
   await page.waitForTimeout(900); // let the shader paint its one frame
+  if (process.env.INK_HOVER) {
+    // Put a hover-driven state on screen before measuring — a branch panel
+    // that opens on pointerenter, say — and give its spring time to settle.
+    // Without this, which panel is open at measure time is a race against
+    // the auto-swap, and "both states measured" is luck rather than a fact.
+    await page.hover(process.env.INK_HOVER);
+    await page.waitForTimeout(1200);
+  }
+  if (process.env.INK_TABTO) {
+    // Keyboard-focus a control (Tab until it is the active element), for the
+    // states a component opens on :focus-visible. Real key presses, so the
+    // browser's own focus-visible heuristic decides, not a script focus().
+    const sel = process.env.INK_TABTO;
+    let hit = false;
+    for (let i = 0; i < 40 && !hit; i++) {
+      await page.keyboard.press("Tab");
+      hit = await page.evaluate((s) => document.activeElement?.matches(s) ?? false, sel);
+    }
+    if (!hit) throw new Error(`INK_TABTO: never reached ${sel} in 40 tabs`);
+    await page.waitForTimeout(1200);
+  }
   if (SCROLL) {
     await page.evaluate((y) => window.scrollTo(0, y), SCROLL);
     await page.waitForTimeout(400);

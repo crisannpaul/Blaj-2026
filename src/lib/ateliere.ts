@@ -77,7 +77,7 @@ export interface Atelier {
   /** True while the organizers still owe a photograph and `image` is stock. */
   imagePlaceholder?: boolean;
   /** Which of the two palette accents grades the stage behind this card. */
-  accent: "sky" | "gold";
+  accent: "lapis" | "gold";
 }
 
 export const ATELIERE: readonly Atelier[] = [
@@ -107,7 +107,7 @@ export const ATELIERE: readonly Atelier[] = [
     ],
     tags: ["CeODaBlajul", "Blaj", "MicaRoma", "IstoriePeRepedeInainte"],
     image: "/ateliere/masina-timpului.webp",
-    accent: "sky",
+    accent: "lapis",
   },
   {
     slug: "episcopul-tinerilor",
@@ -169,7 +169,7 @@ export const ATELIERE: readonly Atelier[] = [
     ],
     tags: ["sens", "vocație", "discernământ", "curaj", "împlinire", "fericire"],
     image: "/ateliere/curajul-de-a-ti-urma-inima.webp",
-    accent: "sky",
+    accent: "lapis",
   },
   {
     slug: "iconar",
@@ -221,7 +221,7 @@ export const ATELIERE: readonly Atelier[] = [
     ],
     tags: ["lumină", "creație", "imaginație", "comuniune", "har", "veșnicie"],
     image: "/ateliere/mozaicar.webp",
-    accent: "sky",
+    accent: "lapis",
   },
   {
     slug: "curajul-de-a-ti-conduce-viata",
@@ -277,7 +277,7 @@ export const ATELIERE: readonly Atelier[] = [
     ],
     tags: ["voluntariat", "misiune", "aventură", "mărturie", "tineri"],
     image: "/ateliere/voluntari-in-misiune.webp",
-    accent: "sky",
+    accent: "lapis",
   },
 ];
 

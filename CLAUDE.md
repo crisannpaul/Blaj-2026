@@ -100,14 +100,18 @@ is behind.
   not work. 320px must not break.
 - **Light theme only, everywhere.** One `:root`, no `.dark` block, no `dark:`
   variant. The workshops stage has its own `--stage` / `--on-stage` tokens so it
-  can carry a faint sky cast, but it is light and its ink is near-black. It was
-  briefly dark; that was reverted because the luminance flip between pages read
-  as two different products.
+  can sit a hair warmer and deeper than the page, but it is light and its ink is
+  near-black. It was briefly dark; that was reverted because the luminance flip
+  between pages read as two different products.
 - **Pick the surface's luminance first, then the ink to match — never the
   reverse.** Dark ink needs a backdrop luminance of >= 0.19, near-white ink needs
   <= 0.17. They do not overlap, so "bright background + white text" cannot be
-  tuned into working. On the workshops stage this also governs the accents: they
-  are sky-400 and yellow-400 only because the stage is light. See SPEC 6.1b.
+  tuned into working. It also governs every layer meant to protect ink: a cover
+  that guards dark type must itself be light. Painting it with the accent worked
+  under sky-400 only because sky was brighter than the photograph beneath it —
+  lapis and gilt are darker, and the same layer sank the landing panels' labels
+  to 4.50:1 on 9 Sep. The accents grade the workshops stage through a 68% wash
+  toward `--stage` for the same reason. See SPEC 6.1b.
 - **A raw colour or font stack outside `src/app/globals.css` is a defect.** And a
   token used in a component must be registered in `@theme inline`, or the utility
   silently resolves to nothing. Tailwind v4 raises no error for this.

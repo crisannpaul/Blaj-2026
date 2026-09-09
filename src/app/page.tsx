@@ -22,16 +22,15 @@ import {
  * ratio moves from 1.08 at 390 to 1.35 at lg, and `object-cover` centre-crops.
  *
  * The tint is what keeps them from reading as more of the marquee behind them.
- * Sky goes to the workshops because /ateliere already carries a sky cast, and
- * gold to the hunt because a treasure hunt is the one thing on this page that
- * gold actually means something for.
+ * Lapis goes to the workshops and gilt to the hunt, because a treasure hunt is
+ * the one thing on this page that gold actually means something for.
  */
 const BRANCHES: readonly BranchPanel[] = [
   {
     href: "/ateliere",
     label: "Ateliere",
     image: "/landing/workshops.webp",
-    tint: "sky",
+    tint: "lapis",
   },
   {
     href: "/blajhunt",

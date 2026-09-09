@@ -21,13 +21,13 @@ export const metadata = { title: "Ateliere" };
  * `scripts/photos.js`. A7 has none yet and sits on a stock frame,
  * which its credit line says out loud rather than hides.
  *
- * `accent` alternates the site's two accents, sky and gold, as CSS variables
- * rather than hex — the palette lives in globals.css and nowhere else. They
- * can be this bright because the stage is light and the ink is dark: the
+ * `accent` alternates the site's two accents, lapis and gilt, as CSS variables
+ * rather than hex — the palette lives in globals.css and nowhere else. The
  * grade washes toward --stage, so the luminance floor does not depend on the
- * accent (SPEC 6.1b). Verify any new accent with ink.js regardless.
+ * accent (SPEC 6.1b) — which is what lets an accent as deep as lapis grade a
+ * light stage at all. Verify any new accent with ink.js regardless.
  */
-const ACCENT = { sky: "var(--brand)", gold: "var(--contrast)" } as const;
+const ACCENT = { lapis: "var(--brand)", gold: "var(--contrast)" } as const;
 
 const WORKSHOPS: HeroCarouselItem[] = ATELIERE.map((a) => ({
   id: a.slug,

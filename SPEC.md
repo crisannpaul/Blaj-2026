@@ -53,7 +53,7 @@ src/components/ui/            branch-panels.tsx (the landing fold's two branches
                               diagonal-marquee-carousel.tsx (landing background)
                               hero-carousel.tsx (workshops stage)
                               how-it-works.tsx (the numbered trail on /blajhunt)
-                              adisyon-shader.tsx (the sky field behind the hunt hero)
+                              adisyon-shader.tsx (the dawn field behind the hunt hero)
                               stop-glyphs.tsx (one line drawing per stop, D13)
 src/lib/                      ateliere.ts — the seven workshops, typed in from the organizers'
                                 documents (A3, 8 Sep). ateliere-gallery.ts — reads
@@ -286,24 +286,40 @@ Everything lives in **`src/app/globals.css`**, and the contract is **shadcn's** 
 rest. That is what anything pulled from 21st.dev or ui.shadcn.com expects, so components drop in
 already themed instead of fighting us.
 
-**Sunlit Sky is the palette. There is no second palette and no dark mode** (decided 4 Sep, D8).
-One `:root` block, `color-scheme: light`. Adding a `.dark` block is a decision to be taken
-deliberately, not a tweak — the previous build carried two palettes across two schemes and every
-serious defect the cold reviewer found was a token that flipped in a scheme nobody was looking at.
+**Icoană pe sticlă is the palette — lapis + gilt on warm stone. There is no second palette and
+no dark mode** (D8: Sunlit Sky decided 4 Sep, replaced 9 Sep). One `:root` block, `color-scheme:
+light`. Adding a `.dark` block is a decision to be taken deliberately, not a tweak — the previous
+build carried two palettes across two schemes and every serious defect the cold reviewer found was
+a token that flipped in a scheme nobody was looking at.
 
-21st.dev / @serafimcloud — sky-400 on a neutral scale, Outfit display + Inter body, `--radius:
-0.625rem`, no texture. On top of shadcn's set there is a small **brand layer**:
+**Why it changed.** Sunlit Sky (21st.dev / @serafimcloud — sky-400 + yellow-400 on zinc) was
+chosen from a theme, not from the content. Measured on 9 Sep, every photograph on the site has a
+mean hue between **22° and 47°** — icon frames, rugs, Blaj stone, parchment — and the cool
+neutrals and two cold, bright accents fought all of it. Nothing on any page sat between L 0.85 and
+L 0.01, so the site read as white paper, black type and two stickers; both accents were too
+bright to carry white text, which is why four tokens existed only as workarounds
+(`--primary-foreground` as ink, `--ring` not the primary, `--brand-text`, `--contrast-text`); and
+sky-400 beside yellow-400 is the Ukrainian flag, which a first-time visitor said out loud. The
+replacement is drawn from the photographs: warm stone neutrals, and the two colours of a
+Transylvanian glass icon — the cobalt of its frame and the gilt of its halo. Outfit display +
+Inter body and `--radius: 0.625rem` are unchanged. On top of shadcn's set there is a small
+**brand layer** (every ratio is WCAG 2 against the surface named):
 
 | Token | Value | Why |
 |---|---|---|
-| `--brand` | `#00bcff` | sky-400, the signature |
-| `--brand-text` | `#00698f` | sky-400 fails as text (2.2:1 on white). This is 6.15:1 |
-| `--contrast` | `#fdc700` | yellow-400, accent two — decorative only |
-| `--contrast-text` | `#6f5600` | 6.98:1, for when yellow has to carry words |
-| `--border` | `#e5e5e5` | hairline divider, 1.26:1, decorative by design |
-| `--border-strong` | `#8c8c8c` | 3.36:1 — the only one allowed to carry a component edge |
-| `--primary-foreground` | `#04212c` | **ink on sky, never white.** White on sky-400 is 2.18:1 |
-| `--scrim` | `10 20 28` | shadow tint, pulled toward the sky hue, unwrapped rgb so it takes an alpha |
+| `--background` | `#faf7f1` | bone, not white. The whole neutral scale is warm stone |
+| `--foreground` | `#1c1814` | warm near-black, 16.5:1 on bone |
+| `--primary` / `--brand` | `#24478a` | lapis, the signature. L 0.067, so **white sits on it at 8.96:1** |
+| `--primary-foreground` | `#ffffff` | white on lapis. The old palette needed ink here — white on sky-400 was 2.18:1 |
+| `--brand-strong` | `#1a3569` | pressed state — white still 11.95:1 |
+| `--brand-text` | `#24478a` | the primary itself, 8.38:1 as text on bone. No separate shade any more |
+| `--contrast` | `#ab7d28` | gilt, accent two. 3.45:1 on bone, 3.08:1 on `--muted`, 3.25:1 on the stage — at the 3:1 graphic floor on every light surface, so it may draw an edge. Yellow-400 was 1.44:1 and could only decorate |
+| `--contrast-text` | `#6b4f0a` | 7.15:1 on bone, 5.48:1 on gilt-veiled parchment |
+| `--border` | `#e6dfd3` | hairline divider, 1.24:1, decorative by design |
+| `--border-strong` | `#8b8276` | 3.54:1 on bone — the only one allowed to carry a component edge |
+| `--ring` | `#24478a` | the primary, now that it is 8.38:1 against the page. Against its own button it relies on the 2px `ring-offset` every button declares |
+| `--destructive` | `#a63b2a` | madder; white on it 6.4:1 |
+| `--scrim` | `30 24 16` | shadow tint, pulled toward the stone hue, unwrapped rgb so it takes an alpha |
 
 The type ramp is **exactly five steps** (`--text-display / h2 / h3 / body / ui`) registered in
 `@theme`. A sixth is a defect. The landing page uses four. Nothing renders below 12px.
@@ -317,7 +333,7 @@ invisible for three builds.
 
 | Ref | Idea | Status |
 |---|---|---|
-| [Sunlit Sky](https://21st.dev/@serafimcloud/themes/sunlit-sky) | sky-400 + yellow-400 on a neutral scale, geometric sans, soft radii | **live**, the only palette |
+| [Sunlit Sky](https://21st.dev/@serafimcloud/themes/sunlit-sky) | sky-400 + yellow-400 on a neutral scale, geometric sans, soft radii | **retired 9 Sep** — its colours were replaced by the lapis + gilt palette in section 6; the type and radius it brought stayed |
 | [Diagonal marquee carousel](https://21st.dev/@saurabh-2607/components/great-ui-diagonal-marquee-carousel) | slow diagonal marquee of photos behind the hero | **live**, `src/components/ui/diagonal-marquee-carousel.tsx` |
 | crafterui / 21st.dev editorial hero carousel | filmstrip sharing one top edge, focused card at full height, backdrop graded to the focused photo | **live**, `src/components/ui/hero-carousel.tsx` — the workshops page |
 
@@ -425,8 +441,8 @@ different products.
 
 | Token | Value | Note |
 |---|---|---|
-| `--stage` | `#f4fafe` | a hair of sky in the white, so the page is related to the landing rather than identical |
-| `--on-stage` | `#0a0a0a` | the same ink as `--foreground` |
+| `--stage` | `#f6f0e4` | warm paper, a hair deeper than `--background`, so the page is related to the landing rather than identical |
+| `--on-stage` | `#1c1814` | the same ink as `--foreground` |
 
 **The grade lifts, it does not darken.** Three layers over the focused photo:
 the accent at `mix-blend-mode: color` (hue only), a `--stage` wash at 68% which
@@ -434,9 +450,15 @@ is what guarantees the luminance floor, then the accent again at 19% `multiply`
 to put back the tint the wash desaturates. Worst case — a pure black photo —
 still lands around 7:1 against near-black ink.
 
-**Accents are the real palette here: sky-400 and yellow-400, alternating.** They
-can be this bright *because* the stage is light and the ink is dark. The floor no
-longer depends on the accent being dark.
+**Accents are the real palette here: lapis and gilt, alternating.** Neither has
+to be bright for the stage to work, and lapis is anything but: the grade takes
+the accent's hue at `mix-blend-mode: color`, washes 68% toward `--stage`, then
+multiplies the accent back at 19%, so the floor never depends on the accent.
+Measured 9 Sep at 390 with the lapis palette: on a lapis-graded card
+(`#mozaicar`) every dark-ink element reads ≥ 9.3:1 and on a gilt-graded one
+(`#iconar`) ≥ 9.1:1; the lowest number on either is the white-on-lapis button
+at 8.96:1. The lapis grade renders as a cool slate and the gilt grade as
+parchment, so the alternation reads warm/cool rather than blue/yellow.
 
 > **If anyone ever flips this stage back to dark, the accents must go dark with
 > it.** On a dark stage with white type, yellow-400 as an accent measured
@@ -480,7 +502,7 @@ the largest step between adjacent columns — and **run it against the broken
 version first**, because a probe that reports "no edge" is worthless until it
 has reported a real edge you put there on purpose.
 
-### 6.1c The sky field (`/blajhunt`)
+### 6.1c The field (`/blajhunt`)
 
 The hunt hero sits on a generated field rather than a photograph, because there
 is no photograph of the hunt yet and a bare CSS gradient standing in for one
@@ -490,10 +512,13 @@ shader in `src/components/ui/adisyon-shader.tsx`, adapted on four points:
 - **Its ramp is four tokens, not four hard-coded floats.** `--field-0 … --field-3`
   live in `globals.css` with every other colour, and the component reads them
   off `<html>` at mount. The 21st.dev original bottomed out at `#031c26`, a
-  near-black this site has no surface for.
+  near-black this site has no surface for. Since 9 Sep the ramp is dawn over
+  paper — parchment `#f3e6cb`, bone `#faf7f1`, a pale slate `#e2e7ee`, a pale
+  lapis `#b6c6dc` — in place of the gold-white-sky it carried under Sunlit Sky.
 - **Every stop is pale on purpose.** Near-black ink sits directly on this field,
   so the same rule as 6.1b applies: backdrop luminance >= 0.19. The darkest
-  stop, `--field-3` (`#86d5fd`), is 0.58. Darkening any stop is the same
+  stop, `--field-3` (`#b6c6dc`), is 0.56, and the ink on it is 10.17:1 by
+  arithmetic. Darkening any stop is the same
   decision as flipping a surface's ink, not a colour tweak. `vignette` went
   0.21 -> 0 for exactly this reason: it darkened the edges of a field the ink
   has to survive on.
@@ -516,7 +541,7 @@ shader in `src/components/ui/adisyon-shader.tsx`, adapted on four points:
 described only the one that is dead.** Read the split before touching either.
 
 `/blajhunt-legacy` — the vertical roadmap — carries the `trail-field` utility in
-`globals.css`: thirteen stops **cycling gold -> white -> sky -> stage three
+`globals.css`: thirteen stops **cycling parchment -> bone -> slate -> stage three
 times** over the ~4000px that page scrolls. The reasoning that produced it still
 stands *for that page*: the first version walked the ramp once, which over
 4000px is about one step of luminance per screenful, so slow it read as a flat
@@ -525,16 +550,16 @@ tint. What makes a field feel alive is how *often* it changes, not how strongly.
 
 `/blajhunt` — the live horizontal carousel — has never used it. Its trail
 section paints `.field` in `trail-swipe.module.css`, and **since 9 Sep that is a
-handover and then plain white**: `--field-0` at 0%, `--background` by 20%, white
-the rest of the way. It walked the four `--field-*` stops once until then, and
-that pale sky wash was the bottom layer of three blues stacked inside the same
-400px — field, then the sky glyph plate on each card, then the sky-tinted proof
-chips, with the sky CTA on top of all of it and no longer reading as an accent.
-The carousel is one screen tall, not 4000px, so the frequency argument above
-buys nothing here; accent economy (GUIDELINES 5) does. Sky is now spent on
-actions only.
+handover and then plain `--background`**: `--field-0` at 0%, `--background` by
+20%, and the page colour the rest of the way. It walked the four `--field-*`
+stops once until then, and (under Sunlit Sky) that pale sky wash was the bottom
+layer of three blues stacked inside the same 400px — field, then the sky glyph
+plate on each card, then the sky-tinted proof chips, with the sky CTA on top of
+all of it and no longer reading as an accent. The carousel is one screen tall,
+not 4000px, so the frequency argument above buys nothing here; accent economy
+(GUIDELINES 5) does. The accent is now spent on actions only.
 
-What both share is the seam: each begins on `--field-0`, the warm gold the
+What both share is the seam: each begins on `--field-0`, the warm parchment the
 hero's own bottom edge ends on, and the hero's bottom fade (`field-seam`) was
 retargeted from `--stage` to `--field-0` so the two are one continuous ramp with
 no line to hide.
@@ -631,7 +656,7 @@ finale; proof chips are `--brand-text` on a 5% `--brand` wash inside a
 `--brand/45` border; the route's dots are `--brand-text/45`. Measured rendered
 contrast: chips 5.89:1, pills 12.58:1, card copy 7.81:1. The page's worst value
 is still the hero kicker at 5.17:1 (1440) / 5.56:1 (390), which is inherited
-from the sky field and not from any of this.
+from the field and not from any of this.
 
 **The drawings are gilt, and that is the one place a gradient earns its keep.**
 They were `--contrast-text` at 70% opacity, which over the near-white plate
@@ -782,9 +807,9 @@ calibrated cutoff:
 
 | Page | Worst glyph contrast | Where |
 |---|---|---|
-| `/` | **6.09:1** | the sky kicker at 390px. Re-measured 8 Sep against the real archive; it read 6.15:1 over the Unsplash placeholders, so eleven real photographs cost it 0.06 and nothing else moved |
-| `/ateliere` | **9.62:1** | the disabled "Înscrieri în curând" label |
-| `/blajhunt` | **5.56:1** | the sky kicker over the sky field, at 390px |
+| `/` | **6.19:1** | the open "Ateliere" label at 1440, lapis panel, on the second workshops photograph. Re-measured 9 Sep under lapis + gilt with the bone cover, both panel states forced via `INK_TABTO`; open gilt 6.88, the spines 12.5–14.7, and the worst thing at 390 is the open "Ateliere" at 6.89 with the 13px date line at 7.13. Under Sunlit Sky the worst had been the sky kicker at 6.09:1, and on this photograph the sky panel's open label 5.53:1 |
+| `/ateliere` | **8.96:1** | the white-on-lapis "Detalii" button, identical on a lapis-graded (`#mozaicar`) and a gilt-graded (`#iconar`) card; every dark-ink element is ≥ 9.1:1 |
+| `/blajhunt` | **5.78:1** | the 13px stat labels ("într-o echipă") over the parchment band at 390. The kicker, now lapis, reads 7.54:1 over the field (it was 5.56:1 in sky over sky) |
 
 Checked at 320x568, 390x844, 844x390 (landscape) and 1440x900, and at three scroll depths.
 
@@ -827,7 +852,7 @@ node .claude/skills/web-verify/ink.js <url> <width> <height> [scrollY]
 
 It prints, per text leaf, the median and minimum rendered contrast at the glyph
 cores against the WCAG floor for that element's own size and weight. Run it
-wherever text sits over art — over the sky field, over a photograph, over a
+wherever text sits over art — over the field, over a photograph, over a
 scrim — because `audit.js` reports `contrast failures: none` there and means
 nothing by it. **The 98% cutoff inside it is calibrated; re-calibrate against
 13px `#525252` on `#f4fafe` = 7.43:1 before believing any change to it.**
@@ -1136,7 +1161,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | D5 | Are participants pre-registered, so we have names in advance, or walk-in? Changes the code flow. | organizers | 9 Sep |
 | D6 | One round or two ("două ture")? The schema has `round`, but the UI differs. | organizers | 12 Sep |
 | D7 | Final video: uploaded through the platform, or handed to staff on site? (13.1) | organizers | 13 Sep |
-| ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
+| ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette. **Reopened and re-decided 9 Sep**: Icoană pe sticlă — lapis + gilt on warm stone, still light only, still one palette. Reasons and tokens in section 6; the fork was built on branch `worktree-palette-lapis` for inspection first | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
 
@@ -1167,6 +1192,44 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 
 ## 14. Changelog
 
+- **2026-09-09 (the palette: lapis + gilt on bone, on a fork)** — D8 reopened. The user found
+  Sunlit Sky lifeless, and a first-time visitor read sky-400 beside yellow-400 as the Ukrainian
+  flag. Measured rather than argued: every photograph on the site has a mean hue of 22–47°, the
+  cool zinc neutrals and two cold, bright accents fought all of it, no surface sat between L 0.85
+  and L 0.01, and both accents were too bright to hold white text (four tokens existed only as
+  workarounds). Three candidates — lapis + gilt, terracotta + green, madder + gilt, all on warm
+  stone — were rendered over the live pages by injecting `:root` at screenshot time; the user chose
+  lapis + gilt and asked for a fork to inspect. Built on branch `worktree-palette-lapis` and served
+  on **:3001** beside the unchanged :3000. What changed:
+  1. **`:root` in `globals.css`** — bone `#faf7f1`, warm ink `#1c1814`, stone greys; lapis
+     `#24478a` as primary **with white text (8.96:1)**; gilt `#ab7d28` (3.45:1 on bone, so it may
+     draw an edge); `--ring` is the primary again; `--brand-text` equals the primary; the field
+     ramp is dawn over paper (`#f3e6cb #faf7f1 #e2e7ee #b6c6dc`, darkest 0.56); the glyph gold's
+     lit end is `#a67a0e` (the old `#ad8010` fell to 2.99:1 on the warmer `--muted`). Section 6
+     has the table and every ratio.
+  2. **The accent key `"sky"` is `"lapis"`** in `ateliere.ts`, both `/ateliere` pages,
+     `branch-panels.tsx` and the landing — a token named sky that renders lapis is drift.
+  3. **The landing panels' text cover is `--background`, not the accent.** Under sky the accent
+     cover lifted the backdrop; under lapis and gilt the same layer sank it — the open "Ateliere"
+     label measured **4.50:1** and the gilt spine 5.35:1 at the alphas that had given 8.67 and
+     11.73. The other session's 75% spine wash (set the same day for the second workshops
+     photograph, whose black habits sit dead centre) is kept and is bone too. With the bone cover,
+     on that photograph, both states at 320/390/1440: open lapis **6.19** (binds at 1440), lapis
+     spine 12.50, open gilt 6.88, gilt spine 13.18 — against 5.53 / 5.44 / 6.89 / 11.20 for the
+     sky cover on the same picture. The reasoning is in the file's header; CLAUDE.md's luminance
+     rule now names it.
+  4. **`ink.js` gained `INK_HOVER` and `INK_TABTO`**, so a hover- or focus-driven state (which
+     panel is open) is forced rather than raced against the 1.5s auto-swap. "Both states
+     measured" is a fact now — the hover proved timing-sensitive on one build, the Tab did not.
+  Verified on :3001 after a full stop-rebuild-start (the first re-measure ran against the old
+  process serving a rebuilt `.next` — 500s, no panels, a hollow fold — and was discarded; the
+  CLAUDE.md warning about that is not hypothetical). audit.js clean on `/`, `/ateliere`,
+  `/blajhunt` at 390/768/1440 — no overflow, no CSS-contrast failures, no console errors; ink.js
+  all pass on all three and on `#mozaicar`; hittest.js OK on all three. The `/ateliere` lapis grade
+  renders as a cool slate and the gilt grade as parchment, so the alternation reads warm/cool.
+  **Not done here, deliberately:** the landing marquee wash still bleaches the archive to ~85%
+  white on every palette — a scrim-strength lever, separate from colour — and the Vercel
+  deployment is behind by everything since 4 Sep, as before. The :3000 main checkout is untouched.
 - **2026-09-09 (Câmpia Libertății gets the monument that is actually there)** —
   the user supplied a photograph. What stands on the field is a **modernist
   concrete trilithon** — two slab piers under one deep cantilevered beam, on a

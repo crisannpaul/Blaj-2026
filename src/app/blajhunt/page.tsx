@@ -54,7 +54,7 @@ export default function Blajhunt() {
     >
       <main>
         {/* ── The fold ────────────────────────────────────────────────────
-            Unchanged from /blajhunt. The sky field is a canvas over the same
+            Unchanged from /blajhunt. The field is a canvas over the same
             gradient it draws, so a phone without WebGL, a failed shader link
             and the frame before first paint all show the same picture rather
             than a hole. */}

@@ -41,8 +41,8 @@
   --color-brand-text: var(--brand-text);
   /* The workshops stage. Light, like everything else — it used to be the one
      dark surface here and was changed because the luminance flip broke the
-     site's continuity. Its own tokens so it can carry a faint sky cast that
-     --background does not. */
+     site's continuity. Its own tokens so it can sit a hair deeper and warmer
+     than --background does. */
   --color-stage: var(--stage);
   --color-on-stage: var(--on-stage);
 
@@ -69,53 +69,70 @@
   --text-ui: 0.8125rem;
 }
 
-/* ── palette: Sunlit Sky ── 21st.dev/@serafimcloud. Sky-400 + yellow-400 on a
-   neutral scale. The one palette; there is no second. ── */
+/* ── palette: Icoană pe sticlă ── lapis + gilt on bone. Drawn from the site's
+   own photographs rather than from a theme: every image on it measures a hue
+   of 22–47° (icon frames, rugs, Blaj stone, parchment), so the neutrals are
+   warm stone and the two accents are the two colours of a Transylvanian glass
+   icon — the cobalt of its frame and the gilt of its halo. It replaced Sunlit
+   Sky (sky-400 + yellow-400 on zinc) on 9 Sep: cool neutrals and two bright
+   accents fought the warm imagery, no surface sat between L 0.85 and L 0.01,
+   and sky beside yellow read as a flag. The one palette; there is no second.
+   Every ratio below is WCAG 2 against the surface named. ── */
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+  --background: #faf7f1;   /* bone */
+  --foreground: #1c1814;   /* warm near-black, 16.5:1 on bone */
 
-  --card: #ffffff;
-  --card-foreground: #0a0a0a;
-  --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
+  --card: #fffdf8;
+  --card-foreground: #1c1814;
+  --popover: #fffdf8;
+  --popover-foreground: #1c1814;
 
-  /* Sky-400 is bright: white on it is 2.18:1. Its foreground must be INK. */
-  --primary: #00bcff;
-  --primary-foreground: #04212c;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #525252;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  --destructive: #e7000b;
+  /* Lapis is DEEP (L 0.067), so its foreground is white — 8.96:1. This is the
+     reversal that matters most. Sky-400 was too bright to carry white (2.18:1),
+     so it needed ink on it, a focus ring that was not itself, and a separate
+     shade to be legible as text. A primary that holds white needs none of
+     those; the tokens below that used to be workarounds now simply agree. */
+  --primary: #24478a;
+  --primary-foreground: #ffffff;
+  --secondary: #f0eae0;
+  --secondary-foreground: #1c1814;
+  --muted: #f0eae0;
+  --muted-foreground: #5a5249;   /* 7.17:1 on bone, 6.41:1 on --muted */
+  --accent: #f0eae0;
+  --accent-foreground: #1c1814;
+  --destructive: #a63b2a;        /* madder — white on it 6.4:1, on bone 5.99:1 */
 
-  /* --border is a hairline divider (1.26:1, decorative); --border-strong
-     (3.36:1) is the one that may carry a component edge. */
-  --border: #e5e5e5;
-  --border-strong: #8c8c8c;
-  --input: #d4d4d4;
-  /* NOT --primary. A sky ring around a sky button is 1.00:1 against its own
-     fill and 2.18:1 against the page — an indicator you cannot see. Ink is
-     16.68:1 on the page and 7.65:1 on the button. */
-  --ring: #04212c;
+  /* --border is a hairline divider (1.24:1, decorative); --border-strong
+     (3.54:1 on bone, 3.33:1 on the stage) is the one that may carry a
+     component edge. */
+  --border: #e6dfd3;
+  --border-strong: #8b8276;
+  --input: #d3cabc;
+  /* The primary itself, which is now safe: 8.38:1 against the page. Against
+     its own button it relies on the 2px `ring-offset` every button here
+     declares — no single colour is visible on both bone and lapis without one
+     (ink is 1.97:1 on lapis; white is invisible on bone). */
+  --ring: #24478a;
 
-  /* Accent economy: sky is accent one, yellow is accent two. Three accent
+  /* Accent economy: lapis is accent one, gilt is accent two. Three accent
      moments per screen is the ceiling (GUIDELINES section 5). */
-  /* Workshops stage. A hair of sky in the white so the page reads as related
-     to the landing rather than identical to it. Ink is --foreground: on a light
-     stage dark type is the EASY direction — it needs backdrop luminance >= 0.19,
-     where near-white ink needed <= 0.17. Those never overlapped, which is why a
-     bright backdrop and white text could not both be had. */
-  --stage: #f4fafe;
-  --on-stage: #0a0a0a;
+  /* Workshops stage. Warm paper, a hair deeper than --background, so the page
+     reads as related to the landing rather than identical to it. Ink is
+     --foreground: on a light stage dark type is the EASY direction — it needs
+     backdrop luminance >= 0.19, where near-white ink needed <= 0.17. Those never
+     overlapped, which is why a bright backdrop and white text could not both be
+     had. */
+  --stage: #f6f0e4;
+  --on-stage: #1c1814;
 
-  --brand: #00bcff;
-  --brand-strong: #0099d6;  /* pressed state — ink still reads 5.18:1 on it */
-  --brand-text: #00698f;
-  --contrast: #fdc700;
-  --contrast-text: #6f5600;
+  --brand: #24478a;
+  --brand-strong: #1a3569;  /* pressed state — white still reads 11.95:1 on it */
+  --brand-text: #24478a;    /* the same colour: lapis is 8.38:1 as text on bone */
+  /* Gilt, not yellow. 3.45:1 on bone, 3.08:1 on --muted, 3.25:1 on the stage —
+     at or above the 3:1 graphic floor on every light surface, so it may draw an
+     edge as well as fill one. Yellow-400 was 1.44:1 and could only decorate. */
+  --contrast: #ab7d28;
+  --contrast-text: #6b4f0a;  /* 7.15:1 on bone, 5.48:1 on gilt-veiled parchment */
 
   /* The gilt on the ten Blajhunt stop glyphs, top of the drawing to the ground
      line. Read only by `stop-glyphs.tsx`, through a `userSpaceOnUse` gradient
@@ -126,32 +143,33 @@
      utility, so a `--color-*` alias would only manufacture two utilities
      nobody calls. They live here because a raw hex in a component is a defect.
 
-     The drawings were `--contrast-text` at 70% before this, which over the
-     near-white plate composites to about #97874b — olive, not gold. The floor
-     that bounds the lit end is 3:1 for a graphic: on `--muted` #f4f4f5, the
-     plate's darkest ground, --glyph-gold-lit reads 3.26:1 and the deep end
-     7.5:1. Brightening the lit end is the move to be careful with — #b8880e
-     is already under, at 2.9:1. */
-  --glyph-gold-lit: #ad8010;
+     The floor that bounds the lit end is 3:1 for a graphic: on `--muted`
+     #f0eae0, the plate's darkest ground, --glyph-gold-lit reads 3.24:1 and the
+     deep end 7.35:1. The lit end used to be #ad8010, which was 3.26:1 on zinc
+     and is 2.99:1 on the warmer stone — under the floor by a hair, which is why
+     it moved. Brightening it is the move to be careful with. */
+  --glyph-gold-lit: #a67a0e;
   --glyph-gold-deep: #5f4703;
 
-  /* The generated sky field behind the Blajhunt hero, bottom stop to top stop.
-     Read at runtime by adisyon-shader.tsx and painted verbatim by the
-     `field-fallback` utility below, so the WebGL field and its no-WebGL
-     stand-in are the same four colours and both are themed from here.
+  /* The generated field behind the Blajhunt hero, bottom stop to top stop:
+     dawn over paper — parchment, bone, a pale slate, a pale lapis. Read at
+     runtime by adisyon-shader.tsx and painted verbatim by the `field-fallback`
+     utility below, so the WebGL field and its no-WebGL stand-in are the same
+     four colours and both are themed from here.
 
      Every stop is deliberately pale. Near-black ink sits directly on this
      field, and that needs a backdrop luminance of >= 0.19 (SPEC 6.1b); the
-     darkest stop here, --field-3, is 0.58. Darkening any of these is the same
-     decision as flipping a surface's ink, not a colour tweak. */
-  --field-0: #fff4d1;
-  --field-1: #ffffff;
-  --field-2: #e0f3fe;
-  --field-3: #86d5fd;
+     darkest stop here, --field-3, is 0.56, and ink on it is 10.17:1. Darkening
+     any of these is the same decision as flipping a surface's ink, not a
+     colour tweak. */
+  --field-0: #f3e6cb;
+  --field-1: #faf7f1;
+  --field-2: #e2e7ee;
+  --field-3: #b6c6dc;
 
-  /* Shadow tint, unwrapped rgb so it can take an alpha. Pulled toward the sky
-     hue rather than neutral grey — Vercel Design, "hue consistency". */
-  --scrim: 10 20 28;
+  /* Shadow tint, unwrapped rgb so it can take an alpha. Pulled toward the
+     stone hue rather than neutral grey — Vercel Design, "hue consistency". */
+  --scrim: 30 24 16;
 
   --radius: 0.625rem;
 
@@ -223,7 +241,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   THE SKY FIELD  (see --field-* above)
+   THE FIELD  (see --field-* above)
    `field-fallback` is what the Blajhunt hero shows when WebGL is missing, the
    shader fails to link, or the canvas has not painted yet. It is the same ramp
    in the same direction, so the fallback is not a degraded state that looks
@@ -241,12 +259,13 @@
   );
 }
 
-/* `trail-field` carries the sky PAST the fold. The hero's field used to stop
+/* `trail-field` carries the field PAST the fold. The hero's field used to stop
    dead at the trail, which landed on a flat --stage for 4000px — the page went
    from alive to inert exactly where the reader starts scrolling. This picks the
    ramp back up where the hero leaves it and keeps moving: it starts on
-   --field-0, the same warm gold the hero's own bottom edge ends on, so there is
-   no seam to hide, and then CYCLES gold -> white -> sky -> stage three times
+   --field-0, the same warm parchment the hero's own bottom edge ends on, so
+   there is no seam to hide, and then CYCLES parchment -> bone -> slate -> stage
+   three times
    over the ~4000px of trail before settling on --background for the section
    that follows.
 
@@ -261,7 +280,7 @@
 
    The luminance rule (SPEC 6.1b) is what bounds this: near-black ink sits
    directly on it, so every stop has to stay >= 0.19. The darkest here is
-   --field-2 at 0.87 — this ramp has a lot of headroom, and that is deliberate.
+   --field-2 at 0.79 — this ramp has a lot of headroom, and that is deliberate.
    Deepening any stop is the same decision as flipping a surface's ink. */
 @utility trail-field {
   background-image: linear-gradient(

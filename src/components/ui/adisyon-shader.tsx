@@ -339,7 +339,7 @@ const UNIFORMS = {
   cursorEffect: 2.0,
   cursorStrength: 0.65,
   cursorRadius: 0.46,
-  // Perceptual mixing. White → pale yellow → pale sky → sky goes muddy and
+  // Perceptual mixing. Parchment → bone → slate → pale lapis goes muddy and
   // grey through the middle in plain sRGB; in OKLab it stays clean.
   oklab: 1.0,
   timeScale: -0.727,

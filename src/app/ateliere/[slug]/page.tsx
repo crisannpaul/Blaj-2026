@@ -24,7 +24,7 @@ import { galleryFor } from "@/lib/ateliere-gallery";
  * see all of it.
  *
  * Accent economy (GUIDELINES 5): the workshop's own accent as a short rule,
- * the sky kicker, the Maps link. The tags are neutral on purpose.
+ * the lapis kicker, the Maps link. The tags are neutral on purpose.
  *
  * Signup does not exist yet (SPEC section 9), so the primary control is the
  * same disabled, labelled button the carousel used to carry — honest about
@@ -50,7 +50,7 @@ export async function generateMetadata({
   };
 }
 
-const ACCENT_RULE = { sky: "bg-brand", gold: "bg-contrast" } as const;
+const ACCENT_RULE = { lapis: "bg-brand", gold: "bg-contrast" } as const;
 
 /** Under a stock photograph, while the organizers still owe the real one. */
 const PLACEHOLDER_NOTE = "Fotografie provizorie — cea a atelierului urmează.";
