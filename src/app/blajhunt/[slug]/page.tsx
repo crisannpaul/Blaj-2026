@@ -111,11 +111,23 @@ export default async function Place({
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-start">
               <span
                 aria-hidden="true"
-                className="bg-contrast/25 text-contrast-text flex size-16 shrink-0 items-center justify-center rounded-2xl"
+                className="bg-contrast/25 flex size-20 shrink-0 items-center justify-center rounded-2xl"
               >
+                {/* 56px in an 80px tile, up from 44 in 64. This is the
+                    SMALLEST any stop glyph is drawn, so it is the size the
+                    set's detail budget is set against — the drawings gained
+                    detail and 44px could no longer hold it.
+
+                    Heavier in user units than the card plate (1.8 against
+                    1.5) because apparent weight is stroke x size: 1.8 at 56px
+                    is 2.1px against the plate's 2.75px, still lighter, and
+                    1.5 here would have come out at 1.75px and read spindly.
+
+                    The gilt reads on this tile too — it is `--contrast` at
+                    25%, about #fff2cc, where the lit end measures 3.21:1. */}
                 <StopGlyph
                   name={glyph ?? "cathedral"}
-                  className="size-11 [stroke-width:1.6]"
+                  className="size-14 [stroke-width:1.8]"
                 />
               </span>
               <div className="min-w-0">

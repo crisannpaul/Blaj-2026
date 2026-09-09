@@ -1,41 +1,76 @@
 import { ViewTransition } from "react";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import DiagonalMarqueeCarousel from "@/components/ui/diagonal-marquee-carousel";
+import {
+  BranchPanels,
+  type BranchPanel,
+} from "@/components/ui/branch-panels";
 
 /**
  * Every string here is a placeholder pending the organizers — the gathering's
  * official name, the date and the blurb all still need confirming (SPEC
  * A3/A5). They live in one object so there is exactly one place to edit.
  *
- * The two ACTIONS are the page's whole job: this is the common trunk and the
- * day has exactly two branches. Their sub-lines are deliberately asymmetric —
- * the hunt cites its ten stops because ten is real and tracked (D3 settles
- * *which* ten, not how many); the workshops cite no count, because the six on
- * /ateliere are invented placeholders (A3) and a number repeated in a second
- * place is a second thing to remember to fix.
+ * The two BRANCHES are the page's whole job: this is the common trunk and the
+ * day has exactly two things in it. They are labels only, by decision — no
+ * descriptive sub-line — so the pair reads as a poster rather than a menu.
+ *
+ * The two images are the commissioned artwork (A1/A3), supplied 8 Sep and
+ * converted to webp from the originals kept out of the bundle in `docs/`. They
+ * are 1152x928, i.e. 5:4 — sized to the largest the open panel is ever painted
+ * (390x288 CSS px, 1170x864 on a 3x phone) so nothing upscales. See the export
+ * geometry table in SPEC before commissioning any replacement: the open panel's
+ * ratio moves from 1.08 at 390 to 1.35 at lg, and `object-cover` centre-crops.
+ *
+ * The tint is what keeps them from reading as more of the marquee behind them.
+ * Sky goes to the workshops because /ateliere already carries a sky cast, and
+ * gold to the hunt because a treasure hunt is the one thing on this page that
+ * gold actually means something for.
+ */
+const BRANCHES: readonly BranchPanel[] = [
+  {
+    href: "/ateliere",
+    label: "Ateliere",
+    image: "/landing/workshops.webp",
+    tint: "sky",
+  },
+  {
+    href: "/blajhunt",
+    label: "Blajhunt",
+    image: "/landing/blajhunt.webp",
+    tint: "gold",
+  },
+];
+
+/**
+ * THE LEAD IS LENGTH-CONSTRAINED, and the constraint is structural, not taste.
+ *
+ * The fold is `justify-end` inside `min-h-[100svh]`, so the copy block is
+ * anchored to the BOTTOM and every extra line of lead pushes the kicker UP,
+ * toward and then off the top of the screen. Measured slack below the cards is
+ * exactly the 56px of bottom padding at every width from 375 to 768: there is
+ * no spare room to grow into, only room taken from the top.
+ *
+ * The text supplied on 8 Sep ran 305 characters. It was cut to ~215 by dropping
+ * "Vă așteptăm cu un program complex și atractiv din care nu lipsesc" — a
+ * clause that announces a list instead of being one — and folding the list onto
+ * the first sentence. Nothing factual went: the invitation, both eparchies and
+ * all five things in the programme survive. The eparchy names would save the
+ * most characters by far and are exactly what must NOT be cut, because naming
+ * Cluj-Gherla is how a young person from Cluj-Gherla knows they are invited.
+ *
+ * If it grows again, the room comes from the CARDS, not from the top of the
+ * screen — and that is a coupled decision with the vertical mark on a spine.
+ * See the height note in `branch-panels.tsx` before changing either.
  */
 const CONTENT = {
-  kicker: "Întâlnirea Tineretului Greco-Catolic",
-  title: "Blaj 2026",
+  kicker: "Întâlnirea Intereparhială a Tineretului",
+  title: "Blaj 2026",
   meta: "19 septembrie 2026 · Blaj",
   lead:
-    "O zi împreună pentru tinerii greco-catolici din Transilvania: ateliere, " +
-    "prietenii noi și un oraș de descoperit.",
-  actions: [
-    {
-      href: "/ateliere",
-      label: "Descoperă atelierele",
-      hint: "Alege-ți atelierul zilei",
-      primary: true,
-    },
-    {
-      href: "/blajhunt",
-      label: ["Vezi traseul ", "Blajhunt"],
-      hint: "Zece opriri, pe echipe",
-      primary: false,
-    },
-  ],
+    "La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia " +
+    "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +
+    "împreună — rugăciune, voie bună, ateliere, prietenii noi și un oraș " +
+    "de descoperit.",
 } as const;
 
 /**
@@ -52,6 +87,15 @@ const CONTENT = {
  * radius is 1.25H. This linear reaches transparent at both ends by
  * construction: solid 22%-88%, ramping over the padding.
  *
+ * That reasoning covers the TOP and BOTTOM edges only, which is exactly how
+ * this shipped a third time. `to bottom` has no horizontal ramp at all, so the
+ * box's left and right edges are square cuts. Below 592px both hang off the
+ * screen and nobody sees them; from 592px up to `lg` the right edge is inside
+ * the viewport and sliced whatever photograph it landed on — a 45%-luminance
+ * step straight down the artwork at 768 wide and on any phone held sideways.
+ * The box is therefore inset by -50vw on both sides: the gradient does not
+ * need the width, it needs its own vertical edges to be the only edges it has.
+ *
  * At 90% the marquee still reads through it — over a pure black photo the
  * kicker measures 5.15:1, and it is 5.16:1 in practice.
  */
@@ -59,55 +103,6 @@ const COPY_SCRIM =
   "linear-gradient(to bottom, transparent 0%, " +
   "color-mix(in oklab, var(--background) 90%, transparent) 22%, " +
   "color-mix(in oklab, var(--background) 90%, transparent) 88%, transparent 100%)";
-
-/**
- * One shape, two weights. The pair has to rank itself — two controls of equal
- * weight is the same as having no primary at all — and the fill is what does
- * it, not the size: both rows are the same height so the pair still reads as
- * one object rather than two unrelated buttons.
- *
- * Two lines, not one, because "Blajhunt" is a coined name that means nothing
- * to someone who has not been told what it is. The hint is what makes the
- * second row worth tapping, and it is what lets the row be 68px tall — a
- * comfortable target at the bottom of a phone, which a 48px pill is not.
- *
- * Sizes and colours go in plain className strings on purpose. `cn()` would
- * read `text-body` as a colour, not find `--text-body`, and silently drop one
- * of the two — see CLAUDE.md. Nothing here is conditional, so nothing here
- * needs merging.
- */
-const ACTION_BASE =
-  "group shadow-card focus-visible:ring-ring focus-visible:ring-offset-background " +
-  "flex min-h-[4.25rem] w-full items-center gap-4 rounded-2xl py-3.5 pr-3.5 pl-5 " +
-  "transition-transform hover:scale-[1.015] focus-visible:ring-2 " +
-  "focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.985]";
-
-/**
- * The hint's alpha is 85%, not 80%, and not because a tool asked for it.
- * Measured on the rendered pixels it is 5.74:1 on the sky fill where 80% was
- * 5.15:1 — thin headroom for a 13px line — and at 13px the floor is 4.5.
- *
- * `audit.js` reports this span as 4.10:1 and FAILING at 1440. It is wrong: it
- * composites the ink's alpha over the page's white and then compares the
- * result against the sky tile, which is not a pair that exists anywhere on
- * screen. Hand arithmetic and `ink.js` both give 5.15:1 for the 80% it was.
- * Recorded in SPEC 6.2 with the numbers — do not "fix" the colour to satisfy
- * that reading.
- */
-
-/**
- * The arrow needs a chip. Left to itself it floated ~200px from the end of its
- * own label — at 1440 the row is 384px wide and the label stops at 277 — which
- * reads as a table row with a stray glyph in it, not as a control. A disc at
- * the end makes the right edge deliberate: text on one side, the affordance on
- * the other, and the dead space between them becomes the gap between two
- * things rather than an accident.
- *
- * Decorative, and inside a row that is itself the 68px target, so its own 36px
- * is not a tap target and does not have to clear the floor.
- */
-const CHIP_BASE =
-  "flex size-9 shrink-0 items-center justify-center rounded-full";
 
 export default function Home() {
   return (
@@ -129,16 +124,16 @@ export default function Home() {
           and the fold stops being a centred template. It shifts to a left
           column at lg, where the photographs get the right half. */}
         <div
-          className="relative z-20 flex min-h-[100svh] flex-col justify-end px-6 pt-24 pb-14 lg:justify-center lg:px-24 lg:pb-14"
+          className="relative z-20 flex min-h-[100svh] flex-col justify-end px-6 pt-16 pb-14 short:pt-6 tight:pt-8 lg:justify-center lg:px-24 lg:pb-14"
           style={{
             paddingBottom:
-              "max(3.5rem, calc(env(safe-area-inset-bottom) + 3.5rem))",
+              "max(2.5rem, calc(env(safe-area-inset-bottom) + 2.5rem))",
           }}
         >
           <div className="relative max-w-[33rem] lg:max-w-[38rem]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-10 -top-36 -bottom-20 -z-10 lg:hidden"
+              className="pointer-events-none absolute -inset-x-[50vw] -top-36 -bottom-20 -z-10 lg:hidden"
               style={{ background: COPY_SCRIM }}
             />
 
@@ -154,7 +149,7 @@ export default function Home() {
                 {CONTENT.kicker}
               </span>
               <span
-                className="text-display mt-3 block font-semibold"
+                className="text-display short:text-h2 mt-3 short:mt-2 block font-semibold"
                 translate="no"
               >
                 {CONTENT.title}
@@ -165,59 +160,16 @@ export default function Home() {
               {CONTENT.meta}
             </p>
 
-            <p className="text-body mt-5 max-w-prose">{CONTENT.lead}</p>
+            <p className="text-body mt-5 short:mt-3 max-w-prose">{CONTENT.lead}</p>
 
-            {/* A list, because it is one: the two things the day is made of.
-              Capped narrower than the prose above it so the rows stay a
-              column of controls rather than stretching into two banners at
-              tablet width. */}
-            <ul className="mt-8 grid max-w-[24rem] gap-3">
-              {CONTENT.actions.map((action) => (
-                <li key={action.href}>
-                  <Link
-                    href={action.href}
-                    transitionTypes={["nav-forward"]}
-                    className={
-                      action.primary
-                        ? `${ACTION_BASE} bg-primary text-primary-foreground active:bg-brand-strong`
-                        : `${ACTION_BASE} border-border-strong bg-background/92 text-foreground border backdrop-blur-sm`
-                    }
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className="font-ui block text-base font-semibold">
-                        {Array.isArray(action.label) ? (
-                          <>
-                            {action.label[0]}
-                            <span translate="no">{action.label[1]}</span>
-                          </>
-                        ) : (
-                          action.label
-                        )}
-                      </span>
-                      <span
-                        className={
-                          action.primary
-                            ? "font-ui text-ui text-primary-foreground/85 mt-0.5 block"
-                            : "font-ui text-ui text-muted-foreground mt-0.5 block"
-                        }
-                      >
-                        {action.hint}
-                      </span>
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className={
-                        action.primary
-                          ? `${CHIP_BASE} bg-primary-foreground/15`
-                          : `${CHIP_BASE} bg-secondary`
-                      }
-                    >
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* The two branches. One open, one a spine; the pair alternates
+              on its own until the visitor does anything, because hover does
+              not exist on the phone this is designed for. */}
+            <BranchPanels
+              panels={BRANCHES}
+              className="mt-6 short:mt-5 max-w-[26rem] lg:max-w-[32rem]"
+            />
+
           </div>
         </div>
 

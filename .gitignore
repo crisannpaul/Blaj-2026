@@ -15,9 +15,11 @@
 
 # next.js
 /.next/
-# TEMPORARY, with the D14 /blajhunt-swipe run — parallel variants each build to
-# their own dist dir so they cannot serve each other mixed content. Remove this
-# line together with the distDir hook in next.config.ts.
+# Kept deliberately, though nothing writes here right now. The D13 and D14
+# creative runs each gave their parallel variant its own dist dir so the two
+# servers could not serve each other mixed content; the `distDir` hook in
+# next.config.ts is reverted after every run, and this line is what stops the
+# next one leaking a build directory into the repo before anyone remembers.
 /.next-*/
 /out/
 

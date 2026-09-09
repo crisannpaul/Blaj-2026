@@ -42,8 +42,18 @@ export interface HeroCarouselItem {
   id?: string | number;
   /** Headline for the active slide. `\n` becomes separate reveal lines. */
   title: string;
-  /** Image URL, used both in the card and as the graded background. */
+  /** Image URL for the card in the strip. */
   image: string;
+  /**
+   * Tiny stand-in for the graded background, if the card image should not be
+   * enlarged into it. The backdrop paints this image full-bleed at 1.28 scale,
+   * which at 1440 is a ~2.5x enlargement of a 720px card — enough to make any
+   * lettering inside a source legible behind the copy. A 120px-wide file
+   * upscaled by the browser is the same field with the detail gone, and no
+   * runtime `filter` to re-rasterise during the 6s scale.
+   * Falls back to `image`. @default undefined
+   */
+  backdropImage?: string;
   /** Byline printed beside the headline, e.g. "CU PR. ANDREI". @default undefined */
   credit?: string;
   /** Right-aligned facts, e.g. ["90 MIN", "20 LOCURI"]. @default undefined */
@@ -83,6 +93,12 @@ export interface HeroCarouselProps {
   autoplay?: boolean;
   /** Milliseconds between autoplay steps. @default 4000 */
   autoplayDelay?: number;
+  /**
+   * Mirror the focused card into the URL hash (`#<id>`) and read it back on
+   * mount, so a link out and back lands on the card it left from. Needs item
+   * ids. Uncontrolled mode only. @default false
+   */
+  syncHash?: boolean;
   /** Extra classes for the stage. @default undefined */
   className?: string;
 }
@@ -95,7 +111,7 @@ export interface HeroCarouselProps {
  */
 const RATIOS = {
   narrow: {
-    CARD_H: 0.2, // active card height ÷ stage height
+    CARD_H: 0.3, // active card height ÷ stage height
     CARD_AR: 0.75, // active card is 3:4
     GAP: 0.05, // gap ÷ card width
     STRIP_TOP: 0.36,
@@ -106,7 +122,7 @@ const RATIOS = {
     RAIL: 0.32, // progress rail width ÷ stage width
   },
   wide: {
-    CARD_H: 0.264,
+    CARD_H: 0.31,
     CARD_AR: 0.75,
     GAP: 0.038,
     STRIP_TOP: 0.44,
@@ -120,6 +136,41 @@ const RATIOS = {
 
 /** Below this measured stage width the narrow ratio set applies. */
 const NARROW_AT = 720;
+
+/**
+ * Headline leading, as a multiple of the title's own size, and how much ink
+ * the per-line wipe mask lets out past its box. Measured against Outfit at
+ * 600, which is the only face this headline is ever set in.
+ *
+ * Outfit's ink does not fit 0.9. It reaches 0.98em above the baseline (Î and
+ * Ă carry their accent above cap height) and 0.388em below it — and that
+ * lower figure is not a descender, it is the comma under ș and ț, which
+ * Outfit draws 1.7x deeper than its own j (0.224em). Something has to give.
+ *
+ * What gives is the last third of that comma, and nothing else:
+ *
+ *  - TOP admits the accents whole (0.162em needed). This was the reported bug:
+ *    every Î lost its circumflex and every ă its breve.
+ *  - BOTTOM admits every true descender — j and g at 0.224em are the deepest —
+ *    and stops there. The comma is cut at 0.203em below the baseline, keeping
+ *    about half of it: still unmistakably a comma-below, which is all it has to
+ *    be, and short enough to stay out of the line underneath.
+ *
+ * Letting the comma out whole was tried and looked worse than the bug. At 0.9
+ * its tip lands exactly on the next line's x-height (0.9 - 0.388 = 0.512 vs an
+ * x-height of 0.51) and reads as an apostrophe dropped into the middle of the
+ * word below — "mașina / timpului" became "masina / timpul’ui". Loosening to
+ * 1.0 clears the x-height but not the ascenders; clearing those needs
+ * 0.388 + 0.714 = 1.10, which is no longer this headline.
+ *
+ * Constants, not literals, because the room calculation divides by the leading
+ * and the wipe's travel is measured from the padded edge: as literals they
+ * would drift apart and the title would overflow its box again on a short
+ * stage. Re-measure all three if the display face ever changes.
+ */
+const TITLE_LEADING = 0.9;
+const TITLE_INK_TOP = "0.22em";
+const TITLE_INK_BOTTOM = "0.12em";
 
 /** Wheel distance that commits to a step, and the lockout after one. */
 const WHEEL_THRESHOLD = 60;
@@ -143,6 +194,7 @@ export function HeroCarousel({
   label: regionLabel = "Carusel",
   autoplay = false,
   autoplayDelay = 4000,
+  syncHash = false,
   className,
 }: HeroCarouselProps) {
   const stageRef = React.useRef<HTMLDivElement>(null);
@@ -164,6 +216,37 @@ export function HeroCarousel({
     [controlled, index, last, onIndexChange],
   );
 
+  // The URL reflects the focused card (Vercel baseline, State & Navigation).
+  // `#<id>` is read once, before first paint, so coming back from a detail
+  // page lands on the card that was left; it is written with replaceState so
+  // a swipe does not grow the history stack, and with the router's own state
+  // object preserved so Next's bookkeeping survives the write.
+  React.useLayoutEffect(() => {
+    if (!syncHash || controlled !== undefined) return;
+    const read = () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      if (!id) return;
+      const i = items.findIndex((it) => String(it.id) === id);
+      if (i >= 0) setUncontrolled(i);
+    };
+    read();
+    // A same-document hash change (a link to `/ateliere#slug` from a page
+    // that is already `/ateliere`) does not remount, so listen as well. No
+    // loop: replaceState below never fires hashchange.
+    window.addEventListener("hashchange", read);
+    return () => window.removeEventListener("hashchange", read);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  React.useEffect(() => {
+    if (!syncHash) return;
+    const id = items[index]?.id;
+    if (id === undefined) return;
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `#${encodeURIComponent(String(id))}`,
+    );
+  }, [syncHash, index, items]);
+
   // One observer feeds every measurement below.
   React.useEffect(() => {
     const stage = stageRef.current;
@@ -178,7 +261,27 @@ export function HeroCarousel({
   const narrow = box.w > 0 && box.w < NARROW_AT;
   const R = narrow ? RATIOS.narrow : RATIOS.wide;
 
-  const fullH = clamp(box.h * R.CARD_H, 96, 360);
+  // The card is a share of the stage, but the strip may not eat the copy band:
+  // every card's WIDTH is derived from this height, so the ratio that gives a
+  // legible picture on a tall phone is the same ratio that pushes the action
+  // off a short one. A landscape phone (844x390) was already putting the last
+  // 3px of the button under the fold at the old ratio. So take the smaller of
+  // the ratio and whatever is left once the band keeps COPY_MIN, which is the
+  // measured height of its own content — scrim, description, action, rail and
+  // the safe-area padding — at the tightest width each set has to serve.
+  // Both ratios are set by their TIGHTEST device rather than their roomiest,
+  // because the leftover the band spreads between the action and the rail does
+  // not scale with the stage: the description and the button are near enough a
+  // fixed height, so a taller phone has proportionally more to give. Measured
+  // gap between button and rail at 0.27: 28px at 320, 41 at 360, 64 at 390, 77
+  // at 430. 360x740 is therefore what caps the narrow ratio — raising it past
+  // 0.30 closes that gap on a 360 while merely tidying a 430.
+  const COPY_MIN = narrow ? 250 : 190;
+  const fullH = clamp(
+    Math.min(box.h * R.CARD_H, box.h * (1 - R.STRIP_TOP) - COPY_MIN),
+    96,
+    360,
+  );
   const halfH = fullH / 2;
   const cardW = fullH * R.CARD_AR;
   const gap = Math.max(4, Math.round(cardW * R.GAP));
@@ -271,6 +374,31 @@ export function HeroCarousel({
   const lines = active.title.split("\n");
   const accent = active.accent ?? "#8a8a8a";
 
+  // The headline box is STRIP_TOP of the stage and everything in it is
+  // bottom-anchored, so a title that does not fit overflows UPWARD, under the
+  // top bar — flex-end does not clamp. Size from the ratio, then cap by what
+  // actually fits above the credit and meta lines. The cap only binds on very
+  // short stages: at 320x568 a three-line title is 27px against a 33px ratio
+  // size; at 390x844 the ratio gives 49 and the room is 59, so nothing moves.
+  // Credit and meta share the headline's row above `narrow`, so they only
+  // count against the height when stacked — at the body's 1.6 line-height,
+  // which they inherit, plus the column's 8px gap each. Measured, not
+  // guessed: 1.25 here put the title's box flush against the bar at 320.
+  const topBar = Math.max(12, box.h * 0.024) + 44;
+  const stacked = narrow
+    ? (active.credit ? label * 1.6 + 8 : 0) +
+      (active.meta?.length ? label * 1.6 + 8 : 0)
+    : 0;
+  const room =
+    box.h * R.STRIP_TOP - topBar - stacked - Math.round(box.h * 0.028) - 4;
+  const titleSize = Math.max(
+    24,
+    Math.min(
+      Math.max(28, Math.round(box.h * R.TITLE)),
+      Math.floor(room / (lines.length * TITLE_LEADING)),
+    ),
+  );
+
   return (
     <div
       ref={stageRef}
@@ -310,7 +438,7 @@ export function HeroCarousel({
           transition={swing}
         >
           <motion.img
-            src={active.image}
+            src={active.backdropImage ?? active.image}
             alt=""
             aria-hidden
             draggable={false}
@@ -423,18 +551,45 @@ export function HeroCarousel({
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.h2
               key={index}
-              className="font-display font-semibold leading-[0.9] tracking-[-0.03em]"
-              style={{ fontSize: Math.max(28, Math.round(box.h * R.TITLE)) }}
+              // A column of flex items, not of blocks, purely so the masks'
+              // negative margins do not collapse: adjacent sibling margins
+              // collapse to the LARGER magnitude rather than summing, so as
+              // blocks the -0.22em top and -0.36em bottom cancelled only once
+              // per gap and the title grew 17.6px — quietly loosening the very
+              // leading this fix exists to preserve. Flex items never collapse.
+              className="font-display flex flex-col font-semibold tracking-[-0.03em]"
+              style={{ fontSize: titleSize, lineHeight: TITLE_LEADING }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.18 } }}
             >
               {lines.map((line, i) => (
-                // Each line wipes up from behind its own edge.
-                <span key={i} className="block overflow-hidden">
+                // Each line wipes up from behind its own edge — and the mask
+                // is sized to the INK, not to the line box.
+                //
+                // A mask exactly one line box tall cut the accent off every Î
+                // and the tail off every j — at 49px, 7.9px off the top of
+                // "În vizită la" and 6.0px off the bottom of "Episcopul". The
+                // padding buys that room (see TITLE_INK_TOP for what it admits
+                // and what it deliberately still trims); the equal negative
+                // margin gives it straight back, so the line rhythm and the
+                // titleSize computed against it are untouched.
+                <span
+                  key={i}
+                  className="block overflow-hidden"
+                  style={{
+                    paddingTop: TITLE_INK_TOP,
+                    marginTop: `-${TITLE_INK_TOP}`,
+                    paddingBottom: TITLE_INK_BOTTOM,
+                    marginBottom: `-${TITLE_INK_BOTTOM}`,
+                  }}
+                >
                   <motion.span
                     className="block"
-                    initial={{ y: "110%" }}
+                    // Clears the PADDED bottom edge, not the line box: the
+                    // mask now hangs TITLE_INK_BOTTOM lower than it did, and at
+                    // the old 110% the line began its wipe already showing.
+                    initial={{ y: "125%" }}
                     animate={{ y: 0 }}
                     transition={
                       reduced
@@ -525,10 +680,27 @@ export function HeroCarousel({
               animate={{ height: i === index ? fullH : halfH }}
               transition={spring}
             >
-              {/* The focused card is exactly 3:4, so object-position does
-                  nothing to it - it only picks which band of the portrait the
-                  half-height neighbours keep. Anchored just above centre so a
-                  clipped card still shows a face, not a forehead. */}
+              {/* The focused card is exactly 3:4 and so is the artwork, so
+                  there is no overflow to place and this does nothing to it. It
+                  only picks which band of the picture the half-height
+                  neighbours keep — and that band is exactly half, because a
+                  card at half height is a 3:2 window onto a 3:4 picture.
+
+                  50% keeps the MIDDLE half, 25%..75%. The arithmetic: the
+                  hidden overflow equals the box height, so `p` puts the window
+                  at p/2 of the picture.
+
+                  This has now been all three values, each time after looking at
+                  what was actually in the frame. 26% was tuned for photographs
+                  of people, where a band from the top lands on foreheads. Then
+                  the set became artwork and collages composed downward from a
+                  title, and 0% — the top half — was right for those. Then the
+                  user generated a settled thumbnail for all seven, and they are
+                  built like photographs again: sky, roofline and empty margin
+                  up top, the subject in the middle. The top half of those is
+                  the half with nothing in it. Revisit whenever the artwork
+                  changes character, and look at the strip rather than reasoning
+                  about it — that is what caught it all three times. */}
               <img
                 src={item.image}
                 alt=""
@@ -536,7 +708,7 @@ export function HeroCarousel({
                 width={750}
                 height={1000}
                 className="h-full w-full object-cover"
-                style={{ objectPosition: "50% 26%" }}
+                style={{ objectPosition: "50% 50%" }}
               />
               {/* Unfocused cards wash toward the stage, so they recede on a
                   light field the way the black overlay did on a dark one. */}
@@ -595,6 +767,7 @@ export function HeroCarousel({
                   {active.ctaHref ? (
                     <Link
                       href={active.ctaHref}
+                      transitionTypes={["nav-forward"]}
                       className="bg-primary text-primary-foreground active:bg-brand-strong focus-visible:ring-ring focus-visible:ring-offset-stage shadow-card font-ui inline-flex min-h-12 items-center rounded-full px-6 font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
                       style={{ fontSize: Math.max(15, body) }}
                     >

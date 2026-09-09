@@ -302,11 +302,18 @@ export default function Trail({ steps, start, end, className }: TrailProps) {
                     <div className="flex flex-row-reverse items-center gap-3.5 lg:block">
                       <span
                         aria-hidden="true"
-                        className="bg-contrast/25 text-contrast-text flex size-11 shrink-0 items-center justify-center rounded-xl lg:hidden"
+                        className="bg-contrast/25 flex size-11 shrink-0 items-center justify-center rounded-xl lg:hidden"
                       >
+                        {/* 32px, up from 28. The tile stays 44px — it is a
+                            row ornament beside a heading and growing it would
+                            push the title — but 28px was already below the
+                            set's own legibility floor and the redrawn glyphs
+                            carry more detail than the old ones. 32 in 44
+                            leaves 6px of padding a side, which is the most
+                            this tile can give. */}
                         <StopGlyph
                           name={glyph ?? "cathedral"}
-                          className="size-7 [stroke-width:1.9]"
+                          className="size-8 [stroke-width:1.9]"
                         />
                       </span>
                       <h3 className="text-h3 text-card-foreground min-w-0 flex-1">
@@ -388,10 +395,13 @@ export default function Trail({ steps, start, end, className }: TrailProps) {
                       : "lg:col-start-1 lg:justify-end",
                   )}
                 >
-                  <StopGlyph
-                    name={glyph}
-                    className="text-contrast-text/60 size-28 [stroke-width:1.15]"
-                  />
+                  {/* Size and weight unchanged: 1.15 at 112px is 2.68px of
+                      apparent stroke, which is already the card plate's 2.75px
+                      — the two are the same drawing at the same weight on two
+                      screens, and that is the point of the desktop column.
+                      Only the dead `text-contrast-text/60` comes off; the
+                      glyph paints its own gilt now. */}
+                  <StopGlyph name={glyph} className="size-28 [stroke-width:1.15]" />
                 </div>
               ) : null}
             </div>
