@@ -784,21 +784,31 @@ wash `/` has today. The chip's saturation is 1.1 against the pane's 1.4 because 
 already the accent — at 1.4 the sky spine rendered as highlighter cyan.
 
 **The ink rule binds the tints (6.1b), and here the backdrop moves.** The marquee scrolls other
-frames under the pane after `ink.js` has gone home, so the sheet tint was set from the worst-case
-arithmetic, not from one reading: the kicker (`--brand-text`, L=0.121) over a black frame washed
-10% needs the pane at >= 70% to hold 4.5:1, and **72%** gives 4.67:1 there. At 64% it measured
-5.05:1 on the real deck with a worst case of 4.25:1 — a fail waiting for a dark photograph. The
-small difference between the two *measured* numbers (5.05 vs 5.21) says the frames under the
-kicker were already light when they were read; the tint buys its margin on the frames that were
-not. Measured with `ink.js`, motion frozen (`INK_REDUCED=1`, `INK_TAB=2` for the second state):
+frames under the pane after `ink.js` has gone home, so a reading over the deck of the day is not
+a floor. The kicker (`--brand-text`, L=0.121) and the 13px date line are the weakest inks on the
+page and they decide the sheet. Three rounds, all measured with `ink.js`, motion frozen
+(`INK_REDUCED=1`, `INK_TAB=2` for the second state):
+
+| Sheet | Kicker at 390 | Notes |
+|---|---|---|
+| flat 72% (first cut) | 5.21:1 | 4.67:1 by arithmetic over a black frame washed 10% — safe. The user looked and asked for **more transparent**, both the sheet and the two cards |
+| flat 50% | **4.31:1 FAIL**, date line 4.34:1 | fails on the real deck at 390, passes at 320 / 768 / 1440 — the phone crop puts a dark frame under the kicker |
+| **66% -> 40% ramp, top to bottom** | **4.75:1**, date line 4.86:1 | 5.58 / 5.14 / 5.57:1 at 320 / 768 / 1440. **This is what ships on the branch.** Passes with less margin than 72%; the trade is taken knowingly |
+
+The ramp is the classic glassmorphism fill and it works here for a structural reason: the two
+weak inks sit in the sheet's top quarter, where it is 62–66% dense, and everything below them is
+16px near-black body text at 10:1 that can sit on 40%. `--glass-tint-top` is the knob; unset, a
+pane is flat. The cards moved in the same pass — lips 55% -> **40%**, chips 66% -> **56%**:
 
 | Where | Worst glyph contrast | Element |
 |---|---|---|
-| 390x844, both states | **5.21:1** | the sky kicker on the sheet (6.09:1 on `/` — the pane costs 0.9) |
-| 320x568 / 768x1024 / 1440x900 | 5.78 / 5.59 / 5.79:1 | the sky kicker |
-| collapsed sky chip, 390 and 1440 | 5.56:1 | the stacked 16px letters — 5.1:1 at a 60% chip, which is why it is 66% |
-| open lips | 9.9:1 sky, 10.8:1 gold | the 23px label |
-| 32px initial on a chip | 5.76:1 | floor 3:1 |
+| collapsed sky chip, 390 / 1440 | 5.42 / 5.35:1 | the stacked 16px letters over the black habits — 4.58:1 at 52%, which is why it is 56% and not lower |
+| open lips | 9.9:1 sky, 9.6:1 gold | the 23px label — room to spare, the spine has none |
+| 32px initial on a chip | 5.63:1 | floor 3:1 |
+
+For the record, on `/` the kicker reads 6.09:1 — the pane costs it 1.3 points at this
+transparency, and 4.5 is the floor, not a target. If the next photograph in the deck is darker
+where the phone crop puts it under the kicker, `--glass-tint-top` goes up first.
 
 Tier 1 (`audit.js` at 390/768/1440): no horizontal overflow, no sub-12px text, no small targets,
 no console errors, 0% empty band. `hittest.js`: 2 interactive, 0 unreachable. The fold overflows
@@ -1273,6 +1283,13 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     worst-case arithmetic over a dark frame was 4.25:1, so it went to 72% — the backdrop scrolls
     and a single reading is not a floor. The sky chip went 60% -> 66% for the same reason
     (stacked letters at 5.1:1), and its saturation came down from the pane's 1.4 to 1.1.
+  - The user looked at the first cut and asked for **more transparency**, sheet and cards. A
+    flat 50% sheet failed the kicker on the phone (4.31:1), so the sheet became a 66% -> 40%
+    top-to-bottom ramp (`--glass-tint-top`), dense where the two weak inks are and clear below;
+    lips 55% -> 40%, chips 66% -> 56%. Kicker 4.75:1 at 390 — the thinner margin is the trade,
+    taken knowingly. Both builds were left up side by side for the decision: the dense first cut
+    on :3002, the transparent one on :3003 (`NEXT_DIST_DIR=.next-b`, a `next.config.ts` hook
+    that defaults to `.next`).
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`

@@ -443,24 +443,31 @@
    THE INK RULE STILL BINDS (SPEC 6.1b). Dark ink needs a backdrop luminance
    of >= 0.19. A frosted pane's floor is `tint x L(fill)` over whatever is
    darkest behind it, and on the landing that backdrop MOVES — the marquee
-   scrolls other photographs under the pane after ink.js has gone home. So the
-   tint is set from the arithmetic, not from one measurement: the kicker
-   (`--brand-text`, L=0.121) is the weakest ink on the page, and over a pure
-   black frame washed 10% it needs the pane at >= 70% to hold 4.5:1. 72% gives
-   4.67:1 in that worst case and measured 5.21:1 at 390 over the real deck
-   (5.6–5.8 at 320, 768 and 1440); at 64% it measured 5.05:1 and the worst
-   case was 4.25:1, a fail waiting for a dark photograph. The small gap
-   between 64% and 72% in the MEASURED number says the deck under the kicker
-   was already light when it was read — the tint buys its margin on the
-   frames that were not under it. The blur helps in practice — it averages a
-   dark habit with the table beside it — but only ink.js can tell you what
-   actually rendered.
+   scrolls other photographs under the pane after ink.js has gone home. The
+   kicker (`--brand-text`, L=0.121) and the 13px date line are the weakest
+   inks on the page, and they decide the sheet:
+
+     flat 72%          kicker 5.21:1 at 390, 4.67:1 by arithmetic over a black
+                       frame — safe, and the user said "more transparent".
+     flat 50%          kicker 4.31:1, date 4.34:1 at 390 — FAILS on the real
+                       deck, not just on paper.
+     66% -> 40% ramp   kicker 4.75:1, date 4.86:1 at 390; 5.1–5.6:1 at 320,
+                       768 and 1440. Passes, with less margin than 72% — that
+                       is the trade, taken knowingly (SPEC D15).
+
+   The ramp works because the two weak inks sit in the sheet's top quarter,
+   where it is 62–66% dense; the lead below them is 16px near-black at 10:1
+   and can sit on 40%. The blur helps in practice — it averages a dark habit
+   with the table beside it — but only ink.js can tell you what actually
+   rendered, and a reading over the deck of the day is not a floor.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
   --glass-fill: var(--background);
-  --glass-tint: 72%;
-  --glass-blur: 18px;
+  /* Defaults only. Every pane on the site sets its own tint (and the sheet
+     its own top), so these are what a new pane gets before it is measured. */
+  --glass-tint: 50%;
+  --glass-blur: 24px;
   /* Frost greys what it blurs; this puts the colour back. A pane over
      photographs wants 1.4. A chip whose fill is already an accent wants far
      less — sky-400 at 1.4 read as a highlighter. */
@@ -470,19 +477,32 @@
 /* The pane. Fill and frost only — the edge is `glass-rim` / `glass-rim-top`
    so a band cut into a card can carry a lip without a full ring. */
 @utility glass-frost {
-  background-color: color-mix(in oklab, var(--glass-fill) var(--glass-tint), transparent);
+  /* The fill is a top-to-bottom gradient, `--glass-tint-top` down to
+     `--glass-tint`. Unset, the top falls back to the bottom and the pane is
+     flat — that is the lips and the chips. The sheet sets both, because its
+     two weak inks (the kicker and the date line) sit in its top quarter and
+     the rest of it holds 16px near-black body text with 10:1 to spare; a flat
+     pane transparent enough to please the eye failed the kicker at 4.31:1,
+     and one dense enough for the kicker read as a white slab. The fallback
+     in `var()` is deliberate — a `:root` default of `var(--glass-tint)`
+     would resolve on :root, not on the pane that overrides the tint. */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--glass-fill) var(--glass-tint-top, var(--glass-tint)), transparent),
+    color-mix(in oklab, var(--glass-fill) var(--glass-tint), transparent)
+  );
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
 
   /* No frost means the fill is doing all the work — give it the wash the
      landing has today rather than a see-through tint. */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    background-color: color-mix(in oklab, var(--glass-fill) 90%, transparent);
+    background: color-mix(in oklab, var(--glass-fill) 90%, transparent);
   }
 
   /* An OS-level "reduce transparency" is a request for exactly this. */
   @media (prefers-reduced-transparency: reduce) {
-    background-color: color-mix(in oklab, var(--glass-fill) 94%, transparent);
+    background: color-mix(in oklab, var(--glass-fill) 94%, transparent);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

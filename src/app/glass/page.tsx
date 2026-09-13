@@ -74,7 +74,7 @@ export default function GlassHome() {
                pane put an empty fogged expanse to the right of it — on a
                sideways phone, half the screen. The card is left-aligned, as
                the copy is at `lg`. */
-            className="glass-frost glass-rim isolate rounded-t-[1.75rem] px-6 pt-7 short:pt-4 tight:pt-5 sm:mx-6 sm:mb-6 sm:max-w-[36rem] sm:rounded-[1.75rem] short:mb-3 lg:mx-0 lg:mb-0 lg:max-w-[38rem] lg:px-10 lg:pt-10"
+            className="glass-frost glass-rim [--glass-tint-top:66%] [--glass-tint:40%] isolate rounded-t-[1.75rem] px-6 pt-7 short:pt-4 tight:pt-5 sm:mx-6 sm:mb-6 sm:max-w-[36rem] sm:rounded-[1.75rem] short:mb-3 lg:mx-0 lg:mb-0 lg:max-w-[38rem] lg:px-10 lg:pt-10"
             style={{
               paddingBottom:
                 "max(2.5rem, calc(env(safe-area-inset-bottom) + 2.5rem))",

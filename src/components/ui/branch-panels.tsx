@@ -217,25 +217,30 @@ const TINT = {
        veil's colour bleeds through it as a pale cast rather than a bar; the
        spine keeps the accent as its fill because a spine IS a colour chip and
        a white-frosted one lost the pair's two-colour reading. Tints are the
-       ink floor (see GLASS in globals.css): 0.55 over black for the lip,
-       0.66 x L(sky-400)=0.29 for the spine, both above 0.19. The chip's
+       ink floor (see GLASS in globals.css): 0.40 over black for the lip,
+       0.56 x L(sky-400)=0.24 for the spine, both above 0.19. The chip's
        saturation is turned down because its fill is already the accent: at
        the pane's 1.4 the sky spine rendered as highlighter cyan.
 
        MEASURED at 390 and 1440, both states, reduced motion (INK_REDUCED=1,
-       INK_TAB=2 for the second state): open lip 9.9:1 sky / 10.8:1 gold, and
-       the stacked letters on the sky spine 5.1:1 worst at 60% — the number
-       that moved the chip to 66%. */
-    lip: "[--glass-fill:var(--background)] [--glass-tint:55%] [--glass-blur:14px]",
-    chip: "[--glass-fill:var(--primary)] [--glass-tint:66%] [--glass-blur:14px] [--glass-sat:1.1]",
+       INK_TAB=2 for the second state). The stacked 16px letters on the SKY
+       spine are the binding number — the workshops photograph has two black
+       habits dead centre, which is all a spine keeps:
+         chip 66%  5.56:1      chip 52%  4.58:1 (too thin)      chip 56%  5.35:1
+       56% is where it sits, after the user asked for more transparency than
+       the first cut's 66%. The lip went 55% -> 40% in the same pass and its
+       label still reads 9.9:1 (sky) / 9.6:1 (gold) — a 23px semibold word on
+       a frosted photograph has room to spare; the spine does not. */
+    lip: "[--glass-fill:var(--background)] [--glass-tint:40%] [--glass-blur:16px]",
+    chip: "[--glass-fill:var(--primary)] [--glass-tint:56%] [--glass-blur:16px] [--glass-sat:1.1]",
   },
   gold: {
     field: "bg-contrast",
     veil: "bg-contrast/30",
     scrim: "from-contrast/42 via-contrast/20",
     wash: "bg-contrast/75",
-    lip: "[--glass-fill:var(--background)] [--glass-tint:55%] [--glass-blur:14px]",
-    chip: "[--glass-fill:var(--contrast)] [--glass-tint:66%] [--glass-blur:14px] [--glass-sat:1.1]",
+    lip: "[--glass-fill:var(--background)] [--glass-tint:40%] [--glass-blur:16px]",
+    chip: "[--glass-fill:var(--contrast)] [--glass-tint:56%] [--glass-blur:16px] [--glass-sat:1.1]",
   },
 } as const;
 
