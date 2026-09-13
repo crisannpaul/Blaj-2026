@@ -46,6 +46,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Scratch the cold reviewer subagent writes beside the harness while it works
+# (it needs to sit there so `require("playwright-core")` resolves). Nine of
+# them were swept into a commit by a `git add -A` on 14 Sep; underscore means
+# scratch in that directory.
+.claude/skills/web-verify/_*
+
 # Event source documents: Treasurehunt.docx contains the ANSWERS to every task.
 # Never let it reach a public repo or a client bundle (SPEC section 13.9).
 # Remove this line only if the repo is private and you have decided that is fine.

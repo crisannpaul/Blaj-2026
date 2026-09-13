@@ -7,6 +7,9 @@ import type { NextConfig } from "next";
  * error (CLAUDE.md). Unset, it is the default `.next`; `.gitignore` already
  * covers `/.next-*`. Set it for BOTH the build and the start:
  *   NEXT_DIST_DIR=.next-b npm run build && NEXT_DIST_DIR=.next-b npx next start -p 3003
+ * Side effect: the first such build adds `.next-b/types/**` to the `include`
+ * list in tsconfig.json, as Next does for any dist dir. Harmless when the
+ * directory is absent, and it comes back if reverted, so it is committed.
  */
 const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
