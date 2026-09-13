@@ -54,6 +54,13 @@ far was either invisible to the harness or introduced by trusting a number:
   paints over it. That is what `hittest.js` is for.
 - `hover:` compiles under `@media (hover: hover)` and **does not exist on a
   phone**. Never signal a state with it alone.
+- **A `mix-blend-mode` anywhere under a stacking context switches off every
+  SVG backdrop filter in it** — Chromium isolates the group and drops
+  reference filters from the backdrop path, silently. The glass page's
+  refraction measured 0.0% bend until the cards' multiply veil went. And a
+  `setAttribute` on a live SVG filter does **not** invalidate the cached
+  backdrop: an A/B done that way compares a render with itself. Toggle the
+  `filter` property instead. See SPEC 6.1e and 6.2.
 
 ## Always redeploy :3000 after a change
 

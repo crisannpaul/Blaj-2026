@@ -213,34 +213,39 @@ const TINT = {
     veil: "bg-primary/30",
     scrim: "from-primary/42 via-primary/20",
     wash: "bg-primary/75",
-    /* `finish="glass"` only. The open lip is frosted --background, so the
-       veil's colour bleeds through it as a pale cast rather than a bar; the
-       spine keeps the accent as its fill because a spine IS a colour chip and
-       a white-frosted one lost the pair's two-colour reading. Tints are the
-       ink floor (see GLASS in globals.css): 0.40 over black for the lip,
-       0.56 x L(sky-400)=0.24 for the spine, both above 0.19. The chip's
-       saturation is turned down because its fill is already the accent: at
-       the pane's 1.4 the sky spine rendered as highlighter cyan.
+    /* `finish="glass"` only — the values a `glass-fill` layer takes; the
+       frost layer beside it is `glass-frost glass-liquid` at 8px, shared.
 
-       MEASURED at 390 and 1440, both states, reduced motion (INK_REDUCED=1,
-       INK_TAB=2 for the second state). The stacked 16px letters on the SKY
-       spine are the binding number — the workshops photograph has two black
-       habits dead centre, which is all a spine keeps:
-         chip 66%  5.56:1      chip 52%  4.58:1 (too thin)      chip 56%  5.35:1
-       56% is where it sits, after the user asked for more transparency than
-       the first cut's 66%. The lip went 55% -> 40% in the same pass and its
-       label still reads 9.9:1 (sky) / 9.6:1 (gold) — a 23px semibold word on
-       a frosted photograph has room to spare; the spine does not. */
-    lip: "[--glass-fill:var(--background)] [--glass-tint:40%] [--glass-blur:16px]",
-    chip: "[--glass-fill:var(--primary)] [--glass-tint:56%] [--glass-blur:16px] [--glass-sat:1.1]",
+       The lip is a quarter of --background: clear glass, the photograph
+       continues through it, and a 23px semibold near-black word has room to
+       spare on it. The chip's fill is NOT the raw accent any more. The first
+       cuts filled the spine with sky-400 at 56–66% and the cold review called
+       it a flat cyan slab that deleted the art it covered; `--glass-sky` /
+       `--glass-gold` (globals.css) are the accent lifted 30% toward white, so
+       the chip reads as tinted glass — pale, luminous, the map and the
+       workshop visible through it — and still says sky vs gold.
+
+       The lift is also what makes a clear chip legible. The workshops
+       photograph has two black habits dead centre, which is all a spine keeps,
+       and the stacked 16px letters sit on them: with a sky-400 fill the chip
+       needed 56% (4.58:1 at 52%) to hold 4.5:1 there. Lifted toward white
+       the fill's own luminance is ~0.6 instead of 0.43, so 48% clears the
+       floor over pure black by arithmetic. Measured, not assumed — see the
+       ink table in SPEC 6.1e. */
+    lip: "[--glass-tint:25%]",
+    chip: "[--glass-fill:var(--glass-sky)] [--glass-tint:48%]",
+    /* The veil, glass finish: a plain wash, never a multiply — see the
+       veil's own comment in the markup below for why. */
+    glassVeil: "bg-primary/35",
   },
   gold: {
     field: "bg-contrast",
     veil: "bg-contrast/30",
     scrim: "from-contrast/42 via-contrast/20",
     wash: "bg-contrast/75",
-    lip: "[--glass-fill:var(--background)] [--glass-tint:40%] [--glass-blur:16px]",
-    chip: "[--glass-fill:var(--contrast)] [--glass-tint:56%] [--glass-blur:16px] [--glass-sat:1.1]",
+    lip: "[--glass-tint:25%]",
+    chip: "[--glass-fill:var(--glass-gold)] [--glass-tint:44%]",
+    glassVeil: "bg-contrast/35",
   },
 } as const;
 
@@ -317,9 +322,10 @@ export function BranchPanels({
             <Link
               href={panel.href}
               transitionTypes={["nav-forward"]}
-              /* A template literal, not cn(): `glass-rim` and `shadow-card`
-                 both set box-shadow and tailwind-merge knows neither. */
-              className={`${glass ? "glass-rim" : "shadow-card"} focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none`}
+              /* The card's own edge is the same in both finishes. The first
+                 glass cut gave it a bright refracted ring and the cold review
+                 called it neon on a chip; the glass is in the covers now. */
+              className="shadow-card focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               onPointerEnter={(e) => {
                 /* Mouse only. A touch "enter" fires just before the tap that
                    is already navigating, so reacting to it would flip the
@@ -383,9 +389,23 @@ export function BranchPanels({
                 height={1000}
                 className="absolute inset-0 size-full object-cover grayscale"
               />
+              {/* THE GLASS FINISH MUST NOT BLEND. A `mix-blend-mode`
+                anywhere under the landing's stacking context makes Chromium
+                isolate the whole group, and inside an isolated group it drops
+                SVG reference filters from every backdrop — the sheet's
+                refraction (`glass-liquid`) measured 0.0% bend with this
+                multiply present and 22% with it set to normal, nothing else
+                changed. Found by elimination on 14 Sep; see SPEC 6.1e. So the
+                glass finish tints with a plain wash instead of a multiply:
+                lighter and less saturated, which is also the direction the
+                "too coloured" complaint pointed. */}
               <span
                 aria-hidden="true"
-                className={`absolute inset-0 mix-blend-multiply ${tint.veil}`}
+                className={
+                  glass
+                    ? `absolute inset-0 ${tint.glassVeil}`
+                    : `absolute inset-0 mix-blend-multiply ${tint.veil}`
+                }
               />
               {/* The text's cover, per state — see TINT above.
                 Open: a gradient over the bottom 3/5, under the label, reaching
@@ -401,15 +421,23 @@ export function BranchPanels({
                 /* Glass: a lip under the open label — 56px, which is the
                    label row plus its padding plus one line of air, and it
                    has a hard top edge ON PURPOSE: a pane has an edge, a
-                   scrim must not. The spine is frosted whole, as a chip. */
+                   scrim must not. The spine is a chip of tinted glass over
+                   the whole card. Same three layers as the landing's sheet:
+                   frost (blur + refraction, oversized and clipped by the
+                   pane), fill, bevel. The pane itself has no colour, so it
+                   is the layers that carry the tint values. */
                 <span
                   aria-hidden="true"
                   className={
                     open
-                      ? `glass-frost glass-rim-top absolute inset-x-0 bottom-0 h-14 short:h-12 ${tint.lip}`
-                      : `glass-frost absolute inset-0 ${tint.chip}`
+                      ? "glass-pane absolute inset-x-0 bottom-0 h-14 short:h-12"
+                      : "glass-pane absolute inset-0"
                   }
-                />
+                >
+                  <span className="glass-frost glass-liquid [--glass-blur:8px] [--glass-sat:1.05]" />
+                  <span className={`glass-fill ${open ? tint.lip : tint.chip}`} />
+                  <span className={open ? "glass-bevel-top" : "glass-bevel"} />
+                </span>
               ) : (
                 <span
                   aria-hidden="true"

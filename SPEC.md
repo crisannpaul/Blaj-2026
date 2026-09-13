@@ -738,89 +738,104 @@ the canvas.
 
 ### 6.1e Glass — an experiment at `/glass` (14 Sep, open as D15)
 
-The landing with a **liquid-glass finish**, built on branch `worktree-glass` (worktree
-`.claude/worktrees/glass`, on top of a snapshot commit of the 14 Sep working copy) and served on
-**:3002** (`http://192.168.0.229:3002/glass`) beside the untouched :3000, so it can be judged
-against `/` by eye. Unlinked and `noindex`. Same content — moved to `src/lib/landing.ts` and
-shared by both pages so they cannot drift in copy while one is judged on finish — same
-composition, and two covers swapped:
+The landing with a **liquid-glass finish**, on branch `worktree-glass` (worktree
+`.claude/worktrees/glass`, over a snapshot commit of the 14 Sep working copy), served on
+**:3002** (`http://192.168.0.229:3002/glass`) beside the untouched :3000 so it can be judged
+against `/` by eye; the previous cut is on :3003 (below). Unlinked and `noindex`. Same content —
+moved to `src/lib/landing.ts` and shared, so the two cannot drift in copy while one is judged on
+finish — same composition, and the two covers that protect the ink swapped for panes of clear
+glass. `/` still renders `finish="tint"` and is pixel-identical to before.
 
-- **The copy sits on a frosted pane instead of a 90% wash.** A bottom sheet on a phone (full
-  width, rounded at the top only, running under the home indicator — the shape a phone already
-  knows glass in, and it costs no horizontal room at 390px), a free-standing card from `sm` up,
-  left-aligned as the copy is at `lg`. `glass-frost` + `glass-rim` in `globals.css`.
-- **The branch cards carry `finish="glass"`**: a 56px frosted lip under the open label instead
-  of the gradient scrim — with a hard top edge on purpose, a pane has an edge where a scrim must
-  not — a frosted colour chip for the spine instead of the flat 75% wash, and the glass rim
-  instead of `shadow-card`. `/` still renders `finish="tint"` and is pixel-identical to before.
-- **The marquee is less bleached**: 10% wash instead of 22%, and the solid desktop left column
-  is a soft vignette (`columnWash="soft"`, never opaque, gone by 68% of the width). A frosted
-  pane over an already-white field is invisible; glass only reads when there is something behind
-  it. With no column at all the desktop became a photo wall with a card on it, which is the
-  opposite of the brief ("subtle — enhance without the user noticing it is there").
+**Three cuts in one day, each pushed by the user's eye.** The first was 72% white and 18px of
+blur; the user said "more transparent" and the cold review, independently, said the blur turned
+the marquee into grey blotches and the pane into a dirty card. The second was a 66%→40% ramp,
+still too dense for the user, who then sent the 21st.dev dock itself as the target. The third is
+that reference, and it is what ships on the branch:
 
-**The recipe**, after the 21st.dev liquid-glass dock: blurred backdrop + translucent fill
-(`glass-frost`); specular top edge, semi-transparent hairlines and a layered shadow, plus a
-masked 2px ring with its own stronger backdrop filter as the refraction cue — an edge that reads
-thicker and brighter than the pane, which is what a real bevel does (`glass-rim`; `glass-rim-top`
-is the lip's one edge). Dropped from the original, deliberately: the `feDisplacementMap` SVG
-refraction (it only bends a backdrop through `backdrop-filter: url()`, which WebKit does not
-support — and every phone this is built for is WebKit — while on the one browser that can, it
-re-renders a scale-200 displacement per frame over a marquee that never stops); the
-hover-grows-padding transitions (layout animation, and `hover:` does not exist on the target
-device); and the hard-coded `rgba(255,255,255,…)` fills. Every colour is mixed from
-`--background`, `--foreground` and `--scrim`, so a reskin reaches it. **The component itself was
-not installed**: its file is a dock and a button on a scrolling macOS wallpaper, and nothing in
-it survives except three CSS rules, so there is no `components/ui/liquid-glass.tsx` and no
-`moveBackground` keyframe — a `GlassEffect` wrapper would have been a second source of truth
-for the same rules.
+- **The pane is clear — a quarter white, 6px of blur, a directional bevel.** Below `sm` a
+  bottom sheet (full width, rounded at the top, under the home indicator); from `sm` a card no
+  wider than the branch pair (`29rem` — the review found a 136px frosted void at 768 when it
+  followed the copy's 33rem), left-aligned as the copy is at `lg`.
+- **Three layers inside a clipping pane**, as the original has them: `glass-frost` (backdrop
+  blur, oversized by 1.5rem, clipped) + `glass-liquid` (the SVG refraction), `glass-fill` (the
+  tint, `--glass-tint-top` → `--glass-tint`), `glass-bevel` (light from the top left;
+  `glass-bevel-top` for a lip), and then the copy, `position: relative` so it paints above them.
+  Layers because `filter: url()` bends whatever element it is on — a filter on the pane would
+  wobble the text with the glass — and because WebKit still applies the filter to a layer's
+  *own* pixels: on a layer with no content and no fill that is nothing, on a tinted layer it is
+  wavy transparent edges. The pane carries no `isolate`, `filter` or `opacity`; any of them
+  makes it a backdrop root and the frost blurs its own empty parent.
+- **Every ink on the pane is near-black.** The sky kicker (`--brand-text`, L=0.12) and the
+  muted date line failed the moment the pane went below ~60% white (4.31:1 at 50%), and no
+  clear pane holds a mid-tone ink over photographs: at a quarter white over a black frame
+  washed 10%, near-black reads 6.9:1, the sky kicker 2.2:1. So it is the ink that changed, not
+  the glass; the sky accent sits on the Ateliere chip and the yellow rule stays.
+- **The branch cards carry `finish="glass"`**: a clear lip (25% white) under the open label, a
+  tinted-glass chip for the spine — the accent lifted 30% toward white (`--glass-sky` /
+  `--glass-gold`), so the map and the workshop show through it and it still says sky vs gold —
+  and, load-bearing, **a plain wash instead of the multiply veil** (next paragraph). The card's
+  own edge is `shadow-card` in both finishes; the first cut's bright ring around each card was
+  what the review called neon.
+- **The marquee is less bleached**: 10% wash instead of 22%, and the solid desktop column is a
+  soft vignette — glass over an already-white field is invisible.
 
-**The knobs are `--glass-fill / --glass-tint / --glass-blur / --glass-sat`**, custom properties
-set per pane with arbitrary properties that reference tokens (`[--glass-fill:var(--primary)]
-[--glass-tint:66%]`), never raw values. All four carry the `glass-` prefix so none can shadow a
-`:root` token (the `--card` incident, 6.2). `prefers-reduced-transparency: reduce` raises the
-fill to 94% and drops the blur and the ring; a browser without `backdrop-filter` gets the 90%
-wash `/` has today. The chip's saturation is 1.1 against the pane's 1.4 because its fill is
-already the accent — at 1.4 the sky spine rendered as highlighter cyan.
+**The refraction, and the day it cost.** `glass-filter.tsx` renders one SVG filter per page:
+turbulence → contrast stretch → blur → displacement (the original's specular-lighting stages
+computed a result nothing read; gone). Two things stood between the CSS and a visible bend:
 
-**The ink rule binds the tints (6.1b), and here the backdrop moves.** The marquee scrolls other
-frames under the pane after `ink.js` has gone home, so a reading over the deck of the day is not
-a floor. The kicker (`--brand-text`, L=0.121) and the 13px date line are the weakest inks on the
-page and they decide the sheet. Three rounds, all measured with `ink.js`, motion frozen
-(`INK_REDUCED=1`, `INK_TAB=2` for the second state):
+1. **A `mix-blend-mode` descendant switches off SVG backdrop filters for its whole stacking
+   context.** The cards' `mix-blend-multiply` veil made Chromium isolate the landing's copy
+   container, and inside that group neither `filter: url()` on a backdrop-filtered layer nor
+   `backdrop-filter: url()` bent anything — **0.0%** of the sheet's pixels moved with the veil
+   present, **22%** with it set to `normal`, nothing else changed. Found by removing things one
+   at a time, after fifteen structural variants of an isolated test page had all bent fine. The
+   glass finish veils with `bg-primary/35` instead.
+2. **Fractal noise has almost no amplitude.** Two octaves sit within ±0.12 of mid-grey, so a
+   throw of 22 moved the backdrop by two pixels. A linear transfer (slope 3) widens the map to
+   its full range before the blur rounds it; at scale 28 that is ±6px typical, ±14px maximum,
+   waves of ~150px.
 
-| Sheet | Kicker at 390 | Notes |
-|---|---|---|
-| flat 72% (first cut) | 5.21:1 | 4.67:1 by arithmetic over a black frame washed 10% — safe. The user looked and asked for **more transparent**, both the sheet and the two cards |
-| flat 50% | **4.31:1 FAIL**, date line 4.34:1 | fails on the real deck at 390, passes at 320 / 768 / 1440 — the phone crop puts a dark frame under the kicker |
-| **66% -> 40% ramp, top to bottom** | **4.75:1**, date line 4.86:1 | 5.58 / 5.14 / 5.57:1 at 320 / 768 / 1440. **This is what ships on the branch.** Passes with less margin than 72%; the trade is taken knowingly |
+And a harness trap that hid both for an hour: **`setAttribute` on a live SVG filter does not
+invalidate Chromium's cached backdrop.** Every A/B that changed `scale` and screenshotted
+reported ~2% at any throw — headless shell, full Chromium and Brave alike — because it compared a
+render with itself. Toggle the layer's `filter` property between `none` and the url. Measured
+that way on the shipped page: **42%** of the sheet's pixels move at 390, **15%** at 1440. WebKit
+(every iPhone) shows the same glass without the ripple; Chromium on Android shows it, and its
+frame cost there is **not measured** (the review clocked the first cut at 48 vs 53 fps under 6x
+CPU throttle, before the refraction existed).
 
-The ramp is the classic glassmorphism fill and it works here for a structural reason: the two
-weak inks sit in the sheet's top quarter, where it is 62–66% dense, and everything below them is
-16px near-black body text at 10:1 that can sit on 40%. `--glass-tint-top` is the knob; unset, a
-pane is flat. The cards moved in the same pass — lips 55% -> **40%**, chips 66% -> **56%**:
+**Knobs** are custom properties, never colours — `--glass-fill / -tint / -tint-top / -blur /
+-sat`, all `glass-`-prefixed so none can shadow a `:root` token — set per layer with arbitrary
+properties that reference tokens. `prefers-reduced-transparency: reduce` hides the frost and
+takes the fill to 94%; a browser without `backdrop-filter` gets the 90% wash `/` has today.
+
+**Ink, third cut** — `ink.js`, motion frozen (`INK_REDUCED=1`, `INK_TAB=2` for the second
+state), all pass:
 
 | Where | Worst glyph contrast | Element |
 |---|---|---|
-| collapsed sky chip, 390 / 1440 | 5.42 / 5.35:1 | the stacked 16px letters over the black habits — 4.58:1 at 52%, which is why it is 56% and not lower |
-| open lips | 9.9:1 sky, 9.6:1 gold | the 23px label — room to spare, the spine has none |
-| 32px initial on a chip | 5.63:1 | floor 3:1 |
+| 390x844, both states | 7.7:1 | the open lip's 23px label; the sky chip's stacked letters |
+| 1440x900, both states | 7.2:1 | the open lip's label |
+| 320x568 / 768x1024 | 10.5 / 7.7:1 | — |
+| the kicker and the date line | no longer the weakest text on the page | near-black on a 24–32% pane |
 
-For the record, on `/` the kicker reads 6.09:1 — the pane costs it 1.3 points at this
-transparency, and 4.5 is the floor, not a target. If the next photograph in the deck is darker
-where the phone crop puts it under the kicker, `--glass-tint-top` goes up first.
+Tier 1 (`audit.js`): no overflow, no sub-12px text, no small targets, no console errors.
+`hittest.js`: 2 interactive, 0 unreachable. Fold overflow unchanged from the first cut — 80px at
+320x568 (92 on `/`), 101px on a sideways phone (97 on `/`), none at 375x667 and up.
 
-Tier 1 (`audit.js` at 390/768/1440): no horizontal overflow, no sub-12px text, no small targets,
-no console errors, 0% empty band. `hittest.js`: 2 interactive, 0 unreachable. The fold overflows
-on a sideways phone (844x390: 101px, against 97px on `/`) and at 320x568 (80px, against 92px on
-`/`) — same class as `/`, scrolls, and the 4px on the sideways phone buys the card shape there
-instead of a fogged empty half-screen.
+**Cold review of the first cut (opus, 14 Sep)** — five SHOULD-FIX, two NIT, verdict fix-first;
+all five addressed by the third cut: grey blotches (18px → 6px blur, 72% → 25% white), chips
+deleting the art (tinted glass, art visible), neon ring (gone), 320 all-pane (the pane is clear
+enough that the photographs are the fold), the 136px void at 768 (pane capped at the pair's
+width). Of the NITs, the lip's hard edge is deliberate — a pane has an edge — and the 200%-zoom
+kicker weight is shared with `/` and left. It also saw, and could not reproduce, the sheet's fill
+and frost vanishing after a scroll at 195px in two shots: a GPU artefact until a real iOS device
+says otherwise.
 
-Cost worth knowing: every `glass-frost` is a `backdrop-filter` over a band that never stops
-moving, so the compositor re-blurs it every frame. At most three are on screen — the sheet and
-the two card covers — plus the sheet's 2px ring, at 14–18px radii. WebKit handles that; the
-device to watch is a low-end Android, and that has **not** been measured. If it stutters, the
-first lever is `--glass-blur`, the second is the ring.
+**The component was not installed.** The 21st.dev file is a dock and a button on a scrolling
+macOS wallpaper; what survives is the recipe, as `glass-*` utilities, and the filter, cut down
+in `glass-filter.tsx`. A `GlassEffect` wrapper would have been a second source of truth for the
+same three rules.
 
 ### Page transitions
 
@@ -897,6 +912,18 @@ page under `prefers-reduced-motion: reduce`, which stops the pair alternating) a
 (presses Tab n times before the shots; 2 opens the second branch, the only way to reach the
 other state once the swap is off). Before that the procedure was to copy `ink.js` and add
 `reducedMotion: "reduce"` to `newPage` by hand.
+
+**Two more members of the "the tool's number was evidence about the tool" family, from the glass
+work (14 Sep, 6.1e).** First: **changing an attribute on a live SVG filter does not invalidate
+Chromium's cached backdrop.** An A/B that set `scale` on an `feDisplacementMap` by
+`setAttribute` and screenshotted reported ~2% change at *any* throw, in the headless shell, in
+full Chromium and in Brave alike — it was comparing one render with itself. Toggling the layer's
+`filter` property between `none` and the url is what actually re-renders. Second: a page-level
+capability test beats an in-page one. The same filter that bent 0% on the live page bent 80% on
+a striped test page with identical CSS, which is what turned the question from "does Chromium do
+this" (it does) into "what on this page stops it" (a `mix-blend-mode` descendant, found by
+removing things one at a time). Fifteen structural variants of the test page were tried first
+and every one bent; the answer was never going to be in the pane's own CSS.
 
 **`audit.js` was reading every Tailwind v4 alpha colour as black.** Its `lum()`
 parsed the colour string and assumed 0-255 unless it saw `color(`. But Chromium
@@ -1237,7 +1264,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, served on :3002 beside :3000 (6.1e). Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes — or drop it — the route and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props and the `ink.js` flags stay either way | user | 16 Sep |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, served on :3002 beside :3000 (6.1e) — the clear, refracting third cut; the 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
 
 ---
 
@@ -1290,6 +1317,21 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     taken knowingly. Both builds were left up side by side for the decision: the dense first cut
     on :3002, the transparent one on :3003 (`NEXT_DIST_DIR=.next-b`, a `next.config.ts` hook
     that defaults to `.next`).
+  - **Still not enough** — the user sent the 21st.dev dock itself ("much more glass and
+    liquidy") — so the third cut IS that reference: a quarter-white pane, 6px of blur, a
+    directional bevel and the SVG refraction, rebuilt as three layers inside a clipping pane so
+    the filter never bends the copy. What made it possible is that every ink on the pane is now
+    near-black (the sky kicker and the muted date line failed below ~60% white and there is no
+    clear pane that holds a mid-tone ink); what made it *work* was finding that the branch
+    cards' `mix-blend-mode: multiply` veil switched every SVG backdrop filter on the page off —
+    0.0% bend with it, 22% without, nothing else changed. The glass finish tints with a plain
+    wash instead. Two harness traps cost the afternoon and are recorded in 6.1e and 6.2: a
+    `setAttribute` on a live SVG filter does not invalidate Chromium's cached backdrop, and the
+    fractal-noise map needs a contrast stretch before it moves anything. Measured bend on the
+    shipped page: 42% of the sheet's pixels at 390, 15% at 1440. Ink improved with the lighter
+    veil — worst 7.2:1. The cold review's five SHOULD-FIX findings on the first cut (grey
+    blotches, chips deleting the art, neon ring, 320 all-pane, the 136px void at 768) are all
+    addressed by this cut — see 6.1e — and the third build replaced the first on :3002.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`
