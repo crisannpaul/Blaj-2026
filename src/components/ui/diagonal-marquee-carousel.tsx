@@ -54,6 +54,14 @@ export interface DiagonalMarqueeCarouselProps {
   className?: string;
   cardClassName?: string;
   fadeClassName?: string;
+  /** The wash over the whole band. `/` bleaches it to 22%; a page that puts
+   *  glass over it wants the photographs to survive. @default "bg-background/22" */
+  washClassName?: string;
+  /** The left-column wash from `lg` up. `true` is `/`'s solid column;
+   *  `"soft"` is a lighter vignette for a page whose copy sits on a frosted
+   *  pane — enough to calm the field around the pane, not enough to leave it
+   *  nothing to see through; `false` is none. @default true */
+  columnWash?: boolean | "soft";
 }
 
 /**
@@ -233,6 +241,13 @@ const SCRIM_RIGHT =
   "linear-gradient(to right, var(--background) 0%, var(--background) 32%, " +
   "color-mix(in oklab, var(--background) 80%, transparent) 60%, transparent 88%)";
 
+/* The `"soft"` column: never opaque, and gone by two thirds of the width. A
+   frosted pane over a solid white column is invisible — this leaves the
+   photographs under it at roughly half strength. */
+const SCRIM_SOFT =
+  "linear-gradient(to right, color-mix(in oklab, var(--background) 55%, transparent) 0%, " +
+  "color-mix(in oklab, var(--background) 35%, transparent) 40%, transparent 68%)";
+
 export default function DiagonalMarqueeCarousel({
   cards = DEFAULT_CARDS,
   angle = -25,
@@ -241,6 +256,8 @@ export default function DiagonalMarqueeCarousel({
   className = "",
   cardClassName = "",
   fadeClassName = "",
+  washClassName = "bg-background/22",
+  columnWash = true,
 }: DiagonalMarqueeCarouselProps) {
   // Each row is dealt from a different rotation of the deck, so a frame is
   // never directly above a copy of itself — an unrotated deal reads as tiled
@@ -302,11 +319,13 @@ export default function DiagonalMarqueeCarousel({
         ))}
       </div>
 
-      <div className="bg-background/22 pointer-events-none absolute inset-0 z-10" />
-      <div
-        className={cn("pointer-events-none absolute inset-0 z-10 hidden lg:block", fadeClassName)}
-        style={{ background: SCRIM_RIGHT }}
-      />
+      <div className={`pointer-events-none absolute inset-0 z-10 ${washClassName}`} />
+      {columnWash && (
+        <div
+          className={cn("pointer-events-none absolute inset-0 z-10 hidden lg:block", fadeClassName)}
+          style={{ background: columnWash === "soft" ? SCRIM_SOFT : SCRIM_RIGHT }}
+        />
+      )}
       {/* Edge softeners only — never a full-height wash below lg. A wash whose
           stops are viewport percentages slides out from under copy that is
           positioned by its own height: landscape, 200% zoom and a 640px-tall

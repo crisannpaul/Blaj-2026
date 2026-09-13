@@ -127,6 +127,17 @@ export type BranchPanel = {
 };
 
 /**
+ * How the ink is protected. `tint` is the landing's shipped stack — gradient
+ * scrim under the open label, flat wash over the spine. `glass` is the
+ * `/glass` experiment: the same grey photograph and the same veil, but the
+ * cover is a FROSTED PANE (globals.css, GLASS) — a lip under the open label
+ * and a frosted colour chip for the spine — and the card's edge is the glass
+ * rim instead of a plain shadow. One prop, so `/` is untouched while the two
+ * are compared.
+ */
+export type BranchFinish = "tint" | "glass";
+
+/**
  * Tints. A GREY PHOTOGRAPH, with the accent laid over it as a partial multiply.
  *
  * It used to be the other way round — an opaque accent field with the picture
@@ -202,22 +213,42 @@ const TINT = {
     veil: "bg-primary/30",
     scrim: "from-primary/42 via-primary/20",
     wash: "bg-primary/75",
+    /* `finish="glass"` only. The open lip is frosted --background, so the
+       veil's colour bleeds through it as a pale cast rather than a bar; the
+       spine keeps the accent as its fill because a spine IS a colour chip and
+       a white-frosted one lost the pair's two-colour reading. Tints are the
+       ink floor (see GLASS in globals.css): 0.55 over black for the lip,
+       0.66 x L(sky-400)=0.29 for the spine, both above 0.19. The chip's
+       saturation is turned down because its fill is already the accent: at
+       the pane's 1.4 the sky spine rendered as highlighter cyan.
+
+       MEASURED at 390 and 1440, both states, reduced motion (INK_REDUCED=1,
+       INK_TAB=2 for the second state): open lip 9.9:1 sky / 10.8:1 gold, and
+       the stacked letters on the sky spine 5.1:1 worst at 60% — the number
+       that moved the chip to 66%. */
+    lip: "[--glass-fill:var(--background)] [--glass-tint:55%] [--glass-blur:14px]",
+    chip: "[--glass-fill:var(--primary)] [--glass-tint:66%] [--glass-blur:14px] [--glass-sat:1.1]",
   },
   gold: {
     field: "bg-contrast",
     veil: "bg-contrast/30",
     scrim: "from-contrast/42 via-contrast/20",
     wash: "bg-contrast/75",
+    lip: "[--glass-fill:var(--background)] [--glass-tint:55%] [--glass-blur:14px]",
+    chip: "[--glass-fill:var(--contrast)] [--glass-tint:66%] [--glass-blur:14px] [--glass-sat:1.1]",
   },
 } as const;
 
 export function BranchPanels({
   panels,
   className = "",
+  finish = "tint",
 }: {
   panels: readonly BranchPanel[];
   className?: string;
+  finish?: BranchFinish;
 }) {
+  const glass = finish === "glass";
   const reduced = useReducedMotion();
   const router = useRouter();
   const [active, setActive] = useState(0);
@@ -281,7 +312,9 @@ export function BranchPanels({
             <Link
               href={panel.href}
               transitionTypes={["nav-forward"]}
-              className="shadow-card focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              /* A template literal, not cn(): `glass-rim` and `shadow-card`
+                 both set box-shadow and tailwind-merge knows neither. */
+              className={`${glass ? "glass-rim" : "shadow-card"} focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none`}
               onPointerEnter={(e) => {
                 /* Mouse only. A touch "enter" fires just before the tap that
                    is already navigating, so reacting to it would flip the
@@ -359,14 +392,29 @@ export function BranchPanels({
                 above the 3/5 line — exactly where a bottom-up gradient has
                 faded to nothing, leaving the top letters on raw photograph. A
                 52px spine has no picture worth protecting anyway. */}
-              <span
-                aria-hidden="true"
-                className={
-                  open
-                    ? `absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t ${tint.scrim} to-transparent`
-                    : `absolute inset-0 ${tint.wash}`
-                }
-              />
+              {glass ? (
+                /* Glass: a lip under the open label — 56px, which is the
+                   label row plus its padding plus one line of air, and it
+                   has a hard top edge ON PURPOSE: a pane has an edge, a
+                   scrim must not. The spine is frosted whole, as a chip. */
+                <span
+                  aria-hidden="true"
+                  className={
+                    open
+                      ? `glass-frost glass-rim-top absolute inset-x-0 bottom-0 h-14 short:h-12 ${tint.lip}`
+                      : `glass-frost absolute inset-0 ${tint.chip}`
+                  }
+                />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className={
+                    open
+                      ? `absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t ${tint.scrim} to-transparent`
+                      : `absolute inset-0 ${tint.wash}`
+                  }
+                />
+              )}
 
               {/* THE LABEL, one set of letter spans in both states.
                 

@@ -2,7 +2,7 @@
 
 > Living spec. Everything we decide, plan, build or worry about goes here.
 > Working language of this doc: EN. Working language of the product: RO.
-> Last updated: 2026-09-13
+> Last updated: 2026-09-14
 
 ---
 
@@ -326,6 +326,7 @@ invisible for three builds.
 | [Sunlit Sky](https://21st.dev/@serafimcloud/themes/sunlit-sky) | sky-400 + yellow-400 on a neutral scale, geometric sans, soft radii | **live**, the only palette |
 | [Diagonal marquee carousel](https://21st.dev/@saurabh-2607/components/great-ui-diagonal-marquee-carousel) | slow diagonal marquee of photos behind the hero | **live**, `src/components/ui/diagonal-marquee-carousel.tsx` |
 | crafterui / 21st.dev editorial hero carousel | filmstrip sharing one top edge, focused card at full height, backdrop graded to the focused photo | **live**, `src/components/ui/hero-carousel.tsx` — the workshops page |
+| 21st.dev liquid-glass dock (@suraj-xd) | frosted panes: blurred backdrop, translucent fill, specular edge, refracted rim | **experiment**, `/glass` on branch `worktree-glass`, :3002 — see 6.1e, open as D15. Only the recipe survived, as `glass-*` utilities in `globals.css`; the component itself was not installed |
 
 What changed from the 21st.dev carousel original, and why — all recorded in the file header too:
 
@@ -735,6 +736,82 @@ straight into a second failure that is worse:
 Still no motion library, and still **no JavaScript at all** on this page outside
 the canvas.
 
+### 6.1e Glass — an experiment at `/glass` (14 Sep, open as D15)
+
+The landing with a **liquid-glass finish**, built on branch `worktree-glass` (worktree
+`.claude/worktrees/glass`, on top of a snapshot commit of the 14 Sep working copy) and served on
+**:3002** (`http://192.168.0.229:3002/glass`) beside the untouched :3000, so it can be judged
+against `/` by eye. Unlinked and `noindex`. Same content — moved to `src/lib/landing.ts` and
+shared by both pages so they cannot drift in copy while one is judged on finish — same
+composition, and two covers swapped:
+
+- **The copy sits on a frosted pane instead of a 90% wash.** A bottom sheet on a phone (full
+  width, rounded at the top only, running under the home indicator — the shape a phone already
+  knows glass in, and it costs no horizontal room at 390px), a free-standing card from `sm` up,
+  left-aligned as the copy is at `lg`. `glass-frost` + `glass-rim` in `globals.css`.
+- **The branch cards carry `finish="glass"`**: a 56px frosted lip under the open label instead
+  of the gradient scrim — with a hard top edge on purpose, a pane has an edge where a scrim must
+  not — a frosted colour chip for the spine instead of the flat 75% wash, and the glass rim
+  instead of `shadow-card`. `/` still renders `finish="tint"` and is pixel-identical to before.
+- **The marquee is less bleached**: 10% wash instead of 22%, and the solid desktop left column
+  is a soft vignette (`columnWash="soft"`, never opaque, gone by 68% of the width). A frosted
+  pane over an already-white field is invisible; glass only reads when there is something behind
+  it. With no column at all the desktop became a photo wall with a card on it, which is the
+  opposite of the brief ("subtle — enhance without the user noticing it is there").
+
+**The recipe**, after the 21st.dev liquid-glass dock: blurred backdrop + translucent fill
+(`glass-frost`); specular top edge, semi-transparent hairlines and a layered shadow, plus a
+masked 2px ring with its own stronger backdrop filter as the refraction cue — an edge that reads
+thicker and brighter than the pane, which is what a real bevel does (`glass-rim`; `glass-rim-top`
+is the lip's one edge). Dropped from the original, deliberately: the `feDisplacementMap` SVG
+refraction (it only bends a backdrop through `backdrop-filter: url()`, which WebKit does not
+support — and every phone this is built for is WebKit — while on the one browser that can, it
+re-renders a scale-200 displacement per frame over a marquee that never stops); the
+hover-grows-padding transitions (layout animation, and `hover:` does not exist on the target
+device); and the hard-coded `rgba(255,255,255,…)` fills. Every colour is mixed from
+`--background`, `--foreground` and `--scrim`, so a reskin reaches it. **The component itself was
+not installed**: its file is a dock and a button on a scrolling macOS wallpaper, and nothing in
+it survives except three CSS rules, so there is no `components/ui/liquid-glass.tsx` and no
+`moveBackground` keyframe — a `GlassEffect` wrapper would have been a second source of truth
+for the same rules.
+
+**The knobs are `--glass-fill / --glass-tint / --glass-blur / --glass-sat`**, custom properties
+set per pane with arbitrary properties that reference tokens (`[--glass-fill:var(--primary)]
+[--glass-tint:66%]`), never raw values. All four carry the `glass-` prefix so none can shadow a
+`:root` token (the `--card` incident, 6.2). `prefers-reduced-transparency: reduce` raises the
+fill to 94% and drops the blur and the ring; a browser without `backdrop-filter` gets the 90%
+wash `/` has today. The chip's saturation is 1.1 against the pane's 1.4 because its fill is
+already the accent — at 1.4 the sky spine rendered as highlighter cyan.
+
+**The ink rule binds the tints (6.1b), and here the backdrop moves.** The marquee scrolls other
+frames under the pane after `ink.js` has gone home, so the sheet tint was set from the worst-case
+arithmetic, not from one reading: the kicker (`--brand-text`, L=0.121) over a black frame washed
+10% needs the pane at >= 70% to hold 4.5:1, and **72%** gives 4.67:1 there. At 64% it measured
+5.05:1 on the real deck with a worst case of 4.25:1 — a fail waiting for a dark photograph. The
+small difference between the two *measured* numbers (5.05 vs 5.21) says the frames under the
+kicker were already light when they were read; the tint buys its margin on the frames that were
+not. Measured with `ink.js`, motion frozen (`INK_REDUCED=1`, `INK_TAB=2` for the second state):
+
+| Where | Worst glyph contrast | Element |
+|---|---|---|
+| 390x844, both states | **5.21:1** | the sky kicker on the sheet (6.09:1 on `/` — the pane costs 0.9) |
+| 320x568 / 768x1024 / 1440x900 | 5.78 / 5.59 / 5.79:1 | the sky kicker |
+| collapsed sky chip, 390 and 1440 | 5.56:1 | the stacked 16px letters — 5.1:1 at a 60% chip, which is why it is 66% |
+| open lips | 9.9:1 sky, 10.8:1 gold | the 23px label |
+| 32px initial on a chip | 5.76:1 | floor 3:1 |
+
+Tier 1 (`audit.js` at 390/768/1440): no horizontal overflow, no sub-12px text, no small targets,
+no console errors, 0% empty band. `hittest.js`: 2 interactive, 0 unreachable. The fold overflows
+on a sideways phone (844x390: 101px, against 97px on `/`) and at 320x568 (80px, against 92px on
+`/`) — same class as `/`, scrolls, and the 4px on the sideways phone buys the card shape there
+instead of a fogged empty half-screen.
+
+Cost worth knowing: every `glass-frost` is a `backdrop-filter` over a band that never stops
+moving, so the compositor re-blurs it every frame. At most three are on screen — the sheet and
+the two card covers — plus the sheet's 2px ring, at 14–18px radii. WebKit handles that; the
+device to watch is a low-end Android, and that has **not** been measured. If it stutters, the
+first lever is `--glass-blur`, the second is the ring.
+
 ### Page transitions
 
 React's `<ViewTransition>`, which Next 16 supports in the App Router with no
@@ -805,8 +882,11 @@ Re-run under `reducedMotion: "reduce"`, which stops the alternation dead, and th
 The tell is the core area, not the ratio: a letter whose core is wildly out of line with its own
 twin is measuring something that moved. Runs were bit-stable across three attempts, so *stable is
 not the same as correct* — the animation phase is deterministic relative to load. **Freeze motion
-before believing a number on this page**, and note that the harness has no flag for it: copy
-`ink.js` and add `reducedMotion: "reduce"` to `newPage`.
+before believing a number on this page.** Since 14 Sep `ink.js` takes `INK_REDUCED=1` (opens the
+page under `prefers-reduced-motion: reduce`, which stops the pair alternating) and `INK_TAB=n`
+(presses Tab n times before the shots; 2 opens the second branch, the only way to reach the
+other state once the swap is off). Before that the procedure was to copy `ink.js` and add
+`reducedMotion: "reduce"` to `newPage` by hand.
 
 **`audit.js` was reading every Tailwind v4 alpha colour as black.** Its `lum()`
 parsed the colour string and assumed 0-255 unless it saw `color(`. But Chromium
@@ -924,11 +1004,12 @@ Known false positives on this page — do not chase:
   transparent — and keeping the pixels that changed. The pair swaps every 2.6s, so a swap landing
   *between* those two shots makes the whole panel a "changed pixel" and the glyph mask becomes
   meaningless. Nothing errors; you get numbers.
-  To measure it, freeze the component first: set `SWAP_MS` to something enormous, and set the
-  initial `active` index to 0 or 1 for whichever state you want. Build, measure, revert. Both
-  states have to be measured — they are not symmetric, because each carries a different accent
-  behind a different photograph. Doing exactly that is where the numbers in the 5 Sep changelog
-  entry come from.
+  To measure it, freeze the component first: `INK_REDUCED=1 node ink.js …` for the first state
+  and `INK_REDUCED=1 INK_TAB=2 node ink.js …` for the second (flags added 14 Sep). Before that it
+  meant setting `SWAP_MS` to something enormous and the initial `active` index to 0 or 1, then
+  build, measure, revert — which is where the numbers in the 5 Sep changelog entry come from.
+  Both states have to be measured — they are not symmetric, because each carries a different
+  accent behind a different photograph.
 
 - `contrast failures: span.font-ui 4.10:1 (needs 4.5)` on `/` at 1440, for the hint line inside
   the landing page's sky CTA row. **`audit.js` is wrong here, and the arithmetic says so.** The
@@ -1146,6 +1227,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, served on :3002 beside :3000 (6.1e). Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes — or drop it — the route and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props and the `ink.js` flags stay either way | user | 16 Sep |
 
 ---
 
@@ -1174,6 +1256,23 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 
 ## 14. Changelog
 
+- **2026-09-14 (liquid glass, `/glass`)** — the user asked for a subtle glassmorphism finish on
+  the landing's two covers — the copy's white wash and the branch cards' tint stack — built as a
+  separate page to approve or reject by eye, with a 21st.dev liquid-glass dock as the reference.
+  Built on branch `worktree-glass` over a snapshot commit of the 14 Sep working copy and served
+  on :3002; `/` is unchanged (its content moved to `src/lib/landing.ts`, shared). 6.1e has the
+  recipe, what was dropped from the original and why, and the measurements; open as D15.
+  Along the way:
+  - `ink.js` gained `INK_REDUCED=1` and `INK_TAB=n`, replacing the "copy the file and edit
+    `newPage`" and "set `SWAP_MS` to something enormous" procedures in 6.2. Both are kept there
+    as history.
+  - `BranchPanels` takes `finish="tint" | "glass"`; the marquee takes `washClassName` and
+    `columnWash` (`true | "soft" | false`). The defaults reproduce `/` exactly.
+  - The first desktop cut had no left column at all and read as a photo wall with a card on it;
+    the soft vignette is the fix. The first sheet tint was 64% and passed at 5.05:1, but the
+    worst-case arithmetic over a dark frame was 4.25:1, so it went to 72% — the backdrop scrolls
+    and a single reading is not a floor. The sky chip went 60% -> 66% for the same reason
+    (stacked letters at 5.1:1), and its saturation came down from the pane's 1.4 to 1.1.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`

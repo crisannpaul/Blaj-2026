@@ -134,6 +134,21 @@ const MEASURE = async ({ pngA, pngB, items, dpr }) => {
   });
 };
 
+/**
+ * Two knobs for text that MOVES, which the diff cannot measure and does not
+ * say so about (SPEC 6.2, the 1.37:1 "e"). Both are env vars so the argv
+ * contract above stays the same:
+ *
+ *   INK_REDUCED=1  opens the page under `prefers-reduced-motion: reduce`, which
+ *                  stops the landing pair alternating and lets the diff see
+ *                  glyphs instead of a panel swap.
+ *   INK_TAB=n      presses Tab n times after load, before the shots. On the
+ *                  landing, 2 focuses the second branch and opens it — the
+ *                  only way to measure the other state, since the swap is off.
+ */
+const REDUCED = Boolean(process.env.INK_REDUCED);
+const TAB = parseInt(process.env.INK_TAB || "0", 10);
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({
@@ -141,9 +156,12 @@ const MEASURE = async ({ pngA, pngB, items, dpr }) => {
     deviceScaleFactor: 2,
     isMobile: W < 700,
     hasTouch: W < 700,
+    reducedMotion: REDUCED ? "reduce" : "no-preference",
   });
   await page.goto(url, { waitUntil: "networkidle" });
   await page.waitForTimeout(900); // let the shader paint its one frame
+  for (let i = 0; i < TAB; i++) await page.keyboard.press("Tab");
+  if (TAB) await page.waitForTimeout(700); // past the spring's visual duration
   if (SCROLL) {
     await page.evaluate((y) => window.scrollTo(0, y), SCROLL);
     await page.waitForTimeout(400);

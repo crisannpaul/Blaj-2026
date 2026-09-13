@@ -31,6 +31,7 @@ The rubric and the harness live in `.claude/skills/web-dev` and
 ```
 node .claude/skills/web-verify/audit.js <url> <outDir>     # every change
 node .claude/skills/web-verify/ink.js <url> 390 844        # text over art
+$env:INK_REDUCED=1; $env:INK_TAB=2; node .claude/skills/web-verify/ink.js <url> 390 844   # motion frozen, 2nd branch open
 $env:ROUTES="/,/ateliere"; node .claude/skills/web-verify/hittest.js <baseUrl>
 ```
 
