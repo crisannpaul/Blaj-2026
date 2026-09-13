@@ -124,7 +124,7 @@ export default function Blajhunt() {
             cropped card sitting in a box. */}
         <section
           id="traseu"
-          className={`${styles.field} scroll-mt-4 overflow-hidden pt-14 pb-20`}
+          className={`${styles.field} scroll-mt-4 overflow-hidden pt-10 pb-16`}
         >
           <div className="mx-auto w-full max-w-5xl px-5 sm:px-8">
             <p className="text-muted-foreground font-ui text-ui font-semibold tracking-[0.14em] uppercase">

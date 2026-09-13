@@ -12,25 +12,28 @@
  * NO new colour — same bar the glyphs merge cleared in D13.
  */
 
-/* The field under the carousel. The hero's `field-seam` hands over on
-   --field-0, so this starts there and there is no seam to hide; it then walks
-   the same four --field-* stops once and settles on --background for the
-   section below.
+/* The field under the carousel -- a HANDOVER, then plain white.
 
-   Once, not the three cycles `trail-field` runs. That utility is pacing a
-   ~4000px scroll, where a single pass reads as a flat tint; this section is
-   roughly one screen tall because the route now moves sideways, so one pass is
-   already about a step of luminance per screenful.
+   The hero's `field-seam` fades the shader down onto --field-0, so this has to
+   start on that same warm gold or the join draws a hard line across the page.
+   It reaches --background within the first fifth and stays there.
 
-   SPEC 6.1b bound: near-black ink sits directly on this, so every stop stays
-   >= 0.19 luminance. Darkest here is --field-2 at 0.87. */
+   It used to walk the full --field-* ramp: gold, white, sky, stage. That put a
+   pale sky wash under the whole carousel, and it stacked with the sky PLATE
+   behind every glyph and the sky-tinted proof chips on every card -- three
+   different blues layered inside the same 400px, with the sky CTA sitting on
+   top of them and no longer reading as an accent at all.
+
+   The rule that survived is GUIDELINES section 5, accent economy: sky is spent
+   on ACTIONS only. Field white, plate neutral, chips neutral, and the one blue
+   in view is the button you are meant to press.
+
+   SPEC 6.1b is trivially satisfied now -- near-black ink on --background. */
 .field {
   background-image: linear-gradient(
     to bottom,
     var(--field-0) 0%,
-    var(--field-1) 16%,
-    var(--field-2) 44%,
-    var(--stage) 74%,
+    var(--background) 20%,
     var(--background) 100%
   );
 }
@@ -40,30 +43,76 @@
    GAP, with the route sweeping through — not a sliver of the next card, which
    is what the earlier, tighter layout showed.
 
-   Four values, and each derives from the one above it: --card is the only free
-   width, --gap is the room the route needs to be visible, --slide is their sum
-   and is the snap unit, --field is how deep the route may swing. Changing
-   --card or --gap re-proportions the whole component correctly; nothing else
+   Four values, and each derives from the one above it: --card-w is the only free
+   width, --gap-w is the room the route needs to be visible, --slide-w is their sum
+   and is the snap unit, --field-h is how deep the route may swing. Changing
+   --card-w or --gap-w re-proportions the whole component correctly; nothing else
    needs touching.
 
-   The edge spacers derive from --slide, which is what centres the first and
+   The edge spacers derive from --slide-w, which is what centres the first and
    last slide: a flex-basis percentage resolves against the container's visible
    width, not its scroll width, so `(100% - slide) / 2` is exactly the margin a
    centred slide needs. scroll-padding cannot do this job — trailing padding on
    a scroll container is dropped by some engines. */
 .track {
-  /* The card and the space around it are now sized SEPARATELY, and the snap
+  /* NAMES FIRST: every one of these carries a -w / -h suffix, and that is
+     load-bearing rather than tidy. They used to be --card, --gap, --slide and
+     --field, and `--card: min(82vw, 23rem)` on this element SHADOWED the
+     theme's `--card: #ffffff` for the whole subtree — custom properties
+     inherit, and Tailwind's `bg-card` compiles to `background-color:
+     var(--card)`.
+
+     So every card in this track resolved its own background to a LENGTH, which
+     is invalid at computed-value time, which silently drops the declaration.
+     The stop cards were TRANSPARENT, measured `rgba(0, 0, 0, 0)`, for as long
+     as this variable has had that name. Nothing errored and it was nearly
+     invisible on a pale field — but it is why the dashed route was showing
+     straight through the cards and across the glyph plates, against this
+     component's whole premise that the road runs UNDER them.
+
+     Anything named after a shadcn token is unsafe here. Keep the suffix.
+
+     The card and the space around it are sized SEPARATELY, and the snap
      unit is their sum. That split is what lets the gaps grow to roughly half
      the card again without the card itself shrinking to fit — which is what
-     went wrong when one `--slide` had to be both.
+     went wrong when one `--slide-w` had to be both.
 
-     On a phone --slide is WIDER than the viewport, deliberately. The card
+     On a phone --slide-w is WIDER than the viewport, deliberately. The card
      still centres (snap-align centres the slide, the card is centred in it),
      and what fills the rest of the screen is gap with the route sweeping
-     through it, rather than a sliver of the next card. */
-  --card: min(82vw, 23rem);
-  --gap: min(44vw, 18rem);
-  --slide: calc(var(--card) + var(--gap));
+     through it, rather than a sliver of the next card.
+
+     ── The card carries the trim, not the gap ────────────────────────────────
+     Two things are being balanced and they pull opposite ways. How far you
+     have to drag to advance one stop is --slide-w, so it wants to be small.
+     How much route you can see while a card is centred is (viewport minus
+     --card-w) / 2, so the CARD wants to be small. The gap sets neither on its
+     own: widening it only makes the swipe heavier.
+
+     The card took the cut first, at 74vw, and that was the wrong lever. A cold
+     review measured the body copy at **24.4ch** on a 390px screen against the
+     45-75ch floor in GUIDELINES 2, and the narrower column wrapped three of the
+     ten titles onto a second line, which made the cards TALLER and pushed the
+     Maps button through the fold. It bought ~20px of visible road per edge and
+     paid for it on every word of every card.
+
+     So the road is bought vertically instead — see `.route` below, which now
+     crosses the middle of the empty column rather than skimming the top of it.
+     That is free: it does not touch --card-w or --slide-w, so the measure and
+     the swipe distance are both unharmed by it.
+
+     The width is back at 82vw, and the desktop cap went 23rem -> 25rem because
+     the measure is worst where there is most room to fix it. --slide-w is still
+     116vw against the 126vw it started at, so swipes stay shorter than before.
+
+     Worth remembering why the gaps matter at all: until the --card-w rename
+     below, the cards were TRANSPARENT and the route showed straight through
+     them, so it looked continuous while the gaps were doing almost none of the
+     work. With the cards finally opaque, the gaps are the only place the road
+     exists. */
+  --card-w: min(82vw, 25rem);
+  --gap-w: min(34vw, 13rem);
+  --slide-w: calc(var(--card-w) + var(--gap-w));
 
   /* How deep the route may swing, DERIVED FROM THE GAP rather than fixed.
      A fixed 280px looked right on a desktop, where it crosses a 272px gap at
@@ -72,10 +121,27 @@
      screen edges. Tying the two together holds the slope constant at every
      width: 0.72 puts the arc's rise at about 0.46 of the gap it spans, which
      is the proportion in the reference. */
-  --field: calc(var(--gap) * 0.72);
+  --field-h: calc(var(--gap-w) * 0.9);
 
   display: flex;
+
+  /* BOTH axes are declared, and the second one is the whole point.
+
+     `overflow-x: auto` does not leave the other axis alone: when one axis is
+     not `visible`, the other computes from `visible` to `auto`. So this track
+     was silently a VERTICAL scroller as well, and the active card -- scaled up
+     past the bottom of the track by a transform, which counts toward
+     scrollable overflow -- handed it 30px of vertical range with the scrollbar
+     hidden. Measured: scrollHeight 624 against clientHeight 594. A small
+     vertical drag over the carousel therefore scrolled the CARD instead of the
+     page, and the "Deschide in Maps" button was clipped at the track's edge.
+
+     The scale is capped at 1 below so there is nothing to overflow in the
+     first place; this is the belt to that pair of braces. It is also why the
+     slide's padding-bottom has to stay deeper than the lift shadow's reach. */
   overflow-x: auto;
+  overflow-y: hidden;
+
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
 
@@ -101,19 +167,27 @@
 }
 
 .slide {
-  flex: 0 0 var(--slide);
+  flex: 0 0 var(--slide-w);
   scroll-snap-align: center;
-  /* A fast flick must not skip a stop. The route reads as continuous only if
-     you actually see each node it passes through. */
-  scroll-snap-stop: always;
+  /* NO `scroll-snap-stop: always` -- REVERSED, and deliberately.
+
+     It was here so a fast flick could not skip a stop. The cost was that every
+     gesture, however hard it was thrown, got arrested at the very next card;
+     on a track whose slide is wider than the phone that is a lot of finger for
+     one stop, and it is most of what made this feel sticky.
+
+     The roadmap should be crawlable AND flightable. A slow drag still lands on
+     the next stop, because snapping is still mandatory; a hard flick is now
+     allowed to carry several. Nothing is lost in the sense the old comment
+     cared about -- the route is drawn continuously underneath either way. */
 }
 
-/* max(0px, …) because --slide is now wider than the viewport on a phone, which
+/* max(0px, …) because --slide-w is now wider than the viewport on a phone, which
    makes the centring margin negative. A slide wider than the scrollport needs
    no spacer to centre — the scroll position that centres it is reachable on its
    own — and a negative flex-basis is invalid anyway. */
 .edge {
-  flex: 0 0 max(0px, calc((100% - var(--slide)) / 2));
+  flex: 0 0 max(0px, calc((100% - var(--slide-w)) / 2));
 }
 
 /* The card is a fixed fraction of the slide, centred, so the leftover splits
@@ -133,10 +207,26 @@
 
    No `transition` on transform here, deliberately: the value already changes
    once per frame, and a transition on top of that would lag behind the scroll
-   rather than smooth it. */
+   rather than smooth it.
+
+   -- The scale TOPS OUT AT 1, and that is a fix, not a taste ----------------
+   It used to run 1 -> 1.06, and the card ALSO carried a Tailwind
+   `scale-[1.06]` toggled on `isActive`. In Tailwind v4 that utility sets the
+   standalone `scale` PROPERTY rather than `transform`, so the two never
+   overrode each other -- they COMPOSED. Measured on the centred card:
+   `transform: matrix(1.05998)` together with `scale: 1.06`, a 538px card
+   rendering at 604px. That is 1.1236, and 6% of it arrived as a discrete step
+   at the midpoint on top of the smooth 6% this rule exists to provide. The
+   doubled step is what read as snappy; the extra 30px is what overflowed the
+   track.
+
+   Running 0.96 -> 1 keeps the same 4% difference between the card you are
+   reading and the ones either side of it, while the active card is drawn at
+   its natural size and can never exceed its own slide. Emphasis by letting the
+   neighbours recede, not by inflating the subject. */
 .card {
-  width: var(--card);
-  transform: scale(calc(1 + 0.06 * var(--t, 0)));
+  width: var(--card-w);
+  transform: scale(calc(0.96 + 0.04 * var(--t, 0)));
   transform-origin: top center;
 }
 
@@ -159,28 +249,54 @@
 }
 
 /* The plate behind each glyph. A gradient standing in for a photograph reads
-   as a smear (GUIDELINES 6), so this is not pretending to be one: it is a pale
-   sky for a line drawing to sit against, and the drawing is the subject. It is
-   also the slot a real photograph would take if one ever arrives. */
+   as a smear (GUIDELINES 6), so this is not pretending to be one: it is a
+   quiet ground for a line drawing to sit against, and the drawing is the
+   subject. It is also the slot a real photograph would take if one arrives.
+
+   NEUTRAL, not sky. It was --field-2 -> --field-1: a pale blue panel inside a
+   white card standing on what was then a pale blue field, the middle layer of
+   the blue-on-blue-on-blue this component was carrying. --muted -> --card
+   makes it read as a recess in the card rather than as a second colour, and
+   leaves the drawing as the only warmth in the frame. */
 .plate {
   background-image: linear-gradient(
     to bottom,
-    var(--field-2) 0%,
-    var(--field-1) 100%
+    var(--muted) 0%,
+    var(--card) 100%
   );
 }
 
 
-/* The route layer. Absolute and z-0, so the cards — which are z-10 and opaque —
-   stand on top of it and hide the stretch of road they cover. Its height is
-   --field, set on the track, because that value has to scale with the gap and
-   a JS constant cannot. */
+/* The route layer. Absolute and z-0, so the cards — which are opaque — stand on
+   top of it and hide the stretch of road they cover. Its height is --field-h,
+   set on the track, because that value has to scale with the gap and a JS
+   constant cannot.
+
+   ── `top` is a PERCENTAGE, and that is the fix a cold review asked for ──────
+   It was `top: 0`, so the road ran in a band across the TOP of the slide. Once
+   the cards became opaque that stopped reading as a road at all: between two
+   stops you got a five-dash stub hugging the top edge and a ~448px column of
+   plain white underneath it, on a phone where that gap IS the screen. Measured
+   at 95.5px of route in a 542px track — 17.6%, all of it at one edge.
+
+   The band is now placed down the slide instead of enlarged. Enlarging is the
+   move that looks obvious and is wrong: CROSS spans 66 of 100 user units, so
+   the rise is 0.66 x --field-h over a gap of --gap-w, and doubling the height
+   turns a 27-degree road into two near-vertical slashes at the screen edges —
+   which is exactly the failure the --field-h derivation was written to prevent.
+   0.72 -> 0.9 is as far as that can go and still read as a road.
+
+   32% is of the LI's height, and every li is the same height because the track
+   is a flex row and the slides stretch — so the band lands at the same place on
+   every slide and the C1 joins across the seams are untouched. The road now
+   crosses the empty column at roughly its middle and disappears behind each
+   card's flank, which is what a road passing a building does. */
 .route {
   position: absolute;
   inset-inline: 0;
-  top: 0;
+  top: 32%;
   z-index: 0;
   width: 100%;
-  height: var(--field);
+  height: var(--field-h);
   pointer-events: none;
 }
