@@ -546,6 +546,8 @@ export interface HuntCard {
   href: string;
   ctaLabel: string;
   image: string;
+  /** Unused since the artwork landed on 14 Sep. Kept, like `Atelier`'s, for
+   *  the next gap — the card and the strip already know how to say so. */
   imagePlaceholder?: boolean;
   accent: "sky" | "gold";
 }
@@ -563,10 +565,7 @@ export const HUNT_CARD: HuntCard = {
   // Not "Detalii" like the ten. The card leaves for a different kind of page
   // and the label is the only warning the visitor gets before it does.
   ctaLabel: "Vezi traseul",
-  // Awaiting the user's 3:4 artwork; a stock frame until then, labelled on the
-  // card. See STOCK in scripts/photos.js.
-  image: "/ateliere/3.jpg",
-  imagePlaceholder: true,
+  image: "/ateliere/blajhunt.webp",
   // Gold, which is what keeps the strip alternating: the ten below run
   // sky/gold from A2, so the card in front of them has to be gold. Changing it
   // to sky means flipping all eleven, not one.

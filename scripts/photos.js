@@ -237,9 +237,9 @@ const RAW = [
  * a backdrop still is, because a stage where most slides fade to a soft field
  * and one snaps into a sharp photograph reads as a bug.
  *
- * In use for the Blajhunt only. It held A7 until 8 Sep and A8/A10/A11 for six
- * hours on 14 Sep; the ten workshops are all settled artwork now, and the hunt
- * is waiting on a 3:4 thumbnail the same way they were.
+ * EMPTY, for the third time in a week. It held A7 until 8 Sep, A8/A10/A11 for
+ * six hours on 14 Sep, and the Blajhunt for about an hour that evening. All
+ * eleven cards on the strip are settled artwork from poze-org.
  *
  * TO USE IT: add { slug, src } naming a file already in public/ateliere/ (the
  * 1.jpg-6.jpg stock frames are kept there for exactly this) and set
@@ -249,11 +249,7 @@ const RAW = [
  * over this list anyway, so a leftover line would be dead config that nothing
  * warns about — which is why they are removed rather than left.
  */
-const STOCK = [
-  // Four friends arm in arm at sunset — "ia-ți gașca", which is the hunt's own
-  // opening line. Awaiting the user's 3:4 artwork.
-  { slug: "blajhunt", src: "3.jpg" },
-];
+const STOCK = [];
 
 /**
  * Detail-page images from the raw deliveries, in display order. Same

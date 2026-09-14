@@ -79,9 +79,9 @@ public/placeholder/           1.jpg 2.jpg 3.jpg — Unsplash landscapes, PLACEHO
                               is still referenced, by the Blajhunt branch panel
 public/ateliere/              <slug>.webp — the REAL workshop cards (A3), 720x960, or the
                               source's own size up to 960x1280 when it comes from poze-org.
-                              All ten are settled artwork since 14 Sep. 1.jpg-6.jpg are
-                              Unsplash stock frames, unreferenced now but kept for the next
-                              gap (see STOCK in scripts/photos.js).
+                              All eleven are settled artwork since 14 Sep, the Blajhunt's
+                              included. 1.jpg-6.jpg are Unsplash stock frames, unreferenced
+                              now but kept for the next gap (see STOCK in scripts/photos.js).
                               <slug>-bg.webp — the 120x160 backdrop tier, one per workshop.
                               <slug>-N.webp — the detail-page galleries, all ten workshops.
                               <slug>-N.webp — detail-page gallery images, native ratio, sized to
@@ -101,8 +101,8 @@ docs/                         the three .docx sources, and docs/ateliere/ — te
 
 | Piece | State |
 |---|---|
-| Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip; D15 and D16 are what it left open); the two panel photographs are still placeholder |
-| `/ateliere` | **built** — full-bleed light stage carousel, **eleven cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the ten workshops, numbered **01–11 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks; ten settled thumbnails from `poze-org/`, the hunt still on a stock frame and labelled *foto în curând*. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
+| Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip; D15 and D16 are what it left open). The **Blajhunt panel got its own artwork on 14 Sep**, the same treasure-map illustration as the hunt's card so the two read as one thing; the workshops panel is still placeholder |
+| `/ateliere` | **built** — full-bleed light stage carousel, **eleven cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the ten workshops, numbered **01–11 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks, and **eleven settled thumbnails** from `poze-org/` — no card is a stock frame. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
 | `/ateliere/[slug]` | **built** — the workshop sheet: photograph first, then kicker, title, tagline, hook, a ruled facts list with a Maps search link, the disabled signup control with its note, the full description, tags, a native-ratio photo strip, prev/next and a route back to the list. Two-column with a sticky photograph above lg |
 | `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14 |
 | `/blajhunt-legacy` | **built, dead** — the vertical roadmap `/blajhunt` used to be, kept only so the two can still be compared. Nothing links to it; delete once nobody wants it |
@@ -1197,6 +1197,27 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 ---
 
 ## 14. Changelog
+
+- **2026-09-14, later still (the hunt's artwork)** — the user dropped
+  `blajhunt - Thumbnail.jpg` into `poze-org/` and, four minutes later, replaced
+  `docs/poze-landing/blajhunt.jpg` as well. Both regenerated: a treasure-map
+  illustration of Blaj landmarks on parchment, with the dotted route and the
+  red X. `STOCK` is empty for the third time in a week and `imagePlaceholder`
+  is unused on every card again; *foto în curând* appears nowhere on the site.
+
+  The second file was not mentioned and would have been missed by taking
+  "photo replaced" at its word — `npm run photos` rebuilds both trees, and the
+  landing panel's output changing size is what gave it away. The panel and the
+  card are now the same illustration, so `/` and `/ateliere` introduce the hunt
+  with one image instead of two unrelated ones.
+
+  The gold accent chosen an hour earlier for a mechanical reason — the ten
+  workshops run sky/gold from A2, so the card in front of them had to be gold —
+  turns out to match the parchment. Keep it.
+
+  Verified: build clean; `audit.js` clean on `/` and the stage; `ink.js` all
+  pass, the hunt headline at 16.92:1 over the new field and the landing at
+  19.63:1; the card still clicks through to `/blajhunt`.
 
 - **2026-09-14, late (the Blajhunt becomes Atelier 01)** — the hunt has been
   `A1` in the organizers' numbering since the first document landed, and every
