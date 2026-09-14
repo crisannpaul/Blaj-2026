@@ -27,7 +27,7 @@
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 
-const { ATELIERE } = await import("../../src/lib/ateliere.ts");
+const { ATELIERE, HUNT_CARD } = await import("../../src/lib/ateliere.ts");
 const {
   BLAJHUNT_STOPS,
   BLAJHUNT_START,
@@ -196,6 +196,32 @@ add("AL-06", {
   element: "Titlul paginii în browser (devine «Ateliere · Blaj 2026»)",
   current: "Ateliere",
   src: lit(F.ateliere, 'metadata = { title: "Ateliere" }'),
+});
+
+// ── The Blajhunt's card on the carousel (Atelier 01) ────────────────────────
+// Its copy lives in HUNT_CARD rather than in ATELIERE — the hunt is not one of
+// the organizers' workshop documents — so the AT-n loop below never sees it.
+// These three rows are how it reaches the copy round at all.
+add("AL-07", {
+  ...SEC_AL,
+  element: "Titlul primului card, al Blajhunt-ului (Atelier 01)",
+  current: HUNT_CARD.cardTitle,
+  src: data(F.atelierData, "HUNT_CARD", null, "cardTitle"),
+  note: "Blajhunt-ul apare pe carusel ca Atelier 01; butonul lui duce la pagina /blajhunt, nu la o fișă de atelier.",
+});
+add("AL-08", {
+  ...SEC_AL,
+  element: "Rezumatul de sub titlu, pe cardul Blajhunt",
+  current: HUNT_CARD.hook,
+  src: data(F.atelierData, "HUNT_CARD", null, "hook"),
+  note: "Recomandat sub 200 de caractere: pe carusel are loc pentru două propoziții.",
+});
+add("AL-09", {
+  ...SEC_AL,
+  element: "Butonul de pe cardul Blajhunt (deschide pagina traseului)",
+  current: HUNT_CARD.ctaLabel,
+  src: data(F.atelierData, "HUNT_CARD", null, "ctaLabel"),
+  note: "Diferit intenționat de «Detalii» al celorlalte: acest buton duce în altă parte a site-ului.",
 });
 
 /**

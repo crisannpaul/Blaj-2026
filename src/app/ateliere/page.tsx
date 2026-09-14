@@ -3,19 +3,22 @@ import {
   HeroCarousel,
   type HeroCarouselItem,
 } from "@/components/ui/hero-carousel";
-import { ATELIERE, atelierNo } from "@/lib/ateliere";
+import { ATELIERE, HUNT_CARD, atelierNo } from "@/lib/ateliere";
 
 export const metadata = { title: "Ateliere" };
 
 /**
- * The ten workshops — seven delivered on 8 Sep, three more (A8, A10, A11) on
- * 14 Sep — from `src/lib/ateliere.ts`: titles, durations, seats and the hooks
- * are the organizers'. The stage shows one card per workshop and the copy band
- * carries a two-sentence hook; everything longer waits for `/ateliere/[slug]`.
+ * Eleven cards: the Blajhunt at the head, then the ten workshops from
+ * `src/lib/ateliere.ts` — seven delivered on 8 Sep, three more (A8, A10, A11)
+ * on 14 Sep — whose titles, durations, seats and hooks are the organizers'.
+ * Each card gets a two-sentence hook in the copy band; everything longer waits
+ * for `/ateliere/[slug]`, except the hunt, which has `/blajhunt`.
  *
- * The strip reads 01 … 10. That is the SITE's numbering, `atelierNo()`, not
- * the organizers' A2–A11 — see the header of src/lib/ateliere.ts for why the
- * two differ and why the difference is now a constant offset of one.
+ * The strip reads 01 … 11, and since the hunt joined it on 14 Sep those are
+ * the ORGANIZERS' OWN numbers — A1 the hunt, A2–A11 the workshops. The site
+ * spent a week printing its own numbering because the hunt had no card and the
+ * strip would otherwise have opened on "Atelier 02"; that reason is gone. See
+ * `atelierNo` in src/lib/ateliere.ts.
  *
  * The photographs are the organizers' too, cropped to the card's 3:4 by
  * `scripts/photos.js`. A8, A10 and A11 have no artwork yet and sit on stock
@@ -29,7 +32,33 @@ export const metadata = { title: "Ateliere" };
  */
 const ACCENT = { sky: "var(--brand)", gold: "var(--contrast)" } as const;
 
-const WORKSHOPS: HeroCarouselItem[] = ATELIERE.map((a) => ({
+/**
+ * The Blajhunt leads the strip as Atelier 01 — it is the organizers' A1 and
+ * now has a card like everything else. It is the one slide whose CTA leaves
+ * `/ateliere`, which the label says out loud: "Vezi traseul", not "Detalii".
+ *
+ * Built separately from the ten because it is not an `Atelier` — see
+ * HUNT_CARD in src/lib/ateliere.ts for why that is deliberate rather than a
+ * shortcut. Its number is printed from `HUNT_CARD.number` for the same reason
+ * the ten print `atelierNo()`: one source, so the strip cannot renumber itself
+ * halfway along.
+ */
+const HUNT: HeroCarouselItem = {
+  id: HUNT_CARD.slug,
+  title: HUNT_CARD.cardTitle,
+  image: HUNT_CARD.image,
+  backdropImage: `/ateliere/${HUNT_CARD.slug}-bg.webp`,
+  credit: HUNT_CARD.imagePlaceholder
+    ? `Atelier ${String(HUNT_CARD.number).padStart(2, "0")} · foto în curând`
+    : `Atelier ${String(HUNT_CARD.number).padStart(2, "0")}`,
+  meta: [...HUNT_CARD.meta],
+  description: HUNT_CARD.hook,
+  ctaLabel: HUNT_CARD.ctaLabel,
+  ctaHref: HUNT_CARD.href,
+  accent: ACCENT[HUNT_CARD.accent],
+};
+
+const CARDS: HeroCarouselItem[] = ATELIERE.map((a) => ({
   id: a.slug,
   title: a.cardTitle,
   image: a.image,
@@ -51,6 +80,8 @@ const WORKSHOPS: HeroCarouselItem[] = ATELIERE.map((a) => ({
   ctaHref: `/ateliere/${a.slug}`,
   accent: ACCENT[a.accent],
 }));
+
+const WORKSHOPS: HeroCarouselItem[] = [HUNT, ...CARDS];
 
 /** Open on the middle card so the strip visibly continues both ways. */
 const DEFAULT_INDEX = Math.floor(WORKSHOPS.length / 2);
