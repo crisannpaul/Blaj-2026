@@ -111,6 +111,12 @@ is behind.
 - **A raw colour or font stack outside `src/app/globals.css` is a defect.** And a
   token used in a component must be registered in `@theme inline`, or the utility
   silently resolves to nothing. Tailwind v4 raises no error for this.
+- **Never name a local CSS variable after a token in `:root`.** They inherit, so
+  `--card: min(82vw, 23rem)` on a wrapper makes `bg-card` resolve to a *length*
+  for the whole subtree — invalid at computed-value time, declaration dropped, no
+  error. That shipped: every `/blajhunt` stop card was transparent and the dashed
+  route showed through it. Suffix local values with what they are (`--card-w`)
+  and check `globals.css` before choosing a name. See SPEC 6.2.
 - **Never pass a type-ramp size and a text colour through `cn()` together.**
   `cn("text-h3", "text-card-foreground")` returns `"text-card-foreground"` alone:
   tailwind-merge does not know `--text-h3` exists, reads `text-h3` as a colour,
