@@ -1225,8 +1225,17 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   conflicts resolved by hand — so the branch is the main checkout as of ~19:30
   plus the letter, and deploying it rolls nothing back. **The user asked for a
   production deploy; the session's permission gate refused the `vercel --prod`
-  command, so the command was handed to the user to run** (see the next entry
-  once it ships). Landing it: merge the PR (the branch also
+  command, so the command was handed to the user to run.** Then the user looked
+  at `:3000`, saw no letter — it serves the main checkout — and said the merge
+  must be the letter only, on top of the real site's own copy and workshops.
+  So, ~21:50, **the six letter files were copied into the main checkout as
+  they stand on the branch** (`page.tsx`, `welcome-letter.tsx`, `globals.css`,
+  the marquee, `inventory.mjs`, this file), after a second diff confirmed the
+  main checkout had not moved since the carry-over; the checkout is now
+  byte-identical to the branch in `src/`, `scripts/` and `public/`. `:3000`
+  shows the letter after its next rebuild and restart, which the user runs;
+  the production deploy likewise. PR #1 is then redundant — the main checkout
+  already has everything — and can be closed once the checkout is committed. Landing it: merge the PR (the branch also
   carries a snapshot commit of the 14 Sep working copy, so master's uncommitted
   edits to the same files will need reconciling — `page.tsx` above all), or
   apply the five files by hand: `src/app/page.tsx`,
