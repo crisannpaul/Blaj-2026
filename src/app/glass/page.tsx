@@ -55,6 +55,18 @@ import { BRANCHES, CONTENT } from "@/lib/landing";
  *   The user's own reference was 3px. See the GLASS note in globals.css for
  *   what was measured on the way to the value.
  *
+ *   A quarter white is the DESKTOP number. At `lg` the marquee carries a soft
+ *   white column wash under the sheet (`columnWash="soft"`, 55% → 0 across
+ *   two thirds of the width), so the copy there sits on a backdrop that
+ *   averages 203/255 with the photographs' texture at a standard deviation
+ *   of 32. A phone has no column wash, and the same fill left its copy on
+ *   173/255 at 42 — darker and busier, which the user read as "a little hard
+ *   to read because of the transparency", with the desktop "nice". So below
+ *   `lg` the fill is 56% → 48%, which puts the phone's backdrop at the
+ *   desktop's values (measured under the lead, text masked: 52/44 gave
+ *   196 at 30, 60/52 gave 205 at 25). Same glass, same look, matched by
+ *   measurement rather than by sharing a number.
+ *
  * - **Every ink on the pane is near-black.** On `/` the kicker is sky
  *   (`--brand-text`, L=0.12) and the date line is `--muted-foreground`; those
  *   are the two inks that failed the moment the pane went below ~60% white
@@ -118,9 +130,10 @@ export default function GlassHome() {
             own empty parent instead of the marquee. */}
           <div className="glass-pane glass-shadow relative flex flex-1 flex-col rounded-[1.75rem] px-5 pt-7 pb-5 short:pt-4 tight:pt-5 sm:max-w-[29rem] sm:flex-none sm:px-6 sm:pb-10 lg:max-w-[38rem] lg:px-10 lg:pt-10">
             <span aria-hidden="true" className="glass-frost glass-liquid" />
+            {/* Denser below lg, by design — see "a quarter white" above. */}
             <span
               aria-hidden="true"
-              className="glass-fill [--glass-tint-top:32%] [--glass-tint:24%]"
+              className="glass-fill [--glass-tint-top:56%] [--glass-tint:48%] lg:[--glass-tint-top:32%] lg:[--glass-tint:24%]"
             />
             <span aria-hidden="true" className="glass-bevel" />
 

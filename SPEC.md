@@ -746,7 +746,7 @@ the canvas.
 The landing with a **liquid-glass finish**, on branch `worktree-glass` (worktree
 `.claude/worktrees/glass`, over a snapshot commit of the 14 Sep working copy), served on
 **:3002** (`http://192.168.0.229:3002/glass`) beside the untouched :3000 so it can be judged
-against `/` by eye, and online at the preview **https://blaj2026-g04qqlcfm-geneous.vercel.app/glass**
+against `/` by eye, and online at the preview **https://blaj2026-7pqzjlnhf-geneous.vercel.app/glass**
 (the evening cut; see D15 for why production no longer carries it); the previous cut is on
 :3003 (below). Unlinked and `noindex`. Same content —
 moved to `src/lib/landing.ts` and shared, so the two cannot drift in copy while one is judged on
@@ -760,7 +760,14 @@ still too dense for the user, who then sent the 21st.dev dock itself as the targ
 that reference, and it is what ships on the branch:
 
 - **The pane is clear — a quarter white, 3px of blur, a directional bevel.** (6px until the
-  evening's second review; see below.) Below `sm` a card that fills the screen inside a 12px
+  evening's second review; see below.) A quarter white is the DESKTOP fill: at `lg` the
+  marquee's soft column wash already sits under the sheet, and a phone has no column wash, so
+  the same fill left the phone's copy on a backdrop of 173/255 with the photographs' texture
+  at a standard deviation of 42 against the desktop's 203 at 32 — "a little hard to read
+  because of the transparency", the user said, with the desktop "nice". Below `lg` the fill is
+  therefore **56% → 48%** (`lg:` returns it to 32% → 24%), which puts the phone at 201 at 28:
+  the same look, matched by measurement under the lead with the text masked rather than by
+  sharing a number. Below `sm` a card that fills the screen inside a 12px
   margin, all four corners showing; from `sm` a card that hugs its content, no wider than the
   branch pair (`29rem` — the review found a 136px frosted void at 768 when it followed the
   copy's 33rem), left-aligned as the copy is at `lg`. The first three cuts had it as a bottom
@@ -1381,7 +1388,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, on :3002 beside :3000, and **online at the preview https://blaj2026-g04qqlcfm-geneous.vercel.app/glass** (6.1e) — the clear, refracting cut with straight pane edges, a 3px pane, and, on a phone, a card that fills the screen inside a 12px margin with no scroll (the user's own layout, after a scrolling one was tried and rejected the same evening). It was live at blaj2026.vercel.app/glass from the afternoon of 14 Sep until a `--prod` deploy from the main checkout that evening replaced production with the copy work; **promoting the branch now would roll that copy work back**, so the glass goes live only after a merge. The 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, on :3002 beside :3000, and **online at the preview https://blaj2026-7pqzjlnhf-geneous.vercel.app/glass** (6.1e) — the clear, refracting cut with straight pane edges, a 3px pane, and, on a phone, a card that fills the screen inside a 12px margin with no scroll (the user's own layout, after a scrolling one was tried and rejected the same evening). It was live at blaj2026.vercel.app/glass from the afternoon of 14 Sep until a `--prod` deploy from the main checkout that evening replaced production with the copy work; **promoting the branch now would roll that copy work back**, so the glass goes live only after a merge. The 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
 
 ---
 
@@ -1481,7 +1488,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     Landing copy synced from master's 14 Sep edit ("Tinerilor", "în Mica Romă") along with the
     other agent's note on the 948-character letter the organisers sent for the lead.
   - **Preview, not production, this time.** The evening cut is at
-    https://blaj2026-g04qqlcfm-geneous.vercel.app/glass (`/`, `/ateliere` 200, the answers 404).
+    https://blaj2026-7pqzjlnhf-geneous.vercel.app/glass (`/`, `/ateliere` 200, the answers 404).
     Two `--prod` deploys from the main checkout had gone up half an hour earlier — the copy
     work — so **blaj2026.vercel.app/glass is 404 again** and production carries master's copy,
     which this branch only partly has (the landing strings, not `/ateliere` or `/blajhunt`).
@@ -1495,6 +1502,12 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     spacer, no lip, both marquee edge fades off (`topFade` joins `bottomFade`). One screen at
     390x844 and 375x667 with the long copy too; 320x568 and landscape overflow as `/` does.
     Tier 1 clean, ink worst 7.33:1, cards 246 / 72px without JavaScript. 6.1e has the table.
+  - **Denser on the phone (later still).** The user: desktop "looks good, the opacity is nice",
+    the phone "a lil hard to read because of the transparency". Cause: the desktop sheet sits
+    on the marquee's soft column wash and the phone's does not. The fill below `lg` is now
+    56% → 48% (desktop unchanged at 32% → 24%), chosen by measuring the backdrop under the
+    lead with the text masked — phone 173/255 at sd 42 before, 201 at 28 after, desktop 203 at
+    32. Ink unchanged (the weakest glyphs are on the cards). Preview redeployed.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`
