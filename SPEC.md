@@ -49,7 +49,11 @@ src/app/                      layout.tsx (fonts, metadata, viewport), page.tsx, 
                               blajhunt/[slug]/page.tsx — one page per stop (10, static)
                               blajhunt-legacy/page.tsx — the vertical roadmap D14 replaced.
                                 Unlinked, kept for reference, due for deletion
+                              scrisoare/page.tsx — the D15 CANDIDATE: the live fold plus the
+                                organizers' welcome letter as a card. Branch worktree-letter
+                                only, served on :3004; unlinked, noindex. Adopt or delete
 src/components/ui/            branch-panels.tsx (the landing fold's two branches)
+                              welcome-letter.tsx (the letter as a card — branch worktree-letter)
                               diagonal-marquee-carousel.tsx (landing background)
                               hero-carousel.tsx (workshops stage)
                               how-it-works.tsx (the numbered trail on /blajhunt)
@@ -1167,7 +1171,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | The organizers' welcome letter (948 ch, „Dragi tineri” to the Biroul's signature) does not fit the hero slot, which holds ~220. Its first sentence is live; **where does the rest go?** A section of its own below the branch panels is the obvious home, but that is the one place the landing page has no room, so it is a layout decision: shrink the panels, or let the page scroll past one fold | user | before the copy is shown to the organizers |
+| D15 | The organizers' welcome letter (948 ch, „Dragi tineri” to the Biroul's signature) does not fit the hero slot, which holds ~220. Its first sentence is live; **where does the rest go?** A section of its own below the branch panels is the obvious home, but that is the one place the landing page has no room, so it is a layout decision: shrink the panels, or let the page scroll past one fold. **Candidate built 14 Sep, late: `/scrisoare` on branch `worktree-letter`, :3004** — the letter as a card of its own, beside the fold from `lg` and under it on a phone, over a sticky marquee; the panels do not shrink and the fold does not move. Awaiting the user's eye; see the changelog | user | before the copy is shown to the organizers |
 | ~~D16~~ | ~~«Intereparhială» or «Arhieparhială»?~~ — **decided 14 Sep by the user: Intereparhială.** The returned copy sheet had changed „Tineretului” to „Tinerilor” and left „Intereparhială” untouched, which was not the same as confirming it; the user confirmed it separately. The supratitlu reads **Întâlnirea Intereparhială a Tinerilor** | user | done |
 
 ---
@@ -1196,6 +1200,55 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 ---
 
 ## 14. Changelog
+
+- **2026-09-14, late (D15 candidate — the welcome letter as a card, `/scrisoare` on
+  branch `worktree-letter`)** — the organizers want the whole letter on the landing
+  page, and more text in the lead is known to break the fold. Built as a separate
+  route on its own branch and port so it can be judged by eye against `/` before
+  anything replaces it: **`http://192.168.0.229:3004/scrisoare`**, served from
+  `.claude/worktrees/letter` on top of a snapshot commit of the 14 Sep working copy.
+  Not merged, not on Vercel, linked from nowhere, `robots: noindex`.
+
+  - **What it is.** The live fold, its geometry untouched, plus the letter — row
+    AC-04 of the returned copy, „Dragi tineri” to the Biroul's signature,
+    verbatim down to the „<3” — as a `--card` surface at 92% with the archive
+    ghosting through. Right column from `lg` (a fluid 1.15fr : 1fr grid, because
+    38rem + 32rem + gap does not fit inside 1024px), under the fold on a phone.
+    The lead goes back to the organizers' first sentence alone (163 ch): with the
+    letter beside it, the programme list folded onto the lead read as the same
+    sentence twice. One inline link, „atelierele pe care le-am pregătit special
+    pentru voi” → `/ateliere`, so the end of the letter is not a dead end on a
+    phone. The kicker over the salutation, „Cuvânt de bun venit”, is site chrome,
+    not organizers' copy — it needs an AC row in the inventory if this ships.
+  - **The marquee is a sticky backdrop**, one `lvh` tall, pulled back under the
+    content by its own height: the page is 1.9 screens on a phone, and a band
+    sized to the fold would stop dead where the letter begins. `main` is
+    `overflow-x: clip`, not `hidden` — `hidden` makes it a scroll container and
+    sticky then sticks to it instead of to the window. `lvh` not `svh`, so the
+    strip iOS reveals when its toolbar collapses is still photograph.
+  - **The peek is the scroll cue.** The fold is 20px shorter than the screen so
+    the card's top edge — corners, shadow, paper — shows under the panels. 20 and
+    not 28 because the card's top padding is 24 and the strip has to be paper:
+    the first cut put the top 8px of the kicker's capitals on screen, sliced by
+    the viewport edge, which reads as a bug rather than a card.
+  - Measured: peek 20px at 390x844 and 375x667 (panels end at y=800 / 623, card
+    starts at 824 / 647); gone at 320x568, where the fold already overflows by
+    1px; card 358 wide (~40ch) on a phone, 576 (`max-w-[36rem]`) on a tablet or a
+    sideways phone — it was 720 and an 80-character measure before the cap — and
+    512 (~55ch) at `lg`; no page scroll at 1280x800 and up, 137px at 1024x768
+    where the 394px-wide card runs 777px tall. The signature is one balanced
+    paragraph, not two with a forced break — the break left „a Copiilor” alone
+    on a line at 390. `audit.js` clean at 390/768/1440 (the one tap-target flag
+    is the inline link's line box, 383x20 at 1440 — running text, exempt);
+    `ink.js` all pass — kicker 6.09:1 as on `/`, letter body ≥ 17.5:1, the link
+    6.15:1; `hittest.js` 0 unreachable. Build clean, 28 pages.
+  - **Open, for the user:** the letter is signed by the Biroul pentru Pastorația
+    Tinerilor, not by the Archbishop — Preafericitul Părinte Claudiu appears only
+    in its first sentence; the „<3” ships as written; the lead change is one
+    string. To adopt: `scrisoare/page.tsx` becomes `page.tsx`, `welcome-letter.tsx`
+    stays, D15 closes. BRANCHES and CONTENT are duplicated in the candidate on
+    purpose — the live `page.tsx` is edited independently on master. To reject:
+    delete the route and the component; nothing else references them.
 
 - **2026-09-14, evening (the resend: every room, every pin, four answers)** —
   the four questions this session put to the organizers came back answered, and
