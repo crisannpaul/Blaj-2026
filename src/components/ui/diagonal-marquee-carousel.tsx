@@ -22,15 +22,27 @@ import { cn } from "@/lib/utils";
  *  - Every colour reads --background. This site has one palette and no dark
  *    mode; a hard-coded white here would be the one thing a reskin could not
  *    reach.
- *  - Cards size up in four steps from 168px wide. The original's flat 400x300
- *    put 2.3 cards across a 390px phone, which reads as sliding wallpaper.
+ *  - Cards size up in four steps. The original's flat 400x300 put 2.3 cards
+ *    across a 390px phone, which reads as sliding wallpaper. The phone step was
+ *    then raised again (124px tall -> 176px, +86% area) because at the small
+ *    size the archive read as texture rather than as photographs: fewer frames,
+ *    each big enough to see a face in. Desktop was already right and did not
+ *    move — only the base and `sm` steps did.
+ *  - TWO WEBP TIERS behind a `srcset`, because the deck is eleven real
+ *    photographs now rather than three. A phone pulls 394KB for the whole
+ *    archive; serving the desktop tier to everyone would have been 578KB.
  *  - Decorative: aria-hidden on the band, alt="" on every image, no
  *    cursor-pointer on cards that are not clickable.
  */
 
 export interface CardItem {
   id: string | number;
+  /** Fallback source; also the widest tier. */
   url: string;
+  /** Width-descriptor set, so a phone never pulls the desktop tier. @default undefined */
+  srcSet?: string;
+  /** Never rendered — the band is decorative and every frame is `alt=""`. It
+   *  names the photograph for whoever edits the deck next. */
   title: string;
 }
 
@@ -44,12 +56,91 @@ export interface DiagonalMarqueeCarouselProps {
   fadeClassName?: string;
 }
 
-/** Placeholder photography. Replace with the real archive — see SPEC A1/A2. */
-const DEFAULT_CARDS: CardItem[] = [
-  { id: 1, url: "/placeholder/1.jpg", title: "Placeholder" },
-  { id: 2, url: "/placeholder/2.jpg", title: "Placeholder" },
-  { id: 3, url: "/placeholder/3.jpg", title: "Placeholder" },
+/**
+ * The archive — eleven photographs from a past meeting. SPEC A1, delivered.
+ *
+ * The originals live in `docs/poze-intc/`, which never ships; `public/arhiva/`
+ * holds two WebP tiers re-encoded from them by the recipe in SPEC 6.1.
+ *
+ * **The order is the deal, and it is deliberate.** Mean luminance alternates
+ * high/low and no two neighbours share a subject, so a row never reads as two
+ * versions of the same photograph sliding past. Every row is a rotation of
+ * this one list, so reordering it reorders all five. Keep it interleaved.
+ */
+const ARCHIVE: readonly { n: string; title: string }[] = [
+  { n: "01", title: "Adunarea pe platou" },
+  { n: "02", title: "Rugăciune în genunchi" },
+  { n: "03", title: "Mâini ridicate" },
+  { n: "04", title: "Scena principală" },
+  { n: "05", title: "Pauză pe iarbă" },
+  { n: "06", title: "Cercetași cu pancarte" },
+  { n: "07", title: "Aplauze în rând" },
+  { n: "08", title: "Cântare împreună" },
+  { n: "09", title: "Dans în sala mare" },
+  { n: "10", title: "Bucurie în mulțime" },
+  { n: "11", title: "Animatorii în față" },
 ];
+
+const DEFAULT_CARDS: CardItem[] = ARCHIVE.map(({ n, title }, i) => ({
+  id: i + 1,
+  url: `/arhiva/${n}-1120.webp`,
+  srcSet: `/arhiva/${n}-800.webp 800w, /arhiva/${n}-1120.webp 1120w`,
+  title,
+}));
+
+/**
+ * `sizes` must be the width a frame is PAINTED at, not the width of its box.
+ * The sources are 3:2 under `object-cover`, so a narrow card fills by height
+ * and overflows sideways — it paints 1.5x its own height, which is wider than
+ * its box at every breakpoint. Hand the browser the box width instead and it
+ * picks the small tier for a card that needs more, and the crowds go to mush.
+ * A wide card is already wider than 1.5x its height, so there the box governs.
+ */
+/**
+ * THE SMALL TIER IS 800w AND THE NUMBER IS LOAD-BEARING. Every photograph is
+ * dealt into narrow slots AND wide slots, so it has two painted widths at
+ * once. Put a tier boundary between them and the browser fetches BOTH files
+ * for EVERY photograph — the deck doubles. Not hypothetical: at 640w a DPR3
+ * phone wanted 558 for a narrow card and 684 for a wide one, either side of
+ * the boundary, and pulled 848KB of a 270KB archive — on the one device class
+ * this whole site is built for.
+ *
+ * The phone step now paints both widths at the SAME 264px, because the wide
+ * card is exactly 1.5x the card height and that is the width a 3:2 source
+ * occupies at that height. So a base-breakpoint straddle is no longer possible
+ * at any DPR. 800w is what keeps DPR2 and DPR3 phones on the small tier
+ * regardless: 264x3 = 792, just inside it. DPR3.5 needs 924 and takes the
+ * 1120w tier whole — heavier at 578KB, but still one file per photograph.
+ *
+ * A 1024-1279px viewport at DPR2 still splits — 338 vs 408 painted, so 676 vs
+ * 816 — and pays 930KB. That is a retina tablet or a small retina laptop, not
+ * the target device, and closing it would mean shipping every phone a bigger
+ * tier. Left open knowingly.
+ *
+ * All measured, none reasoned; the table is in SPEC 6.1. **A card size change
+ * is also a tier change** — move either and re-measure the real transfer per
+ * device class rather than re-deriving it on paper.
+ */
+const SIZES = {
+  narrow:
+    "(min-width: 1280px) 450px, (min-width: 1024px) 338px, (min-width: 640px) 300px, 264px",
+  wide: "(min-width: 1280px) 544px, (min-width: 1024px) 408px, (min-width: 640px) 300px, 264px",
+} as const;
+
+/**
+ * Frames per half-track. Each half must out-measure the 220vw row or the -50%
+ * loop opens a visible gap, and the deck is what supplies them.
+ *
+ * Twelve is what the widest breakpoint needs. With `wide` on every third frame
+ * a half measures 8x400 + 4x544 + 12x32 = 5760px, clearing 220vw up to a
+ * 2618px viewport — a 2560px desktop included. The nine this carried while the
+ * deck was three placeholders came to 4320px, a ceiling of 1963px, so every
+ * 2560px monitor was showing the seam. Narrower breakpoints have far more
+ * slack: 3056px against 858 at 390, 3488 against 1408 at sm, 4416 against 2253
+ * at lg. All measured with offsetWidth — a rect on a rotated band is its
+ * axis-aligned box and reads ~9% low.
+ */
+const MIN_PER_HALF = 12;
 
 const Card = ({
   card,
@@ -65,22 +156,25 @@ const Card = ({
 }) => (
   <div
     className={cn(
-      "relative h-[124px] shrink-0 overflow-hidden rounded-xl sm:h-[168px] lg:h-[225px] xl:h-[300px]",
+      "relative h-[176px] shrink-0 overflow-hidden rounded-xl sm:h-[200px] lg:h-[225px] xl:h-[300px]",
       wide
-        ? "w-[228px] sm:w-[304px] lg:w-[408px] xl:w-[544px]"
-        : "w-[168px] sm:w-[224px] lg:w-[300px] xl:w-[400px]",
+        ? "w-[264px] sm:w-[300px] lg:w-[408px] xl:w-[544px]"
+        : "w-[220px] sm:w-[250px] lg:w-[300px] xl:w-[400px]",
       "shadow-card",
       className,
     )}
   >
     <img
       src={card.url}
+      srcSet={card.srcSet}
+      sizes={wide ? SIZES.wide : SIZES.narrow}
       alt=""
-      width={800}
-      height={600}
+      width={1120}
+      height={747}
       decoding="async"
-      // Three unique files fill every row, so the first copy is the whole
-      // above-the-fold cost. Fetch those eagerly, coast on cache after.
+      // Eleven unique files fill all five rows and every row repeats them, so
+      // the first copy is the whole cost — the rest are cache hits. Fetch the
+      // opening frames eagerly and coast.
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : "low"}
       className="h-full w-full object-cover"
@@ -117,7 +211,7 @@ const MarqueeRow = ({
           {cards.map((card, idx) => (
             <div
               key={`${card.id}-${idx}-${half}`}
-              className="shrink-0 pr-4 sm:pr-6 lg:pr-8"
+              className="shrink-0 pr-5 sm:pr-6 lg:pr-8"
             >
               <Card
                 card={card}
@@ -148,24 +242,37 @@ export default function DiagonalMarqueeCarousel({
   cardClassName = "",
   fadeClassName = "",
 }: DiagonalMarqueeCarouselProps) {
-  // Nine per half clears the widest row we render (220vw) at every breakpoint:
-  // 9x184px = 1656 on a 390px phone, 9x432px = 3888 on a 1440px desktop.
-  // Each row is dealt from a different rotation of the source, so a frame is
-  // never directly above a copy of itself — with few source photos an
-  // unrotated deal reads as tiled wallpaper rather than as an archive.
+  // Each row is dealt from a different rotation of the deck, so a frame is
+  // never directly above a copy of itself — an unrotated deal reads as tiled
+  // wallpaper rather than as an archive.
   const rotate = (n: number) => {
     const k = cards.length ? n % cards.length : 0;
     return [...cards.slice(k), ...cards.slice(0, k)];
+  };
+
+  // Top a deal up to MIN_PER_HALF: whole copies while one still fits, then
+  // single frames taken from the MIDDLE of the deck. Taking the remainder from
+  // the front instead would put cards[0] at both ends of the half — and the
+  // -50% wrap joins those two ends, so the same photograph would run twice in
+  // a row at the seam, which is the one thing the rotation exists to prevent.
+  const fill = (deal: CardItem[]) => {
+    if (!deal.length) return deal;
+    const out = [...deal];
+    while (out.length + deal.length <= MIN_PER_HALF) out.push(...deal);
+    const mid = Math.floor(deal.length / 2);
+    for (let k = 0; out.length < MIN_PER_HALF; k += 1) {
+      out.push(deal[(mid + k) % deal.length]!);
+    }
+    return out;
   };
 
   const SPEEDS = [baseSpeed, Math.max(baseSpeed - 15, 30), baseSpeed + 15,
                   Math.max(baseSpeed - 6, 35), baseSpeed + 24];
 
   const rows = SPEEDS.map((speed, i) => {
-    const dealt = rotate(i);
-    const tripled = [...dealt, ...dealt, ...dealt];
+    const dealt = fill(rotate(i));
     return {
-      cards: i % 2 === 0 ? tripled : [...tripled].reverse(),
+      cards: i % 2 === 0 ? dealt : [...dealt].reverse(),
       speed,
       direction: (i % 2 === 0 ? -1 : 1) as 1 | -1,
     };
@@ -180,7 +287,7 @@ export default function DiagonalMarqueeCarousel({
     >
       <div
         aria-hidden="true"
-        className="absolute z-0 flex w-[220vw] flex-col gap-4 sm:gap-6 lg:gap-8"
+        className="absolute z-0 flex w-[220vw] flex-col gap-5 sm:gap-6 lg:gap-8"
         style={{ transform: `rotate(${angle}deg)` }}
       >
         {rows.map((row, i) => (

@@ -21,7 +21,7 @@ import styles from "./trail-swipe.module.css";
  * The route is one continuous wave spanning the whole track, painted beneath
  * the cards. The cards are opaque, so each one hides the stretch of road it
  * stands on and what you actually see is the arc crossing each gap. That is
- * why the gaps are large — `--card` and `--gap` are sized separately in the
+ * why the gaps are large — `--card-w` and `--gap-w` are sized separately in the
  * module — and it is the whole reason the layout has the proportions it has:
  * the road needs somewhere to be visible, and the gap is that somewhere.
  *
@@ -30,8 +30,14 @@ import styles from "./trail-swipe.module.css";
  * That was tidier in one way and wrong in another: with a band that shallow the
  * road could only ever ripple, and a route that never leaves the top 80px of
  * the page does not read as a road at all. Trading the disc's place on the line
- * for arcs with real amplitude is the deliberate call here; the disc is now a
- * station number on the card's top edge.
+ * for arcs with real amplitude is the deliberate call here; the number is now a
+ * station badge inside the card, on the corner of the glyph plate.
+ *
+ * It sat ON the card's top edge until the badge and the card's 1px border were
+ * looked at together: the disc is centred on that edge, so the border ran into
+ * it at nine o'clock and out at three, and what you read was a rule struck
+ * through the number of the stop you were on. Moving it inside is also 20px of
+ * card height back, on a card that had none to spare.
  *
  * ── Why the line does not break at a swipe ──────────────────────────────────
  * The obvious build — one SVG per card — draws ten disconnected squiggles, and
@@ -116,13 +122,17 @@ const bendAt = (i: number) =>
   BEND[((i % BEND.length) + BEND.length) % BEND.length];
 
 /**
- * Slide top padding — clearance for the top half of the numbered disc.
+ * Slide top padding — the strip of route that stays above the cards.
  *
- * How far down the route may swing is NOT here. It is `--field` in the module,
- * derived from `--gap`, because it has to scale with the width of the gap it
+ * It used to be clearance for the top half of the numbered disc; the disc is
+ * inside the card now, so all this buys is somewhere for the shallowest arcs
+ * (CROSS bottoms out at 18) to crest in the open rather than behind a card.
+ *
+ * How far down the route may swing is NOT here. It is `--field-h` in the
+ * module, derived from `--gap-w`, because it has to scale with the width of the
  * crosses and a constant in this file cannot.
  */
-const TOP = 20;
+const TOP = 12;
 
 /**
  * Dashes, not dots, and few of them.
@@ -159,29 +169,16 @@ const STROKE = {
   vectorEffect: "non-scaling-stroke",
 } as const;
 
-/** tabler-icons "pin", as on the vertical trail. Terminals only; stops count. */
-const Pin = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-hidden="true"
-    className={className}
-  >
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <path d="M16 3a1 1 0 0 1 .117 1.993l-.117 .007v4.764l1.894 3.789a1 1 0 0 1 .1 .331l.006 .116v2a1 1 0 0 1 -.883 .993l-.117 .007h-4v4a1 1 0 0 1 -1.993 .117l-.007 -.117v-4h-4a1 1 0 0 1 -.993 -.883l-.007 -.117v-2a1 1 0 0 1 .06 -.34l.046 -.107l1.894 -3.791v-4.762a1 1 0 0 1 -.117 -1.993l.117 -.007h8z" />
-  </svg>
-);
-
 /**
  * The terminal plate's mark. A DIFFERENT drawing from `Pin` above, on purpose.
  *
- * `Pin` is filled, which is right at 16px inside the node disc and wrong at
- * 128px on the plate: blown up it is a heavy solid silhouette sitting in a
- * carousel whose other ten plates hold delicate line drawings, and the two
- * read as belonging to different products. This is stroked, in the glyph set's
- * own 48x48 box, at a comparable weight, and it stands on the same ground line
- * every stop glyph stands on — so the trailhead is visibly one of the set.
+ * There used to be a second, FILLED pin at 16px inside the node disc. That was
+ * right at 16px and wrong at 128px on the plate: blown up it is a heavy solid
+ * silhouette in a carousel whose other ten plates hold delicate line drawings,
+ * and the two read as belonging to different products. The disc is gone now
+ * and this is the only pin left — stroked, in the glyph set's own 48x48 box,
+ * at a comparable weight, standing on the same ground line every stop glyph
+ * stands on, so the trailhead is visibly one of the set.
  */
 const PinMark = ({ className }: { className?: string }) => (
   <svg
@@ -196,6 +193,36 @@ const PinMark = ({ className }: { className?: string }) => (
   >
     <path d="M24 41C24 41 37 28 37 20A13 13 0 1 0 11 20C11 28 24 41 24 41Z" />
     <circle cx="24" cy="20" r="4.5" />
+    <path d="M4 43H44" />
+  </svg>
+);
+
+/**
+ * The finale's mark, and the reason there are two of these.
+ *
+ * Both terminals drew `PinMark` and were told apart only by ink colour, so a
+ * cold review landed on it in one line: ARRIVING LOOKED LIKE STARTING. The two
+ * ends of a treasure hunt are the one pair on this page that must not be
+ * confusable, and a hue is not enough to carry that — least of all for the
+ * ~8% of the boys at this event who will not see the difference between a grey
+ * pin and a gold one.
+ *
+ * Same 48x48 box, same stroke weight, and standing on the same ground line
+ * every stop glyph stands on, so it still belongs to the set.
+ */
+const FlagMark = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 48 48"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+    className={className}
+  >
+    <path d="M16 43V7" />
+    <path d="M16 9H35L30 15.5L35 22H16Z" />
     <path d="M4 43H44" />
   </svg>
 );
@@ -309,11 +336,17 @@ export default function TrailSwipe({
           bestDelta = delta;
           best = i;
         }
-        /* 1 dead centre, falling to 0 one slide away. Squared so the lift
-           holds near the middle and drops off late, which reads as the card
-           settling rather than as a linear ramp. */
+        /* 1 dead centre, falling to 0 one slide away, SMOOTHSTEPPED.
+
+           It was squared, on the theory that holding the lift near the middle
+           reads as the card settling. Squared is not symmetric: at half a
+           slide out it returns 0.25, so the card stays visibly small for most
+           of the travel and then rushes the last third — the ramp itself was
+           part of what felt snappy. smoothstep is flat at both ends and
+           steepest in the middle, which is the shape of the gesture. */
         const linear = Math.max(0, 1 - delta / b.width);
-        el.style.setProperty("--t", (linear * linear).toFixed(4));
+        const t = linear * linear * (3 - 2 * linear);
+        el.style.setProperty("--t", t.toFixed(4));
       });
 
       setActive((prev) => (prev === best ? prev : best));
@@ -463,7 +496,7 @@ export default function TrailSwipe({
           className="bg-foreground/10 relative h-px flex-1 overflow-hidden rounded-full"
         >
           <span
-            className="bg-brand-text absolute inset-y-0 left-0 rounded-full transition-[width] duration-300 ease-out motion-reduce:transition-none"
+            className="bg-foreground/55 absolute inset-y-0 left-0 rounded-full transition-[width] duration-500 ease-out motion-reduce:transition-none"
             style={{ width: `${((active + 1) / nodes.length) * 100}%` }}
           />
         </div>
@@ -540,7 +573,12 @@ export default function TrailSwipe({
               ref={(el) => {
                 slideRefs.current[i] = el;
               }}
-              className={cn(styles.slide, "relative flex flex-col pb-9")}
+              /* pb-7 is the lift shadow's reach (offset 15 + spread -12 +
+                 half of blur 30 = 18px) plus margin. It used to be pb-9 to
+                 catch a card scaled past its own box; the scale tops out at 1
+                 now, so nothing but the shadow lands down here — and the
+                 track clips this axis, so it has to fit. */
+              className={cn(styles.slide, "relative flex flex-col pb-7")}
               style={{ paddingTop: TOP }}
             >
               {/* UNDER the cards, not above them. The route is one continuous
@@ -557,43 +595,6 @@ export default function TrailSwipe({
               >
                 <path {...STROKE} d={d} />
               </svg>
-
-              {/* On the curve, straddling the card's top edge. Opaque, so it
-                  masks the dots it covers and the route reads as opening into
-                  a waypoint rather than being interrupted by a badge. */}
-              <div
-                style={{ top: TOP }}
-                /* z-20, above the active card's z-10. The disc is an earlier
-                   sibling than the <article>, so at equal z the card wins and
-                   the centred card — the only one that is scaled — swallowed
-                   the bottom half of its own number. The one node you are meant
-                   to be looking at was the one that disappeared.
-
-                   No `ring-stage` any more: the ring existed to mask the dots
-                   the disc sat among, and the route no longer passes through
-                   here. It is a station number on the card's top edge now, not
-                   a point on the line. */
-                className="bg-card border-border-strong absolute left-1/2 z-20 flex size-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border shadow-sm"
-              >
-                {node.kind === "terminal" ? (
-                  <Pin
-                    className={cn(
-                      "size-4",
-                      node.tone === "sun"
-                        ? "text-contrast-text"
-                        : "text-foreground",
-                    )}
-                  />
-                ) : (
-                  <span
-                    className={`font-ui text-ui leading-none font-semibold tabular-nums ${
-                      sun ? "text-contrast-text" : "text-brand-text"
-                    }`}
-                  >
-                    {String(node.number).padStart(2, "0")}
-                  </span>
-                )}
-              </div>
 
               {node.kind === "terminal" ? (
                 /* The two ends are not cards: no border, no shadow, no
@@ -619,21 +620,22 @@ export default function TrailSwipe({
                    tall as the cards leave room for. The terminal is card-height
                    with no void anywhere, and a tall panel with a single pin in
                    it reads as a trailhead — which is what these two are. */
-                <div className={cn(styles.card, "relative z-10 mx-auto flex flex-1 flex-col px-3 pt-8 pb-5 text-center")}>
+                <div className={cn(styles.card, "relative z-10 mx-auto flex flex-1 flex-col px-3 pt-5 pb-5 text-center")}>
                   <div
                     aria-hidden="true"
                     className={cn(
                       styles.plate,
                       "border-border flex min-h-28 flex-1 items-center justify-center rounded-[calc(var(--radius)-2px)] border",
-                      /* Tied to the route's own two colours rather than to a
-                         grey: sky for the start, the finale's gold for the
-                         end. A neutral pin here read as a dead placeholder.
-                         Alphas match the cards' own glyphs (/70) now that this
-                         is a stroke and not a fill — a line drawing at /35 on a
-                         pale plate is barely there. */
+                      /* The two ends are told apart by INK, and only the
+                         finale gets a colour. It used to be sky for the start
+                         and gold for the end, which spent the page's scarcest
+                         accent on a decorative pin at the exact moment the
+                         field, the plates and the chips were all sky too. Ink
+                         for the trailhead, gold for the finish — the same
+                         progression, one accent instead of two. */
                       node.tone === "sun"
                         ? "text-contrast-text/70"
-                        : "text-brand-text/55",
+                        : "text-foreground/55",
                     )}
                   >
                     {/* Sized to the panel it is in, not to the card's glyphs.
@@ -641,7 +643,11 @@ export default function TrailSwipe({
                         read as an empty frame with a speck in the middle —
                         which is exactly the "placeholder that looks broken"
                         failure. At 128px it is the subject of its own panel. */}
-                    <PinMark className="size-32 [stroke-width:1.1]" />
+                    {node.tone === "sun" ? (
+                      <FlagMark className="size-32 [stroke-width:1.1]" />
+                    ) : (
+                      <PinMark className="size-32 [stroke-width:1.1]" />
+                    )}
                   </div>
                   <p
                     className={`font-ui text-ui mt-4 font-semibold tracking-[0.14em] uppercase ${
@@ -666,48 +672,116 @@ export default function TrailSwipe({
                   className={cn(
                     styles.card,
                     styles.lift,
-                    "bg-card relative mx-auto flex flex-col rounded-[var(--radius)] border p-5 pt-8",
+                    /* flex-1: every card fills its slide, so all ten are the
+                       same height and `mt-auto` on the Maps button lands
+                       it at the SAME y on every stop. Card heights ran
+                       391-480px otherwise — title wrap plus whether the
+                       stop has proof chips — and the one control the card
+                       exists for moved under the thumb on every swipe. */
+                    "bg-card relative mx-auto flex flex-1 flex-col rounded-[var(--radius)] border p-5",
                     sun ? "border-border-strong" : "border-border",
-                    /* The middle card is the one you are reading; the others
-                       are context. Scale rather than width, so the snap
-                       positions, the seam geometry and the node discs are all
-                       untouched by it — only paint changes.
+                    /* STACKING ONLY. Both the size and the shadow are
+                       continuous now and live in the module, on --t.
 
-                       origin-TOP, not centre: the numbered disc straddles the
-                       card's top edge, and a card growing from its middle
-                       drags that edge up out from under the disc. Growing
-                       downward keeps the node exactly on the line. The slide's
-                       pb-9 is the headroom that growth needs.
+                       This branch used to also carry `scale-[1.06]` against
+                       `scale-100`, and that was a real defect rather than a
+                       duplicate: Tailwind v4's `scale-*` sets the standalone
+                       `scale` property, `.card` sets `transform`, and the two
+                       COMPOSE. The centred card measured 1.06 x 1.06 = 1.1236
+                       — 538px rendering at 604px — with half of the lift
+                       arriving as a step at the midpoint. That step is what
+                       felt mechanical, and the 30px it added past the slide is
+                       what gave the track vertical scroll and clipped the Maps
+                       button. See the note on `.card` in the module.
 
-                       SIZE AND SHADOW ONLY. The off-centre cards were also
-                       dimmed to `opacity-70`, which looked right and was not:
-                       ink.js measured the rendered result at 3.28:1 on the
-                       proof chips, 3.57:1 on the Maps button and 3.73:1 on the
-                       body copy, all under the 4.5 floor, on cards that are
-                       perfectly readable content a desktop reader will read.
+                       `shadow-card` / `shadow-sm` went with it, and they were
+                       already dead: `.lift` is unlayered so it outranks a
+                       Tailwind utility, and it was the shadow being painted.
+
+                       Still no dimming. The off-centre cards were once
+                       `opacity-70`, which looked right and was not: ink.js
+                       measured 3.28:1 on the proof chips, 3.57:1 on the Maps
+                       button and 3.73:1 on the body copy, all under the 4.5
+                       floor, on cards a desktop reader will actually read.
                        `audit.js` said "contrast failures: none" throughout,
                        because opacity is invisible to a CSS-derived number.
                        Emphasis that costs legibility is not emphasis. */
-                    isActive
-                      ? "shadow-card z-10 scale-[1.06]"
-                      : "scale-100 shadow-sm",
+                    isActive ? "z-10" : "",
                   )}
                 >
-                  {/* The drawing at a size worth looking at. On the vertical
-                      trail this is a 44px tile wedged beside the title,
-                      because a full-width card has no room for anything else;
-                      one card per screen is what buys it back. */}
-                  <div
-                    aria-hidden="true"
-                    className={cn(
-                      styles.plate,
-                      "border-border text-contrast-text/70 flex h-28 items-center justify-center rounded-[calc(var(--radius)-2px)] border",
-                    )}
-                  >
-                    <StopGlyph
-                      name={glyph ?? "cathedral"}
-                      className="size-20 [stroke-width:1.3]"
-                    />
+                  {/* The drawing at a size worth looking at. One card per
+                      screen is what buys the room for it: on the vertical
+                      trail this had to be a 44px tile wedged beside the title,
+                      because a full-width card had no room for anything else.
+
+                      88px in a 112px plate, up from 72 in 96. The drawings
+                      carry more detail than they used to — four arches under
+                      four windows on `college`, a five-lobed canopy on
+                      `school` — and detail that cannot be resolved is just
+                      noise. Costs 16px of card height, and because this trail
+                      is a horizontal carousel that is 16px ONCE, not once per
+                      card: measured 1808px to 1824px at 390px (+0.88%) and
+                      1686px to 1702px at 1440 (+0.95%). The vertical trail
+                      this replaced would have paid it ten times over.
+
+                      No text colour on the plate any more: the glyph paints
+                      itself with the `--glyph-gold-*` gilt and no longer
+                      inherits `currentColor`. `text-contrast-text/70` here was
+                      what made the drawings olive, and leaving it would be a
+                      dead class that reads as though it still governs them.
+
+                      The wrapper is here so the station badge can sit on the
+                      plate's corner. The badge is a SIBLING of the plate, not a
+                      child: the plate is aria-hidden — it is decoration — and
+                      the stop's number is not. */}
+                  <div className="relative">
+                    <div
+                      aria-hidden="true"
+                      className={cn(
+                        styles.plate,
+                        "border-border flex h-28 items-center justify-center rounded-[calc(var(--radius)-2px)] border",
+                      )}
+                    >
+                      <StopGlyph
+                        name={glyph ?? "cathedral"}
+                        className="size-[5.5rem] [stroke-width:1.5]"
+                      />
+                    </div>
+                    {/* The station number. Near-black, not sky: it was one of
+                        the three blues stacked here, and it is a label rather
+                        than an action. `sun` stops keep the gold, because that
+                        tone is what marks the finale.
+
+                        Size and colour in a template literal, never through
+                        cn(): tailwind-merge does not know --text-ui exists,
+                        reads `text-ui` as a colour and drops one of the pair. */}
+                    <span
+                      className={`bg-card border-border-strong font-ui text-ui absolute top-2.5 left-2.5 flex size-8 items-center justify-center rounded-full border leading-none font-semibold tabular-nums ${
+                        sun ? "text-contrast-text" : "text-foreground"
+                      }`}
+                    >
+                      {String(node.number).padStart(2, "0")}
+                    </span>
+                    {/* The score, opposite the number, ON the plate.
+
+                        It used to sit at the end of the proof-chip row under
+                        `ml-auto`. That worked on eight cards and broke on two:
+                        when two chips fill the row, flex-wrap drops the pill
+                        onto a second line ALONE, right-aligned against nothing,
+                        and the row went from 27.6px to ~61px. Card heights then
+                        ran 433-482px, so the Maps button moved ~51px between
+                        consecutive stops — the thumb target shifting every time
+                        you advance, on the one control the card exists for.
+
+                        Up here it cannot wrap, the row below holds only proofs,
+                        every card loses a row of height, and the plate stops
+                        being lopsided: number left, drawing centred, score
+                        right. */}
+                    {typeof node.step.points === "number" ? (
+                      <span className="bg-contrast text-foreground font-ui text-ui absolute top-2.5 right-2.5 rounded-full px-2.5 py-1 leading-none font-semibold tabular-nums">
+                        {node.step.points}&nbsp;p
+                      </span>
+                    ) : null}
                   </div>
 
                   <h3 className="text-h3 text-card-foreground relative mt-4">
@@ -738,7 +812,21 @@ export default function TrailSwipe({
                          neither number is visible from the CSS. */
                       <Link
                         href={`/blajhunt/${place.slug}`}
-                        className="focus-visible:ring-ring focus-visible:ring-offset-card rounded-sm after:absolute after:inset-x-0 after:-inset-y-3 after:content-[''] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                        /* THE RING IS ON THE ::after, NOT ON THE LINK.
+                           The link is inline, so on a title that wraps — three
+                           of the ten do at 390px — Chromium paints a ring
+                           around EACH line fragment. The two fragments overlap
+                           by about 4px and both dark edges land on top of the
+                           words, so focusing the card made its own title the
+                           hardest thing on it to read. A cold review caught it;
+                           `audit.js` cannot see it, because nothing about the
+                           declared CSS is wrong.
+
+                           The overlay is already a single absolutely
+                           positioned box covering the whole hit area, so
+                           ringing that instead gives exactly one rectangle
+                           around exactly the thing that is clickable. */
+                        className="focus-visible:after:ring-ring rounded-sm after:absolute after:inset-x-0 after:-inset-y-3 after:rounded-md after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
                       >
                         {node.step.title}
                         <span
@@ -754,48 +842,62 @@ export default function TrailSwipe({
                   </h3>
 
                   {place ? (
-                    <p className="text-foreground/80 mt-2">{place.standfirst}</p>
+                    /* font-medium, not a sixth type size — the ramp is
+                       five steps and adding one is a defect. Weight plus the
+                       gap below is enough to split the lead off the history;
+                       they were the same size, same leading and 1.44:1 apart
+                       in colour, which read as seven undifferentiated lines. */
+                    <p className="text-foreground/80 mt-2 font-medium">
+                      {place.standfirst}
+                    </p>
                   ) : null}
 
                   {/* One paragraph of the place's own history, clamped. The
                       rest is a tap away on the stop's page — the card is meant
                       to be read standing in the street, not studied. */}
+                  {/* mt-4, not mt-2.5. 10px is off the 4/8/12/16 scale, and
+                      it also tied the history to the lead as tightly as the
+                      lead is tied to the title — related things have to sit
+                      closer than unrelated ones. */}
                   {place?.body[0] ? (
-                    <p className="text-muted-foreground mt-2.5 line-clamp-4">
+                    <p className="text-muted-foreground mt-4 line-clamp-3">
                       {place.body[0]}
                     </p>
                   ) : (
-                    <p className="text-muted-foreground mt-2.5">
+                    <p className="text-muted-foreground mt-4">
                       {node.step.description}
                     </p>
                   )}
 
-                  <div className="mt-5 flex flex-wrap items-center gap-2">
-                    {node.step.proofs?.length ? (
+                  {/* Proofs only, and the row is gone entirely when a stop
+                      has none — an empty flex row still spends its margin. */}
+                  {node.step.proofs?.length ? (
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
                       <ul className="flex flex-wrap gap-2">
                         {node.step.proofs.map((proof) => (
                           <li
                             key={proof}
-                            className="border-brand/45 bg-brand/5 text-brand-text font-ui text-ui rounded-full border px-2.5 py-0.5 font-medium tracking-[0.08em] uppercase"
+                            /* Neutral. These were border-brand/45 on
+                               bg-brand/5 with brand ink — a third blue, on a
+                               card that already had a blue plate above it and
+                               a blue button below it, for a chip that only
+                               labels what proof the stop wants. --muted-
+                               foreground on --muted is 7.4:1. */
+                            className="border-border bg-muted text-muted-foreground font-ui text-ui rounded-full border px-2.5 py-0.5 font-medium tracking-[0.08em] uppercase"
                           >
                             {proof}
                           </li>
                         ))}
                       </ul>
-                    ) : null}
-                    {typeof node.step.points === "number" ? (
-                      <span className="bg-contrast text-foreground font-ui text-ui ml-auto shrink-0 rounded-full px-2.5 py-1 font-semibold tabular-nums">
-                        {node.step.points}&nbsp;p
-                      </span>
-                    ) : null}
-                  </div>
+                    </div>
+                  ) : null}
 
                   {place ? (
                     <a
                       href={mapsUrl(place)}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="bg-primary text-primary-foreground font-ui focus-visible:ring-ring focus-visible:ring-offset-card mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-base font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
+                      className="bg-primary text-primary-foreground font-ui focus-visible:ring-ring focus-visible:ring-offset-card mt-auto inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-base font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
                     >
                       Deschide în Maps
                       <span aria-hidden="true">&#8599;</span>

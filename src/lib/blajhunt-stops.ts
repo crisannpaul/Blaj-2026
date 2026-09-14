@@ -70,28 +70,28 @@ export const BLAJHUNT_STOPS: BlajhuntStop[] = [
   {
     title: "Liceul „Ștefan Manciulea” și Grădina Botanică",
     description:
-      "O dată din secolul al XVIII-lea și un copac plantat la zece ani după Marea Unire. Amândouă vă așteaptă în aceeași curte.",
+      "Identificarea unei date specifice din secolul al XVIII-lea și un copac plantat la zece ani după Marea Unire.",
     points: 100,
     proofs: ["Răspuns", "Foto"],
   },
   {
     title: "Biserica Grecilor",
     description:
-      "Un singur nume, într-un cimitir mic. O întrebare scurtă — dar răspunsul nu e la vedere de la poartă.",
+      "Un singur nume, într-un cimitir mic. O întrebare scurtă, dar răspunsul nu e la vedere de la poartă.",
     points: 100,
     proofs: ["Răspuns"],
   },
   {
     title: "Castelul Mitropolitan",
     description:
-      "Cinci plicuri ascunse în curte și un mesaj care nu are sens până nu sunt găsite toate. Singura probă pe care nu o poate rezolva un singur om.",
+      "Cinci plicuri ascunse în curte și un mesaj care nu are sens până nu este pus cap la cap.",
     points: 100,
     proofs: ["Căutare", "Răspuns"],
   },
   {
     title: "Casa Maniu",
     description:
-      "Găsiți intrarea potrivită — nu e cea la care vă gândiți — și apoi ridicați privirea.",
+      "Găsiți intrarea potrivită, nu e cea la care vă gândiți, și apoi ridicați privirea.",
     points: 100,
     proofs: ["Foto"],
   },
@@ -105,7 +105,7 @@ export const BLAJHUNT_STOPS: BlajhuntStop[] = [
   {
     title: "Casa Ioan Suciu",
     description:
-      "Înainte de a fi episcop a fost elev. În casă s-a păstrat o hârtie din anii aceia.",
+      "Înainte de a fi episcop a fost elev. În casa sa s-a păstrat o dovadă din anii aceia.",
     points: 100,
     proofs: ["Răspuns"],
   },
@@ -119,7 +119,7 @@ export const BLAJHUNT_STOPS: BlajhuntStop[] = [
   {
     title: "Câmpia Libertății",
     description:
-      "Un videoclip de cel mult două minute, cu toată echipa în el, un semn distinctiv inventat de voi și o formulă de încheiere pe care o primiți acolo.",
+      "Un videoclip de cel mult două minute, cu toată echipa în el, un semn distinctiv inventat de voi și formula de încheiere: „Cu drag, din Blaj!”",
     points: 100,
     proofs: ["Video"],
     tone: "sun",
@@ -128,7 +128,7 @@ export const BLAJHUNT_STOPS: BlajhuntStop[] = [
     // No task exists for this stop in either source document. The copy is
     // written so it can ship as-is if one is added, and so it says nothing
     // untrue if one is not.
-    title: "Protopopiatul Blaj",
+    title: "DE ȘTERS LOCAȚIA!!!",
     description:
       "Ultima oprire din regulament. Detaliile probei se anunță la start.",
     points: 100,
