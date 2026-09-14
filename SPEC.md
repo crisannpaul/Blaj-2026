@@ -1304,6 +1304,13 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     fits. No scroll at any of the four; `audit.js` clean. **The copy block's
     position is not a variable of this layout** — it is `/`'s, and the letter
     fits around it, not the other way round.
+  - **Fourth cut: „it's good, you can move the letter to the right more.”**
+    The grid is `justify-content: space-between` now: the copy column stays
+    at 96px from the left, the card sits 96px from the right, mirroring it,
+    and the photographs run between the two. Measured: card at x=832 (1440),
+    1312 (1920), 1952 (2560); the copy block unchanged at every width; at
+    1280 there is no free space to distribute, so the card stays beside the
+    copy at x=672 as before. `audit.js` clean.
 
 - **2026-09-14, evening (the resend: every room, every pin, four answers)** —
   the four questions this session put to the organizers came back answered, and

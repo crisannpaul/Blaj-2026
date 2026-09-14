@@ -74,19 +74,21 @@ import { WelcomeLetter } from "@/components/ui/welcome-letter";
  *    band stacks like a tablet instead, and the grid starts where both columns
  *    have room.
  *
- *  - THE COLUMNS ARE FIXED AND ANCHORED LEFT, NOT FLUID AND CENTRED. The copy
- *    column is the copy block's own 38rem and the card's is 32rem, the grid is
- *    `justify-content: start`, and the padding is the `px-24` that `/` uses —
- *    so the kicker, title, lead and panels sit at exactly 96px from the left
- *    edge at every width, which is where `/` has them and where the user
- *    wants them: "it was perfect where it was before, to the left." The first
- *    cut used `1.15fr : 1fr` inside a centred `max-w-[96rem]`, and on a wide
- *    screen that walked the whole fold inward — 288px from the edge at 1920,
- *    608 at 2560 — which the user saw at once and rightly rejected. Fixed
- *    columns also keep the letter beside the copy rather than pinned to the
- *    far edge with a gap in the middle, and leave the right of a wide screen
- *    to the photographs, as `/` does. Below 38 + 32rem + gap (1472px) both
- *    columns shrink from their maxima — 1280 still gives the title room.
+ *  - THE COLUMNS ARE FIXED, THE COPY IS ANCHORED LEFT, THE LETTER RIGHT. The
+ *    copy column is the copy block's own 38rem and the card's is 32rem, the
+ *    grid is `justify-content: space-between`, and the padding is the `px-24`
+ *    that `/` uses — so the kicker, title, lead and panels sit at exactly 96px
+ *    from the left edge at every width, which is where `/` has them and where
+ *    the user wants them ("it was perfect where it was before, to the left"),
+ *    and the card sits 96px from the right edge, mirroring them, with the
+ *    photographs running between the two. The first cut used `1.15fr : 1fr`
+ *    inside a centred `max-w-[96rem]`, and on a wide screen that walked the
+ *    whole fold inward — 288px from the edge at 1920, 608 at 2560 — which the
+ *    user saw at once and rejected. The second put the card 64px off the
+ *    copy's right edge, and the user asked for it further right; the edge is
+ *    the one position that needs no number. Below 38 + 32rem + gap (1472px)
+ *    the free space is gone and both columns shrink from their maxima — 1280
+ *    still gives the title room.
  *
  *  - BELOW `xl` THE CARD ALIGNS TO THE COPY COLUMN and carries a wash of its
  *    own. From `sm` it is capped at 33rem — the copy block's own width — so
@@ -172,7 +174,7 @@ export default function Scrisoare() {
           <DiagonalMarqueeCarousel bottomFade={false} />
         </div>
 
-        <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] xl:grid xl:min-h-[100svh] xl:grid-cols-[minmax(0,38rem)_minmax(0,32rem)] xl:items-center xl:justify-start xl:gap-x-16 xl:px-24 xl:py-10">
+        <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] xl:grid xl:min-h-[100svh] xl:grid-cols-[minmax(0,38rem)_minmax(0,32rem)] xl:items-center xl:justify-between xl:gap-x-16 xl:px-24 xl:py-10">
           {/* THE FOLD. Bottom-left on a phone, 48px short of the screen so the
             letter's kicker shows under the panels; a centred left column from
             xl. */}
