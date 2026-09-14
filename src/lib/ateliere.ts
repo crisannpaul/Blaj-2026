@@ -468,21 +468,108 @@ export const atelierBySlug = (slug: string): Atelier | undefined =>
   ATELIERE.find((a) => a.slug === slug);
 
 /**
- * What the site prints: position in this list, 1-based and zero-padded — "01"
- * through "10", no gaps. Deliberately NOT `a.number`, which is the organizers'
- * numbering and runs 02–11.
+ * What the site prints — and since 14 Sep it is simply the organizers' own
+ * number, zero-padded: "01" through "11".
+ *
+ * ── Why this used to be a position counter ──────────────────────────────────
+ * The organizers number the hunt A1 and the workshops A2–A11. The site used to
+ * list only the workshops, so printing their numbers would have opened the
+ * strip on "Atelier 02"; it counted positions instead and printed 01–10, one
+ * less than the paperwork all the way down. (Before 14 Sep it was worse: there
+ * was no A8, so their numbering had a hole in it as well.)
+ *
+ * Both reasons are gone. The hole closed when A8 arrived, and the offset
+ * closed when the Blajhunt took its rightful place at the head of the strip as
+ * `HUNT_CARD` — A1, where it always was. Site and paperwork now agree, which
+ * is what the site wanted in the first place.
  *
  * Every display site goes through here — the stage's credit line, the detail
- * page's kicker and its prev/next links — so the two numbering schemes cannot
- * drift apart on the page.
- *
- * Falls back to the organizers' number for an entry that is not in ATELIERE,
- * which only happens if a caller builds an Atelier by hand; indexOf would
- * otherwise silently print "00".
+ * page's kicker and its prev/next links — so a workshop cannot be numbered one
+ * way in one place and another way elsewhere.
  */
-export const atelierNo = (a: Atelier): string => {
-  const i = ATELIERE.findIndex((x) => x.slug === a.slug);
-  return String(i >= 0 ? i + 1 : a.number).padStart(2, "0");
+export const atelierNo = (a: Atelier): string => String(a.number).padStart(2, "0");
+
+/**
+ * ATELIERE must stay A2–A11, contiguous and in order, or `atelierNo` and the
+ * strip's reading order quietly disagree — the list order is what the visitor
+ * sees and `number` is what gets printed on it. Cheap to assert, and it is the
+ * exact invariant that made the old position counter necessary.
+ *
+ * Dev only: `next build` runs this once per module load, and throwing here
+ * fails the build rather than shipping a mis-numbered strip.
+ */
+if (process.env.NODE_ENV !== "production") {
+  ATELIERE.forEach((a, i) => {
+    const want = i + 2;
+    if (a.number !== want) {
+      throw new Error(
+        `ateliere: ATELIERE[${i}] is "${a.slug}" with number ${a.number}, expected ${want}. ` +
+          `The list must run A2–A11 in order — atelierNo() prints \`number\` and the strip ` +
+          `renders list order, so a gap or a swap here mis-numbers the page.`,
+      );
+    }
+  });
+}
+
+/**
+ * The Blajhunt, as the first card on the workshops strip.
+ *
+ * It is `A1` in the organizers' numbering — every comment in this file that
+ * says "A1 is the hunt" has said so since 8 Sep — but it had no card, so the
+ * strip opened on A2. It has one now, at the head, and clicking it leaves for
+ * `/blajhunt` rather than opening a workshop sheet: the hunt's page already
+ * exists and is a richer thing than `/ateliere/[slug]` could be.
+ *
+ * ── Why it is NOT an entry in ATELIERE ──────────────────────────────────────
+ * `Atelier` is a transcription of one of the organizers' workshop documents:
+ * `leads`, `sessions`, `seats`, `durationMin`, `body`, `tags`. The hunt has
+ * none of those — it is not seated, not timed in groups and not run by a
+ * coordinator — so joining that list would mean inventing five fields to
+ * satisfy a type, and the one thing this file does not do is invent. It would
+ * also hand `/ateliere/[slug]` a route to prerender and `generateStaticParams`
+ * a page that must not exist.
+ *
+ * So it is its own shape, carrying only what a card paints. `meta` is written
+ * out rather than derived because "45 min · 60 locuri" is meaningless for a
+ * hunt; these are the same three figures `/blajhunt` puts under its hero,
+ * minus the team size, which does not fit the two-slot strip.
+ */
+export interface HuntCard {
+  slug: string;
+  number: number;
+  title: string;
+  cardTitle: string;
+  hook: string;
+  /** Replaces the `N min` / `N locuri` pair. */
+  meta: readonly string[];
+  /** Where the CTA goes. The whole point: it leaves /ateliere. */
+  href: string;
+  ctaLabel: string;
+  image: string;
+  /** Unused since the artwork landed on 14 Sep. Kept, like `Atelier`'s, for
+   *  the next gap — the card and the strip already know how to say so. */
+  imagePlaceholder?: boolean;
+  accent: "sky" | "gold";
+}
+
+export const HUNT_CARD: HuntCard = {
+  slug: "blajhunt",
+  number: 1,
+  title: "Blajhunt",
+  cardTitle: "Blajhunt",
+  hook:
+    "Ia-ți gașca și descoperă Blajul așa cum nu l-ai mai văzut: zece opriri, indicii de urmărit și probe de rezolvat pe teren.",
+  // The hunt's own hero stats, in the strip's two slots.
+  meta: ["10 opriri", "1000 puncte"],
+  href: "/blajhunt",
+  // Not "Detalii" like the ten. The card leaves for a different kind of page
+  // and the label is the only warning the visitor gets before it does.
+  ctaLabel: "Vezi traseul",
+  image: "/ateliere/blajhunt.webp",
+  // Gold, which is what keeps the strip alternating: the ten below run
+  // sky/gold from A2, so the card in front of them has to be gold. Changing it
+  // to sky means flipping all eleven, not one.
+  accent: "gold",
 };
 
 export const mapsUrl = (query: string): string =>

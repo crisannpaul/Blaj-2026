@@ -28,7 +28,11 @@ import { Heart } from "lucide-react";
  * There is no kicker. The first cut had „Cuvânt de bun venit” above the
  * salutation as site chrome, so the card read as a letter at a glance; the
  * user cut it. The salutation does that job on its own — and it is now what
- * peeks under the fold on a phone, see `scrisoare/page.tsx`.
+ * peeks under the fold on a phone, see `page.tsx`.
+ *
+ * Every string in LETTER is in the copy inventory as AC-07 to AC-13
+ * (`scripts/copy/inventory.mjs`), pinned by exact text: change one here,
+ * change it there, or the inventory refuses to build.
  *
  * Type: two steps of the ramp — the salutation at `h2`, everything else at
  * `body`. The salutation was `h3` (20px) in the first cut, on the argument

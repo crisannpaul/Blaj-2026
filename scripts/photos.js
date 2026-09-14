@@ -175,15 +175,22 @@ const GALLERY = { height: 720, maxLong: 1800, quality: 0.8 };
 const BACKDROP = { w: 120, h: 160, quality: 0.72 };
 
 /**
- * The workshops, in the order `src/lib/ateliere.ts` lists them. `no` is the
- * ORGANIZERS' number (A1 is the hunt, so they run A2–A11); the position in
- * this array is what "Atelier N" in a filename means.
+ * Everything with a card on the /ateliere strip, in strip order: the Blajhunt
+ * (A1, from HUNT_CARD) then the ten workshops in the order
+ * `src/lib/ateliere.ts` lists them. `no` is the ORGANIZERS' number, and since
+ * the hunt joined the strip it is also the site's — A1–A11 throughout.
  *
- * A8, A10 and A11 arrived on 14 Sep and A8 inserted itself at position 7, so
- * every "Atelier N - Thumbnail" filename from 7 up now resolves to a DIFFERENT
- * workshop than it did before that date. Name by slug and the trap disappears.
+ * The position in this array is what "Atelier N" in a filename means, and it
+ * has now shifted TWICE: A8 arrived on 14 Sep and took position 7, then the
+ * hunt took position 1 and pushed everything down again. A file named
+ * "Atelier 3 - Thumbnail.jpg" has meant three different workshops in one week.
+ * Name by slug. Everything in poze-org already is.
  */
 const WORKSHOPS = [
+  // A1. Not an entry in ATELIERE — it is HUNT_CARD, a card on the same strip
+  // whose page is /blajhunt. It is here because it needs the same two assets
+  // as everything else: a 3:4 card and a 120px backdrop.
+  { slug: "blajhunt", no: 1, title: "Blajhunt (A1, the hunt)" },
   { slug: "masina-timpului", no: 2, title: "Cu mașina timpului prin Blaj" },
   { slug: "episcopul-tinerilor", no: 3, title: "În vizită la Episcopul Tinerilor" },
   { slug: "curajul-de-a-ti-urma-inima", no: 4, title: "Curajul de a-ți urma inima" },
@@ -230,10 +237,9 @@ const RAW = [
  * a backdrop still is, because a stage where most slides fade to a soft field
  * and one snaps into a sharp photograph reads as a bug.
  *
- * EMPTY AGAIN, and twice now it has been emptied rather than deleted. It held
- * A7 until 8 Sep and A8/A10/A11 for six hours on 14 Sep, between their
- * documents arriving and the user's artwork for them landing in poze-org. All
- * ten cards are settled artwork again.
+ * EMPTY, for the third time in a week. It held A7 until 8 Sep, A8/A10/A11 for
+ * six hours on 14 Sep, and the Blajhunt for about an hour that evening. All
+ * eleven cards on the strip are settled artwork from poze-org.
  *
  * TO USE IT: add { slug, src } naming a file already in public/ateliere/ (the
  * 1.jpg-6.jpg stock frames are kept there for exactly this) and set
