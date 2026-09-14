@@ -1215,8 +1215,18 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   literals (run clean after that, 252 rows). D10's row records that the
   marquee now runs behind the whole page. **Not merged into master and not on
   Vercel:** this session cannot touch the main checkout (another session edits
-  it), so the branch is pushed and a draft PR is open; `:3004` serves the
-  promoted `/` for one last look. Landing it: merge the PR (the branch also
+  it), so the branch is pushed and a draft PR is open —
+  **https://github.com/crisannpaul/Blaj-2026/pull/1** — and `:3004` serves the
+  promoted `/`. Before the PR was cut, the main checkout was diffed against the
+  branch file by file: the other session had since changed `ateliere/page.tsx`,
+  `lib/ateliere.ts`, `scripts/photos.js`, added the hunt's thumbnails and
+  replaced `landing/blajhunt.webp`; all carried over unchanged, and
+  `inventory.mjs` (their AL-07…09) and this file three-way merged, two
+  conflicts resolved by hand — so the branch is the main checkout as of ~19:30
+  plus the letter, and deploying it rolls nothing back. **The user asked for a
+  production deploy; the session's permission gate refused the `vercel --prod`
+  command, so the command was handed to the user to run** (see the next entry
+  once it ships). Landing it: merge the PR (the branch also
   carries a snapshot commit of the 14 Sep working copy, so master's uncommitted
   edits to the same files will need reconciling — `page.tsx` above all), or
   apply the five files by hand: `src/app/page.tsx`,
