@@ -437,8 +437,12 @@
    bend a backdrop (WebKit) still applies the filter to the layer's own
    pixels: with the fill on the same layer that shows as wavy transparent
    edges on a flat tint. On a layer with no content and no fill it shows as
-   nothing. The frost is oversized by 1.5rem and the pane clips it, so the
-   throw never samples past the edge of what is there.
+   nothing. The frost is oversized by 24px and the pane clips it, and the
+   filter fades its throw to nothing over that margin and the next ~16px in,
+   so the pane's edge stays straight — a throw AT the edge pulls what is past
+   it (nothing) into view as a wavy light seam, which is what desktop Chrome
+   showed on 14 Sep. The 24px and the filter's mask are one decision; see
+   glass-filter.tsx.
 
    What did NOT survive from the original: its hover-grows-padding transitions
    (layout animation, and `hover:` does not exist on the target device), its
@@ -513,10 +517,16 @@
 }
 
 /* The frost. Oversized so the blur has neighbours at the edge and the
-   refraction has somewhere to pull from; the pane clips it back. */
+   refraction has somewhere to pull from; the pane clips it back.
+
+   THE 24px IS READ BY THE FILTER. `glass-distortion` (glass-filter.tsx) fades
+   its throw to nothing over the outer ~40px of THIS box, which it takes to be
+   the pane's edge plus 16px — that is what keeps the pane's edge straight.
+   Pixels, not rem, so a visitor's font-size setting cannot move the pane's
+   edge out from under the fade. Change one and change the other. */
 @utility glass-frost {
   position: absolute;
-  inset: -1.5rem;
+  inset: -24px;
   pointer-events: none;
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));

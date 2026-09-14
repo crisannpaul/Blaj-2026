@@ -61,6 +61,14 @@ far was either invisible to the harness or introduced by trusting a number:
   `setAttribute` on a live SVG filter does **not** invalidate the cached
   backdrop: an A/B done that way compares a render with itself. Toggle the
   `filter` property instead. See SPEC 6.1e and 6.2.
+- **A displacement filter on a clipped backdrop bends the clip's edge.**
+  Chromium hands the filter the frosted backdrop already cut to the pane, so a
+  throw at the edge pulls nothing into view — wavy edges and a light seam at
+  the chip corners on desktop Chrome. The map is faded to neutral along the
+  edge with a mask built from an `feFlood`; masks eroded or blurred from
+  `SourceAlpha` changed **nothing**, because Skia clamps those primitives at
+  the input's bounds. The fade is in pixels and coupled to `glass-frost`'s
+  24px oversize — change one, change the other. See glass-filter.tsx.
 
 ## Always redeploy :3000 after a change
 

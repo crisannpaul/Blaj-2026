@@ -43,9 +43,10 @@ export const BRANCHES: readonly BranchPanel[] = [
 ];
 
 /**
- * THE LEAD IS LENGTH-CONSTRAINED, and the constraint is structural, not taste.
+ * THE LEAD IS LENGTH-CONSTRAINED ON `/`, and the constraint is structural, not
+ * taste. (`/glass` is not — see the end of this note.)
  *
- * The fold is `justify-end` inside `min-h-[100svh]`, so the copy block is
+ * `/`'s fold is `justify-end` inside `min-h-[100svh]`, so the copy block is
  * anchored to the BOTTOM and every extra line of lead pushes the kicker UP,
  * toward and then off the top of the screen. Measured slack below the cards is
  * exactly the 56px of bottom padding at every width from 375 to 768: there is
@@ -59,17 +60,42 @@ export const BRANCHES: readonly BranchPanel[] = [
  * most characters by far and are exactly what must NOT be cut, because naming
  * Cluj-Gherla is how a young person from Cluj-Gherla knows they are invited.
  *
- * If it grows again, the room comes from the CARDS, not from the top of the
- * screen — and that is a coupled decision with the vertical mark on a spine.
- * See the height note in `branch-panels.tsx` before changing either.
+ * The copy-review round came back on 14 Sep with 948 characters for this slot —
+ * a full welcome letter, "Dragi tineri" through to the Biroul's signature. That
+ * is 4.3x the box. Injected into the running `/` at 390 it took the lead from
+ * 128px to 563px, pushed the document to 1055px against an 844px fold and put
+ * BOTH branch panels under it; the letter's paragraph breaks also vanish here,
+ * because this slot is one <p>. What survives is the organizers' own first
+ * sentence, whose "în Mica Romă" is new and is theirs, plus the programme list
+ * folded back on. The rest of the letter is not lost — it wants a section of
+ * its own below the panels, with real paragraphs and the signature, and that is
+ * a layout decision rather than a copy one. (That note and these strings were
+ * written on master's `page.tsx` on 14 Sep and carried here the same day, so
+ * the two trees say the same thing; on this branch this file is where copy
+ * lands.)
+ *
+ * 220 characters renders in exactly the line count 219 did at every width from
+ * 320 to 844: 7 / 6 / 5 / 5 / 4. Count characters to get close, then count
+ * LINES, because the line count is what the box actually spends.
+ *
+ * If it grows again on `/`, the room comes from the CARDS, not from the top of
+ * the screen — and that is a coupled decision with the vertical mark on a
+ * spine. See the height note in `branch-panels.tsx` before changing either.
+ *
+ * `/glass` has no such ceiling: below `lg` its sheet hangs from the top of a
+ * page that scrolls, so a longer lead makes the sheet taller and the page
+ * longer and pushes nothing off the screen. Checked with the 8 Sep text at its
+ * full 305 characters plus a two-line kicker: at 390x844 the sheet is 656px
+ * and 188px of the marquee still shows under it. The organisers' final copy
+ * is landing here; on this branch this file is the one place it goes.
  */
 export const CONTENT = {
-  kicker: "Întâlnirea Intereparhială a Tineretului",
+  kicker: "Întâlnirea Intereparhială a Tinerilor",
   title: "Blaj 2026",
   meta: "19 septembrie 2026 · Blaj",
   lead:
     "La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia " +
     "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +
-    "împreună — rugăciune, voie bună, ateliere, prietenii noi și un oraș " +
+    "împreună în Mica Romă — rugăciune, ateliere, prieteni noi și un oraș " +
     "de descoperit.",
 } as const;

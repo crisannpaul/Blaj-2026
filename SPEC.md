@@ -758,9 +758,40 @@ still too dense for the user, who then sent the 21st.dev dock itself as the targ
 that reference, and it is what ships on the branch:
 
 - **The pane is clear — a quarter white, 6px of blur, a directional bevel.** Below `sm` a
-  bottom sheet (full width, rounded at the top, under the home indicator); from `sm` a card no
-  wider than the branch pair (`29rem` — the review found a 136px frosted void at 768 when it
-  followed the copy's 33rem), left-aligned as the copy is at `lg`.
+  sheet the full width of the screen, hanging from the top and rounded at the bottom only;
+  from `sm` a card no wider than the branch pair (`29rem` — the review found a 136px frosted
+  void at 768 when it followed the copy's 33rem), left-aligned as the copy is at `lg`. The
+  first three cuts had it as a bottom sheet; the next bullet is why it moved.
+- **Below `lg` the page scrolls, and the marquee is what it scrolls to (14 Sep, evening).**
+  The user, with the third cut on a phone: the copy and the two cards covered most of the
+  screen, the marquee showed in a strip along the top — "awkwardly seen… might as well remove
+  it, but I wanna keep it, it's so nice on desktop" — and the copy is about to grow as the
+  organisers' text lands. Their proposal, a scrollable page with the card up top and the
+  marquee below, is what was built, with one addition: the marquee is a **sticky,
+  viewport-tall backdrop** the sheet slides up and over, not a section further down, so the
+  glass gets the one moment it has a job on a phone — a pane passing over photographs — and
+  the scroll ends on a full screen of them. Mechanics (`page.tsx`): sticky box first in the
+  flow, `100lvh` tall — `lvh` because a phone's toolbar collapses on scroll and an `svh` box
+  would leave a strip of page background under the marquee at that moment; the sheet's column
+  pulled up over it by the same margin; a `100lvh` spacer after it; `overflow-x: clip` on
+  `main`, never `hidden`, which would make `main` the sticky element's scroll container; the
+  marquee's bottom fade off (`bottomFade={false}`), because a fade to page-white at the foot
+  of the first screen says the page ends there. From `lg` the fold is unchanged and does not
+  scroll. Geometry, measured on the build:
+
+  | viewport | sheet at load | marquee under it | the cards at load | with the 8 Sep 305-character lead and a two-line kicker |
+  |---|---|---|---|---|
+  | 390x844 | 584px | 260px | above the fold | sheet 656px, 188px of marquee |
+  | 375x667 | 623px | 44px | above the fold | 648px, 19px |
+  | 320x568 | 648px | — | lower 40px under the fold | 720px, 112px under |
+  | 768x1024 | 649px card | 351px | above | 721px, 279px |
+  | 844x390 | 479px card | — | 73px under the fold | 552px, 186px under |
+  | 1440x900 | 697px | no scroll | above | 722px, still no scroll |
+
+  Below `lg` every page is the sheet plus exactly one screen. What the third cut lost at
+  320x568 from the *top* — the kicker, 80px, clipped — this one loses at the *bottom* — the
+  cards' lower 40px — and a scroll reaches it. Copy that grows makes the sheet taller and the
+  page longer; nothing else moves.
 - **Three layers inside a clipping pane**, as the original has them: `glass-frost` (backdrop
   blur, oversized by 1.5rem, clipped) + `glass-liquid` (the SVG refraction), `glass-fill` (the
   tint, `--glass-tint-top` → `--glass-tint`), `glass-bevel` (light from the top left;
@@ -786,7 +817,8 @@ that reference, and it is what ships on the branch:
 
 **The refraction, and the day it cost.** `glass-filter.tsx` renders one SVG filter per page:
 turbulence → contrast stretch → blur → displacement (the original's specular-lighting stages
-computed a result nothing read; gone). Two things stood between the CSS and a visible bend:
+computed a result nothing read; gone). Two things stood between the CSS and a visible bend,
+and a third between a visible bend and a clean one:
 
 1. **A `mix-blend-mode` descendant switches off SVG backdrop filters for its whole stacking
    context.** The cards' `mix-blend-multiply` veil made Chromium isolate the landing's copy
@@ -799,6 +831,19 @@ computed a result nothing read; gone). Two things stood between the CSS and a vi
    throw of 22 moved the backdrop by two pixels. A linear transfer (slope 3) widens the map to
    its full range before the blur rounds it; at scale 28 that is ±6px typical, ±14px maximum,
    waves of ~150px.
+3. **A throw at the pane's edge bends the edge.** Chromium hands the filter the frosted
+   backdrop already clipped to the pane, so a displacement there pulls what lies past the edge
+   — nothing — into view: on desktop Chrome the chips' edges went wavy and a light seam opened
+   at their corners, which the user saw on the live page the same evening. The map is now
+   faded to neutral along the edge: a flood over the frost box — which `glass-frost` oversizes
+   past the pane by exactly **24px, in pixels** — blurred at σ=26 and re-thresholded to
+   14·(α−0.9) masks the noise, so the throw is 0 to ~10px inside the pane and full from ~24px.
+   Measured at 1440, ripple on against off: the sheet's outer 10px **0.0%** moved (16–28%
+   before), the ramp 10→24px, the interior unchanged at ~30%; the chip's outer 6px 17.5% →
+   1.0%. Two masks built from `SourceAlpha` instead — an erode, a blur-and-threshold — changed
+   nothing, to the decimal: Skia clamps those primitives at the input's bounds, so a shape that
+   fills its bounds never shrinks, and only a primitive with a region of its own has an edge to
+   decay from. The 24px and the mask are one decision; both files say so.
 
 And a harness trap that hid both for an hour: **`setAttribute` on a live SVG filter does not
 invalidate Chromium's cached backdrop.** Every A/B that changed `scale` and screenshotted
@@ -813,6 +858,10 @@ CPU throttle, before the refraction existed).
 -sat`, all `glass-`-prefixed so none can shadow a `:root` token — set per layer with arbitrary
 properties that reference tokens. `prefers-reduced-transparency: reduce` hides the frost and
 takes the fill to 94%; a browser without `backdrop-filter` gets the 90% wash `/` has today.
+The ripple's knobs are attributes in `glass-filter.tsx` — `baseFrequency`, the stretch's
+`slope`, `stdDeviation`, `scale`, and the edge fade's σ=26 and 14·(α−0.9) — plus the 24px in
+`glass-frost` the fade is measured from. None of them can be tuned live in DevTools (the cache
+trap below); rebuild, or point the layer's `filter` at a second filter with another id.
 
 **Ink, third cut** — `ink.js`, motion frozen (`INK_REDUCED=1`, `INK_TAB=2` for the second
 state), all pass:
@@ -825,8 +874,14 @@ state), all pass:
 | the kicker and the date line | no longer the weakest text on the page | near-black on a 24–32% pane |
 
 Tier 1 (`audit.js`): no overflow, no sub-12px text, no small targets, no console errors.
-`hittest.js`: 2 interactive, 0 unreachable. Fold overflow unchanged from the first cut — 80px at
-320x568 (92 on `/`), 101px on a sideways phone (97 on `/`), none at 375x667 and up.
+`hittest.js`: 2 interactive, 0 unreachable. Fold overflow stopped being a number that means
+anything below `lg` when the page began to scroll by design; the geometry table above is the
+measurement now (the third cut had 80px at 320x568 and 101px on a sideways phone, clipped).
+Ink re-measured after the scroll layout and the edge fade, motion frozen, both states: worst
+**7.41:1** at 390 (the lip's label), 7.57:1 at 1440, 10.37:1 at 320 — the same glyphs as
+before, within noise. Frame rate at 390 under 6x CPU throttle: 52.5 fps as shipped, 54.4 with
+the ripple off, 55.2 with no frost at all, 55.6 for `/`; the fade's extra blur and composite
+cost nothing measurable.
 
 **Cold review of the first cut (opus, 14 Sep)** — five SHOULD-FIX, two NIT, verdict fix-first;
 all five addressed by the third cut: grey blotches (18px → 6px blur, 72% → 25% white), chips
@@ -1269,7 +1324,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass` — **live at https://blaj2026.vercel.app/glass since 14 Sep** (production carries the branch tree; `/` is unchanged by it), and on :3002 beside :3000 (6.1e) — the clear, refracting third cut; the 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass` — **live at https://blaj2026.vercel.app/glass since 14 Sep** (production carries the branch tree as of the third cut; `/` is unchanged by it), and on :3002 beside :3000 (6.1e) — the clear, refracting third cut, since the evening of 14 Sep with straight pane edges and, below `lg`, a scrolling top sheet over a sticky marquee (:3002 and the preview URL in 6.1e; production still serves the bottom-sheet third cut until promoted); the 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
 
 ---
 
@@ -1344,6 +1399,19 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     drop nothing — promoted to production (`blaj2026-4l8onuq8f`). **https://blaj2026.vercel.app/glass
     is live**; `/`, `/ateliere`, `/blajhunt` 200, `/docs/Treasurehunt.docx` 404. `.vercelignore`
     gained `.next-*/` first, or the 66MB second build would have gone up with it.
+  - **The corners (same evening).** On desktop Chrome the user saw "weird edges at the
+    corners" of the chips — the displacement was bending the pane's clipped edge and opening a
+    light seam. The map now fades to neutral along every pane's edge (6.1e, item 3 of the
+    refraction list): a flood-built mask, because two `SourceAlpha` masks did nothing at all.
+    Sheet edge band 0.0% moved (was up to 28%), interior unchanged; the frost's oversize is
+    24px in pixels now and the filter is coupled to it.
+  - **The phone stack (same evening).** The user: the sheet covered most of a phone, the
+    marquee was "awkwardly seen" in a strip at the top and "might as well" go — but it is
+    "so nice on desktop" — and the copy is about to grow. Their proposal was a scrollable page
+    with the card up top and the marquee below; built as a top-hanging sheet over a sticky,
+    viewport-tall marquee with one extra screen of scroll (6.1e). Geometry table there; the
+    lead-length ceiling in `src/lib/landing.ts` now applies to `/` only. The marquee gained a
+    `bottomFade` prop (default on; `/` pixel-unchanged).
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`

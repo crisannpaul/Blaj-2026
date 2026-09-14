@@ -62,6 +62,13 @@ export interface DiagonalMarqueeCarouselProps {
    *  pane — enough to calm the field around the pane, not enough to leave it
    *  nothing to see through; `false` is none. @default true */
   columnWash?: boolean | "soft";
+  /** The white fade along the band's bottom edge below `lg`. `/` needs it: the
+   *  band ends where the fold ends, and a hard bottom edge under the copy read
+   *  as a cut. A page that lets the visitor scroll down INTO the band must turn
+   *  it off — a fade to page-white at the foot of the first screen says "the
+   *  page ends here", which is the opposite of what a peeking band should say.
+   *  @default true */
+  bottomFade?: boolean;
 }
 
 /**
@@ -258,6 +265,7 @@ export default function DiagonalMarqueeCarousel({
   fadeClassName = "",
   washClassName = "bg-background/22",
   columnWash = true,
+  bottomFade = true,
 }: DiagonalMarqueeCarouselProps) {
   // Each row is dealt from a different rotation of the deck, so a frame is
   // never directly above a copy of itself — an unrotated deal reads as tiled
@@ -332,7 +340,9 @@ export default function DiagonalMarqueeCarousel({
           phone all dropped the kicker onto raw photography. The copy carries
           its own scrim instead — see page.tsx. */}
       <div className="from-background pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b to-transparent" />
-      <div className="from-background pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t to-transparent lg:hidden" />
+      {bottomFade && (
+        <div className="from-background pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t to-transparent lg:hidden" />
+      )}
 
     </div>
   );
