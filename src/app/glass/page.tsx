@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ViewTransition } from "react";
 import DiagonalMarqueeCarousel from "@/components/ui/diagonal-marquee-carousel";
 import { BranchPanels } from "@/components/ui/branch-panels";
@@ -19,46 +18,30 @@ import { BRANCHES, CONTENT } from "@/lib/landing";
  * - **The copy sits on a pane, not under a wash.** `/` protects the kicker
  *   with a 90% `--background` gradient inset -50vw so it has no visible edges.
  *   A pane is the opposite idea: it has edges on purpose, and what is behind
- *   it stays a photograph. Below `sm` it is a sheet the full width of the
- *   screen — no horizontal room lost on a 390px phone — hanging from the top,
- *   rounded at the bottom only. From `sm` it is a free-standing card,
- *   left-aligned as the copy is at `lg`, and no wider than the branch pair:
- *   the cold review found a 136px frosted void beside the cards at 768 when
- *   the card followed the copy's 33rem instead.
+ *   it stays a photograph. From `sm` it is a free-standing card that hugs its
+ *   content, left-aligned as the copy is at `lg`, and no wider than the branch
+ *   pair: the cold review found a 136px frosted void beside the cards at 768
+ *   when the card followed the copy's 33rem instead.
  *
- * - **Below `lg` the page SCROLLS, and the marquee is what it scrolls to.**
- *   `/` is a bottom sheet in a screen that does not scroll, and on a phone the
- *   copy with its two branches covers most of it; the marquee showed in a
- *   strip along the top — "awkwardly seen", in the user's words, and the copy
- *   is still to grow (SPEC A3/A5). Here the sheet hangs from the TOP of the
- *   first screen with the marquee peeking under it, which is the cue that
- *   there is more, and the band is a sticky, viewport-tall backdrop the sheet
- *   slides up and over as the visitor scrolls, until one more screen of scroll
- *   leaves the photographs alone. That passing of a pane over pictures is the
- *   one moment glass has a job on a phone. Copy that grows makes the sheet
- *   taller and the page longer; nothing is pushed off the top any more and
- *   nothing is clipped. From `lg` the fold is what it was: sheet left,
- *   photographs right, no scroll.
+ * - **On a phone the card IS the screen, and the page does not scroll.** The
+ *   card fills the viewport inside a 12px margin, all four corners showing,
+ *   the copy at the top and the two branches pinned to the bottom in the
+ *   thumb zone (`mt-auto`). What the glass is for on a phone is the empty
+ *   middle of the pane, where the marquee shows through, and the margin round
+ *   it, where it shows plain. Copy that grows eats that middle first; only
+ *   past it does the card outgrow the screen and the page scroll — 320x568
+ *   and a phone held sideways, which is where `/` overflows too.
  *
- *   The mechanics: the sticky box is first in the flow and `100lvh` tall; the
- *   sheet's column follows with a `-100lvh` top margin so it starts over the
- *   box; the screen after it is the extra scroll. `lvh`, not `svh`: a phone's
- *   toolbar collapses on scroll and the viewport grows, and a backdrop sized
- *   to the small viewport would show a strip of page background under the
- *   marquee at that moment. `main` clips sideways with `overflow-x: clip` and
- *   never `hidden` — a hidden overflow on an ancestor makes it the sticky
- *   element's scroll container and the backdrop would scroll away with the
- *   page. The marquee's own bottom fade is off: a fade to page-white at the
- *   foot of the first screen says the page ends there. Its eager preload is
- *   off too, so the two card artworks are fetched before eleven decorative
- *   tiles that now precede them in the DOM.
- *
- * - **The end of the scroll is not a dead end.** The cold review's point: a
- *   full screen of marquee with no word and no link on it, 59% of the page,
- *   and the two branches — the page's whole job — behind you. So the extra
- *   screen carries, at its foot, a lip of glass with the archive's caption
- *   and the two branches again as plain links. It arrives only at the end of
- *   the scroll; at load it is a screen below the fold.
+ *   This is the user's own layout, and it replaced two others in one day.
+ *   The third cut was `/`'s bottom sheet: the copy covered most of the phone
+ *   and the marquee was "awkwardly seen" in a strip along the top. The next
+ *   was a top-hanging sheet over a sticky marquee with one extra screen of
+ *   scroll, so the pane slid over the photographs and the page ended on them;
+ *   the user looked at it on the phone and said no — "there is no point for
+ *   scrolling now" — and asked for the card to fit the whole screen with its
+ *   top edges visible. The marquee's edge fades are off (`topFade` /
+ *   `bottomFade`): with photographs meant to show in the margins, a fade to
+ *   page-white there would read as a white frame.
  *
  * - **The pane is CLEAR — a quarter white, 3px of blur.** The first cut was
  *   72% white and 18px of blur and the user said "more transparent" twice; the
@@ -94,12 +77,11 @@ import { BRANCHES, CONTENT } from "@/lib/landing";
  *
  * The `short:` / `tight:` height bands and the alternation of the pair are
  * `/`'s and are documented there. `tight:` (521–700px tall — an iPhone SE, a
- * 320x568) additionally takes 28px out of the sheet's vertical rhythm here,
- * because on those phones the marquee under the sheet was down to a 44px
- * sliver and the cue that there is more below went with it. The sheet's top
- * padding clears the status bar where the page runs under one:
- * `safe-area-inset-top` is 0 in Safari's own portrait view and ~50px in a
- * standalone one, and the `max()` serves both.
+ * 320x568) additionally takes 28px out of the card's vertical rhythm here, so
+ * that an SE still fits the card without scrolling. The margin round the card
+ * grows to the safe-area insets where the page runs under a status bar or a
+ * home indicator (`safe-area-inset-*` is 0 in Safari's own portrait view and
+ * real in a standalone one).
  */
 export const metadata: Metadata = {
   title: "Glass (experiment)",
@@ -121,25 +103,12 @@ export default function GlassHome() {
       }}
       default="none"
     >
-      <main className="relative isolate overflow-x-clip">
+      <main className="relative isolate min-h-svh overflow-hidden">
         <GlassFilter />
 
-        {/* The backdrop: sticky and a screen tall below lg, absolute behind a
-          fold that does not scroll from lg. First in the flow so it paints
-          under everything; the copy's column is `relative z-20` above it. */}
-        <div
-          aria-hidden="true"
-          className="sticky top-0 z-0 h-lvh lg:absolute lg:inset-0 lg:h-auto"
-        >
-          <DiagonalMarqueeCarousel
-            washClassName="bg-background/10"
-            columnWash="soft"
-            bottomFade={false}
-            priority={false}
-          />
-        </div>
-
-        <div className="relative z-20 -mt-[100lvh] flex flex-col lg:mt-0 lg:min-h-svh lg:justify-center lg:px-24">
+        {/* The column is the screen; the card fills it below `sm` and hugs
+          its content from `sm`. */}
+        <div className="relative z-20 flex min-h-svh flex-col p-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-6 lg:justify-center lg:px-24 lg:py-0">
           {/* The pane. Three decorative layers first — frost, fill, bevel —
             then the copy, which is `relative` so it paints above them (an
             in-flow block would paint UNDER positioned siblings). The pane
@@ -147,7 +116,7 @@ export default function GlassHome() {
             No `isolate`, no `filter`, no `opacity` on this element: any of
             those would make it a backdrop root and the frost would blur its
             own empty parent instead of the marquee. */}
-          <div className="glass-pane glass-shadow relative rounded-b-[1.75rem] px-6 pt-[max(1.75rem,calc(env(safe-area-inset-top)_+_1rem))] pb-10 short:pt-4 tight:pt-5 tight:pb-8 sm:mx-6 sm:mt-6 sm:max-w-[29rem] sm:rounded-[1.75rem] lg:mx-0 lg:mt-0 lg:max-w-[38rem] lg:px-10 lg:pt-10 lg:pb-10">
+          <div className="glass-pane glass-shadow relative flex flex-1 flex-col rounded-[1.75rem] px-5 pt-7 pb-5 short:pt-4 tight:pt-5 sm:max-w-[29rem] sm:flex-none sm:px-6 sm:pb-10 lg:max-w-[38rem] lg:px-10 lg:pt-10">
             <span aria-hidden="true" className="glass-frost glass-liquid" />
             <span
               aria-hidden="true"
@@ -155,7 +124,7 @@ export default function GlassHome() {
             />
             <span aria-hidden="true" className="glass-bevel" />
 
-            <div className="relative max-w-[33rem] lg:max-w-none">
+            <div className="relative flex max-w-[33rem] flex-1 flex-col lg:max-w-none">
               <h1>
                 <span
                   aria-hidden="true"
@@ -180,43 +149,26 @@ export default function GlassHome() {
                 {CONTENT.lead}
               </p>
 
+              {/* `mt-auto` pins the pair to the foot of the card; the padding
+                is the least air it ever has above it. */}
               <BranchPanels
                 panels={BRANCHES}
                 finish="glass"
-                className="mt-6 short:mt-5 tight:mt-5 max-w-[26rem] lg:max-w-[32rem]"
+                className="mt-auto max-w-[26rem] pt-6 short:pt-5 tight:pt-5 lg:max-w-[32rem]"
               />
             </div>
           </div>
         </div>
 
-        {/* The extra screen of scroll, with the way onward at its foot. The
-          lip is the sheet's recipe at lip scale; its ink is near-black for
-          the same reason the sheet's is. Below lg only — the desktop fold
-          never scrolls the cards away. */}
-        <div className="relative z-20 flex h-lvh items-end px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:hidden">
-          <nav
-            aria-label="Cele două ramuri"
-            className="glass-pane glass-shadow relative w-full rounded-2xl px-5 py-4"
-          >
-            <span aria-hidden="true" className="glass-frost glass-liquid" />
-            <span aria-hidden="true" className="glass-fill [--glass-tint:28%]" />
-            <span aria-hidden="true" className="glass-bevel" />
-            <p className="text-foreground font-ui text-ui relative tracking-[0.14em] uppercase">
-              {CONTENT.archive}
-            </p>
-            <p className="relative mt-1 flex flex-wrap gap-x-6">
-              {BRANCHES.map((branch) => (
-                <Link
-                  key={branch.href}
-                  href={branch.href}
-                  transitionTypes={["nav-forward"]}
-                  className="text-foreground font-display text-h3 decoration-contrast focus-visible:ring-ring focus-visible:ring-offset-background inline-flex min-h-11 items-center font-semibold underline decoration-2 underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                >
-                  {branch.label}
-                </Link>
-              ))}
-            </p>
-          </nav>
+        {/* Last in the DOM so a keyboard lands on the call to action first.
+          Paint order is z-index, not source order. */}
+        <div className="absolute inset-0">
+          <DiagonalMarqueeCarousel
+            washClassName="bg-background/10"
+            columnWash="soft"
+            topFade={false}
+            bottomFade={false}
+          />
         </div>
       </main>
     </ViewTransition>

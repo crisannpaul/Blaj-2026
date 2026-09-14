@@ -746,7 +746,7 @@ the canvas.
 The landing with a **liquid-glass finish**, on branch `worktree-glass` (worktree
 `.claude/worktrees/glass`, over a snapshot commit of the 14 Sep working copy), served on
 **:3002** (`http://192.168.0.229:3002/glass`) beside the untouched :3000 so it can be judged
-against `/` by eye, and online at the preview **https://blaj2026-qqmz2hdb3-geneous.vercel.app/glass**
+against `/` by eye, and online at the preview **https://blaj2026-g04qqlcfm-geneous.vercel.app/glass**
 (the evening cut; see D15 for why production no longer carries it); the previous cut is on
 :3003 (below). Unlinked and `noindex`. Same content —
 moved to `src/lib/landing.ts` and shared, so the two cannot drift in copy while one is judged on
@@ -760,43 +760,41 @@ still too dense for the user, who then sent the 21st.dev dock itself as the targ
 that reference, and it is what ships on the branch:
 
 - **The pane is clear — a quarter white, 3px of blur, a directional bevel.** (6px until the
-  evening's second review; see below.) Below `sm` a sheet the full width of the screen,
-  hanging from the top and rounded at the bottom only;
-  from `sm` a card no wider than the branch pair (`29rem` — the review found a 136px frosted
-  void at 768 when it followed the copy's 33rem), left-aligned as the copy is at `lg`. The
-  first three cuts had it as a bottom sheet; the next bullet is why it moved.
-- **Below `lg` the page scrolls, and the marquee is what it scrolls to (14 Sep, evening).**
-  The user, with the third cut on a phone: the copy and the two cards covered most of the
-  screen, the marquee showed in a strip along the top — "awkwardly seen… might as well remove
-  it, but I wanna keep it, it's so nice on desktop" — and the copy is about to grow as the
-  organisers' text lands. Their proposal, a scrollable page with the card up top and the
-  marquee below, is what was built, with one addition: the marquee is a **sticky,
-  viewport-tall backdrop** the sheet slides up and over, not a section further down, so the
-  glass gets the one moment it has a job on a phone — a pane passing over photographs — and
-  the scroll ends on a full screen of them. Mechanics (`page.tsx`): sticky box first in the
-  flow, `100lvh` tall — `lvh` because a phone's toolbar collapses on scroll and an `svh` box
-  would leave a strip of page background under the marquee at that moment; the sheet's column
-  pulled up over it by the same margin; a `100lvh` spacer after it; `overflow-x: clip` on
-  `main`, never `hidden`, which would make `main` the sticky element's scroll container; the
-  marquee's bottom fade off (`bottomFade={false}`), because a fade to page-white at the foot
-  of the first screen says the page ends there. From `lg` the fold is unchanged and does not
-  scroll. Geometry, measured on the build:
+  evening's second review; see below.) Below `sm` a card that fills the screen inside a 12px
+  margin, all four corners showing; from `sm` a card that hugs its content, no wider than the
+  branch pair (`29rem` — the review found a 136px frosted void at 768 when it followed the
+  copy's 33rem), left-aligned as the copy is at `lg`. The first three cuts had it as a bottom
+  sheet and the fourth as a top-hanging sheet on a scrolling page; the next bullet is why.
+- **On a phone the card IS the screen, and the page does not scroll (14 Sep, late evening).**
+  The card fills the viewport inside a 12px margin — all four corners showing, the marquee
+  plain in the margin and seen through the pane — with the copy at the top and the two
+  branches pinned to the foot (`mt-auto`), in the thumb zone. Copy that grows eats the empty
+  middle of the pane first; only past it does the card outgrow the screen and the page scroll,
+  which is where `/` overflows too. From `sm` the card hugs its content; from `lg` the fold is
+  unchanged. The marquee's top and bottom fades are off (`topFade` / `bottomFade`): with
+  photographs meant to show in the margin, a fade to page-white there is a white frame.
 
-  | viewport | sheet at load | marquee under it | the cards at load | with the 8 Sep 305-character lead and a two-line kicker |
+  This is the user's own layout, the third for the phone in one day. The third cut was `/`'s
+  bottom sheet — the copy covered most of the phone and the marquee was "awkwardly seen" in a
+  strip along the top. The next was the user's first proposal, a scrollable page with the card
+  up top and the marquee below, built as a top-hanging sheet over a sticky, viewport-tall
+  marquee with one extra screen of scroll, so the pane slid over the photographs and the page
+  ended on a full screen of them with a glass lip carrying the two links again. The user saw
+  it on the phone and said no: "mobile still looks like shit… let the card fit on the whole
+  screen, make sure the top edges are visible too, and make the page unscrollable, there is
+  no point for scrolling now." The scroll mechanics, the lip and its caption are gone with it;
+  the second cold review's dead-end and "cue" findings (3 and 6 below) are moot for the same
+  reason. Geometry, measured on the build:
+
+  | viewport | card | branches' foot above the screen's bottom edge | page | with the 8 Sep 305-character lead and a two-line kicker |
   |---|---|---|---|---|
-  | 390x844 | 584px | 260px | above the fold | sheet 656px, 188px of marquee |
-  | 375x667 | 574px | 93px | above the fold | 620px, 47px |
-  | 320x568 | 620px | — | lower 20px under the fold | 692px, 92px under |
-  | 768x1024 | 674px card | 326px | above | 721px, 279px |
-  | 844x390 | 505px card | — | 99px under the fold | 552px, 146px under |
-  | 1440x900 | 697px | no scroll | above | 722px, still no scroll |
+  | 390x844 | 12..832 (820px) | 32px | one screen, no scroll | still one screen (7-line lead) |
+  | 375x667 | 12..655 (643px) | 32px | one screen, no scroll | still one screen (8 lines) |
+  | 320x568 | 608px | — | 64px over | 136px over |
+  | 768x1024 | 674px card, hugging | — | one screen | one screen |
+  | 844x390 | 505px card | — | 163px over | 210px over |
+  | 1440x900 | 697px | — | no scroll | no scroll |
 
-  (Final numbers, after the evening's 28px `tight:` trim and the copy sync; the first
-  measurement had 375x667 at 623px with a 44px band and 320x568 at 648px.) Below `lg` every
-  page is the sheet plus exactly one screen. What the third cut lost at 320x568 from the *top*
-  — the kicker, 80px, clipped — this one loses at the *bottom* — the cards' lower 20px — and a
-  scroll reaches it. Copy that grows makes the sheet taller and the page longer; nothing else
-  moves.
 - **Three layers inside a clipping pane**, as the original has them: `glass-frost` (backdrop
   blur, oversized by 1.5rem, clipped) + `glass-liquid` (the SVG refraction), `glass-fill` (the
   tint, `--glass-tint-top` → `--glass-tint`), `glass-bevel` (light from the top left;
@@ -880,9 +878,10 @@ state), all pass:
 | the kicker and the date line | no longer the weakest text on the page | near-black on a 24–32% pane |
 
 Tier 1 (`audit.js`): no overflow, no sub-12px text, no small targets, no console errors.
-`hittest.js`: 2 interactive, 0 unreachable. Fold overflow stopped being a number that means
-anything below `lg` when the page began to scroll by design; the geometry table above is the
-measurement now (the third cut had 80px at 320x568 and 101px on a sideways phone, clipped).
+`hittest.js`: 2 interactive, 0 unreachable. Fold overflow, final: none at 375x667 and up,
+long copy or short — the page is exactly one screen; 64px at 320x568 (136 with the long copy)
+and 163px on a sideways phone, reachable by scroll (the third cut had 80px and 101px there,
+clipped at the top). With JavaScript off the cards paint at 246 / 72px.
 Ink re-measured after the scroll layout and the edge fade, motion frozen, both states: worst
 **7.41:1** at 390 (the lip's label), 7.57:1 at 1440, 10.37:1 at 320 — the same glyphs as
 before, within noise; and again after the evening's review (3px blur, chips 36/32% at 5px, the
@@ -945,7 +944,10 @@ acted on the same evening:
    "must be the design".
 
 Its one NIT-level judgement on desktop — the interior ripple at scale 28 read as "a warped or
-greasy pane" rather than water — is what the halving of the throw answers.
+greasy pane" rather than water — is what the halving of the throw answers. Findings 3 and 6
+lasted an hour: the user then rejected the scrolling layout altogether (the card bullet above),
+so there is no end of scroll to be a dead end and no cue to lose; the lip, its caption and
+`CONTENT.archive` went with it. Findings 1, 2, 4 and 5 stand and are in the build.
 
 **The component was not installed.** The 21st.dev file is a dock and a button on a scrolling
 macOS wallpaper; what survives is the recipe, as `glass-*` utilities, and the filter, cut down
@@ -1379,7 +1381,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, on :3002 beside :3000, and **online at the preview https://blaj2026-qqmz2hdb3-geneous.vercel.app/glass** (6.1e) — the clear, refracting cut with straight pane edges, a 3px pane, and, below `lg`, a scrolling top sheet over a sticky marquee with the two links again at the foot. It was live at blaj2026.vercel.app/glass from the afternoon of 14 Sep until a `--prod` deploy from the main checkout that evening replaced production with the copy work; **promoting the branch now would roll that copy work back**, so the glass goes live only after a merge. The 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, on :3002 beside :3000, and **online at the preview https://blaj2026-g04qqlcfm-geneous.vercel.app/glass** (6.1e) — the clear, refracting cut with straight pane edges, a 3px pane, and, on a phone, a card that fills the screen inside a 12px margin with no scroll (the user's own layout, after a scrolling one was tried and rejected the same evening). It was live at blaj2026.vercel.app/glass from the afternoon of 14 Sep until a `--prod` deploy from the main checkout that evening replaced production with the copy work; **promoting the branch now would roll that copy work back**, so the glass goes live only after a merge. The 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
 
 ---
 
@@ -1479,13 +1481,20 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     Landing copy synced from master's 14 Sep edit ("Tinerilor", "în Mica Romă") along with the
     other agent's note on the 948-character letter the organisers sent for the lead.
   - **Preview, not production, this time.** The evening cut is at
-    https://blaj2026-qqmz2hdb3-geneous.vercel.app/glass (`/`, `/ateliere` 200, the answers 404).
+    https://blaj2026-g04qqlcfm-geneous.vercel.app/glass (`/`, `/ateliere` 200, the answers 404).
     Two `--prod` deploys from the main checkout had gone up half an hour earlier — the copy
     work — so **blaj2026.vercel.app/glass is 404 again** and production carries master's copy,
     which this branch only partly has (the landing strings, not `/ateliere` or `/blajhunt`).
     Promoting this preview would roll those back; the glass goes live after a merge, not
     before. `/` on this branch is otherwise pixel-identical to its previous build (0.00% at
     390, reduced motion) and 1.2% different from master's — the copy.
+  - **Then the user's own layout (late evening).** On the phone the scrolling cut "still looks
+    like shit": the card must fit the whole screen with its top edges visible and the page must
+    not scroll. Built as a card inside a 12px margin filling the viewport, copy at the top, the
+    branches pinned to the foot, marquee visible round it and through it; no sticky, no
+    spacer, no lip, both marquee edge fades off (`topFade` joins `bottomFade`). One screen at
+    390x844 and 375x667 with the long copy too; 320x568 and landscape overflow as `/` does.
+    Tier 1 clean, ink worst 7.33:1, cards 246 / 72px without JavaScript. 6.1e has the table.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`

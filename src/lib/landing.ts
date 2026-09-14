@@ -82,12 +82,13 @@ export const BRANCHES: readonly BranchPanel[] = [
  * the screen — and that is a coupled decision with the vertical mark on a
  * spine. See the height note in `branch-panels.tsx` before changing either.
  *
- * `/glass` has no such ceiling: below `lg` its sheet hangs from the top of a
- * page that scrolls, so a longer lead makes the sheet taller and the page
- * longer and pushes nothing off the screen. Checked with the 8 Sep text at its
- * full 305 characters plus a two-line kicker: at 390x844 the sheet is 656px
- * and 188px of the marquee still shows under it. The organisers' final copy
- * is landing here; on this branch this file is the one place it goes.
+ * `/glass` has more give: its card fills the phone's screen with the copy at
+ * the top and the branches pinned to the foot, so a longer lead eats the empty
+ * glass between them before anything else moves. Checked with the 8 Sep text
+ * at its full 305 characters plus a two-line kicker: still one screen with no
+ * scroll at 390x844 (7 lines) and 375x667 (8 lines); past that the card grows
+ * and the page scrolls, as `/` does. The organisers' final copy is landing
+ * here; on this branch this file is the one place it goes.
  */
 export const CONTENT = {
   kicker: "Întâlnirea Intereparhială a Tinerilor",
@@ -98,9 +99,4 @@ export const CONTENT = {
     "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +
     "împreună în Mica Romă — rugăciune, ateliere, prieteni noi și un oraș " +
     "de descoperit.",
-  /* The caption on the lip at the foot of `/glass`'s scroll, over the archive
-     marquee — `/` has no such lip. The photographs are from a past meeting
-     (SPEC A1); the caption claims no more than that. Placeholder like the
-     rest. */
-  archive: "Din arhivă",
 } as const;

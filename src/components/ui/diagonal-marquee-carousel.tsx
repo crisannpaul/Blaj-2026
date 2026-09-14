@@ -69,6 +69,11 @@ export interface DiagonalMarqueeCarouselProps {
    *  page ends here", which is the opposite of what a peeking band should say.
    *  @default true */
   bottomFade?: boolean;
+  /** The white fade along the band's top edge, all breakpoints. `/` keeps it:
+   *  it softens the band where it runs under a status bar. A page whose pane
+   *  floats inside a margin of visible photographs turns it off, or the top
+   *  margin reads as a white frame. @default true */
+  topFade?: boolean;
   /** Fetch the first row's opening frames eagerly and at high priority. `/`
    *  wants that: the band is the fold. A page that puts the band FIRST in its
    *  DOM behind a sheet must turn it off, or the preload scanner queues eleven
@@ -273,6 +278,7 @@ export default function DiagonalMarqueeCarousel({
   washClassName = "bg-background/22",
   columnWash = true,
   bottomFade = true,
+  topFade = true,
   priority = true,
 }: DiagonalMarqueeCarouselProps) {
   // Each row is dealt from a different rotation of the deck, so a frame is
@@ -347,7 +353,9 @@ export default function DiagonalMarqueeCarousel({
           positioned by its own height: landscape, 200% zoom and a 640px-tall
           phone all dropped the kicker onto raw photography. The copy carries
           its own scrim instead — see page.tsx. */}
-      <div className="from-background pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b to-transparent" />
+      {topFade && (
+        <div className="from-background pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b to-transparent" />
+      )}
       {bottomFade && (
         <div className="from-background pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t to-transparent lg:hidden" />
       )}
