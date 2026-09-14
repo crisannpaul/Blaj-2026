@@ -746,7 +746,9 @@ the canvas.
 The landing with a **liquid-glass finish**, on branch `worktree-glass` (worktree
 `.claude/worktrees/glass`, over a snapshot commit of the 14 Sep working copy), served on
 **:3002** (`http://192.168.0.229:3002/glass`) beside the untouched :3000 so it can be judged
-against `/` by eye; the previous cut is on :3003 (below). Unlinked and `noindex`. Same content —
+against `/` by eye, and online at the preview **https://blaj2026-qqmz2hdb3-geneous.vercel.app/glass**
+(the evening cut; see D15 for why production no longer carries it); the previous cut is on
+:3003 (below). Unlinked and `noindex`. Same content —
 moved to `src/lib/landing.ts` and shared, so the two cannot drift in copy while one is judged on
 finish — same composition, and the two covers that protect the ink swapped for panes of clear
 glass. `/` still renders `finish="tint"` and is pixel-identical to before.
@@ -1377,7 +1379,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass` — **live at https://blaj2026.vercel.app/glass since 14 Sep** (production carries the branch tree as of the third cut; `/` is unchanged by it), and on :3002 beside :3000 (6.1e) — the clear, refracting third cut, since the evening of 14 Sep with straight pane edges and, below `lg`, a scrolling top sheet over a sticky marquee (:3002 and the preview URL in 6.1e; production still serves the bottom-sheet third cut until promoted); the 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, on :3002 beside :3000, and **online at the preview https://blaj2026-qqmz2hdb3-geneous.vercel.app/glass** (6.1e) — the clear, refracting cut with straight pane edges, a 3px pane, and, below `lg`, a scrolling top sheet over a sticky marquee with the two links again at the foot. It was live at blaj2026.vercel.app/glass from the afternoon of 14 Sep until a `--prod` deploy from the main checkout that evening replaced production with the copy work; **promoting the branch now would roll that copy work back**, so the glass goes live only after a merge. The 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
 
 ---
 
@@ -1476,6 +1478,14 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     `INK_CSS=<file>` for measuring a candidate on the built page without a rebuild.
     Landing copy synced from master's 14 Sep edit ("Tinerilor", "în Mica Romă") along with the
     other agent's note on the 948-character letter the organisers sent for the lead.
+  - **Preview, not production, this time.** The evening cut is at
+    https://blaj2026-qqmz2hdb3-geneous.vercel.app/glass (`/`, `/ateliere` 200, the answers 404).
+    Two `--prod` deploys from the main checkout had gone up half an hour earlier — the copy
+    work — so **blaj2026.vercel.app/glass is 404 again** and production carries master's copy,
+    which this branch only partly has (the landing strings, not `/ateliere` or `/blajhunt`).
+    Promoting this preview would roll those back; the glass goes live after a merge, not
+    before. `/` on this branch is otherwise pixel-identical to its previous build (0.00% at
+    390, reduced motion) and 1.2% different from master's — the copy.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`
