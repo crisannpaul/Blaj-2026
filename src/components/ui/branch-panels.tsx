@@ -214,7 +214,7 @@ const TINT = {
     scrim: "from-primary/42 via-primary/20",
     wash: "bg-primary/75",
     /* `finish="glass"` only — the values a `glass-fill` layer takes; the
-       frost layer beside it is `glass-frost glass-liquid` at 8px, shared.
+       frost layer beside it is `glass-frost glass-liquid` at 5px, shared.
 
        The lip is a quarter of --background: clear glass, the photograph
        continues through it, and a 23px semibold near-black word has room to
@@ -229,11 +229,16 @@ const TINT = {
        photograph has two black habits dead centre, which is all a spine keeps,
        and the stacked 16px letters sit on them: with a sky-400 fill the chip
        needed 56% (4.58:1 at 52%) to hold 4.5:1 there. Lifted toward white
-       the fill's own luminance is ~0.6 instead of 0.43, so 48% clears the
-       floor over pure black by arithmetic. Measured, not assumed — see the
-       ink table in SPEC 6.1e. */
+       the fill's own luminance is ~0.6 instead of 0.43, so 48% cleared the
+       floor over pure black by arithmetic — and a second cold review then
+       found the chip at 48% over an 8px blur was still "paint, not glass":
+       67% of the artwork's variation gone, the most saturated block in the
+       fold, and always on the SECONDARY branch. Measured on the built page
+       with `INK_CSS`, the stacked letters hold 8.2:1 at 38% and 8.4:1 at 34%
+       over 5px of blur, so the chip is 36% (gold 32%) at 5px. Not assumed —
+       see the ink table in SPEC 6.1e, and re-measure if the art changes. */
     lip: "[--glass-tint:25%]",
-    chip: "[--glass-fill:var(--glass-sky)] [--glass-tint:48%]",
+    chip: "[--glass-fill:var(--glass-sky)] [--glass-tint:36%]",
     /* The veil, glass finish: a plain wash, never a multiply — see the
        veil's own comment in the markup below for why. */
     glassVeil: "bg-primary/35",
@@ -244,7 +249,7 @@ const TINT = {
     scrim: "from-contrast/42 via-contrast/20",
     wash: "bg-contrast/75",
     lip: "[--glass-tint:25%]",
-    chip: "[--glass-fill:var(--glass-gold)] [--glass-tint:44%]",
+    chip: "[--glass-fill:var(--glass-gold)] [--glass-tint:32%]",
     glassVeil: "bg-contrast/35",
   },
 } as const;
@@ -315,7 +320,20 @@ export function BranchPanels({
                spine's own padding still fit, and at 147px the pair is
                52 + 8 + 87 = 147 exactly. Wider than 320px it never binds. */
             className="short:h-40 relative h-52 min-w-[3.25rem] sm:h-64 lg:h-72"
-            style={{ flexBasis: 0, flexShrink: 1 }}
+            /* `flexGrow` is in `style` AS WELL AS in `animate`, and that is
+               load-bearing: framer renders `animate` values only after it
+               hydrates, so the server markup carried no flex-grow at all and
+               both panels sat at their 52px floor — the open label clipped to
+               "Ate", 73% of the row empty — until the client took over: 132ms
+               on a fast machine, 660ms at 6x CPU throttle. Found by the cold
+               review on 14 Sep; it had shipped on `/` the whole time. With the
+               value in `style` the first paint is the final layout and the
+               spring only ever animates a change of state. */
+            style={{
+              flexBasis: 0,
+              flexShrink: 1,
+              flexGrow: open ? GROW_ACTIVE : GROW_RESTING,
+            }}
             animate={{ flexGrow: open ? GROW_ACTIVE : GROW_RESTING }}
             transition={move}
           >
@@ -387,6 +405,14 @@ export function BranchPanels({
                 alt=""
                 width={800}
                 height={1000}
+                /* The page's primary control is always in the first screen, so
+                   its artwork goes to the front of the queue. Without this the
+                   marquee's eager tiles — which come first in the glass page's
+                   DOM — were fetched ahead of it, and on a 1.6Mbps line the
+                   two cards painted as raw brand colour for up to 2.5s. */
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="absolute inset-0 size-full object-cover grayscale"
               />
               {/* THE GLASS FINISH MUST NOT BLEND. A `mix-blend-mode`
@@ -434,7 +460,7 @@ export function BranchPanels({
                       : "glass-pane absolute inset-0"
                   }
                 >
-                  <span className="glass-frost glass-liquid [--glass-blur:8px] [--glass-sat:1.05]" />
+                  <span className="glass-frost glass-liquid [--glass-blur:5px] [--glass-sat:1.05]" />
                   <span className={`glass-fill ${open ? tint.lip : tint.chip}`} />
                   <span className={open ? "glass-bevel-top" : "glass-bevel"} />
                 </span>

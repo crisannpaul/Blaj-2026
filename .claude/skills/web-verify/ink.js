@@ -145,9 +145,16 @@ const MEASURE = async ({ pngA, pngB, items, dpr }) => {
  *   INK_TAB=n      presses Tab n times after load, before the shots. On the
  *                  landing, 2 focuses the second branch and opens it — the
  *                  only way to measure the other state, since the swap is off.
+ *   INK_CSS=path   injects that stylesheet after load, before the shots — for
+ *                  measuring a tint or blur candidate on the BUILT page without
+ *                  a rebuild per value (the glass chips, 14 Sep). Anything it
+ *                  passes must then be built and measured again without it.
  */
 const REDUCED = Boolean(process.env.INK_REDUCED);
 const TAB = parseInt(process.env.INK_TAB || "0", 10);
+const CSS = process.env.INK_CSS
+  ? require("fs").readFileSync(process.env.INK_CSS, "utf8")
+  : "";
 
 (async () => {
   const browser = await chromium.launch();
@@ -159,6 +166,7 @@ const TAB = parseInt(process.env.INK_TAB || "0", 10);
     reducedMotion: REDUCED ? "reduce" : "no-preference",
   });
   await page.goto(url, { waitUntil: "networkidle" });
+  if (CSS) await page.addStyleTag({ content: CSS });
   await page.waitForTimeout(900); // let the shader paint its one frame
   for (let i = 0; i < TAB; i++) await page.keyboard.press("Tab");
   if (TAB) await page.waitForTimeout(700); // past the spring's visual duration

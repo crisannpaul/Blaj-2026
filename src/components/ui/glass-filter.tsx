@@ -18,10 +18,13 @@
  * `scale x (value - 0.5)`, so without it a throw of 22 was moving the backdrop
  * by two or three pixels and the pane looked flat. The linear transfer
  * (slope 3 about 0.5) widens the map to its full range, clipping the extremes
- * into soft cells, and the blur rounds the cells off; at scale 28 that is a
- * typical ±6px and a maximum ±14px — waves of ~150px, which reads as water on
- * a pane rather than as a broken layer. The alpha table pins the map opaque so
- * premultiplication cannot bias the channels.
+ * into soft cells, and the blur rounds the cells off. The throw is `scale`:
+ * 28 gave a typical ±6px and a maximum ±14px, and a cold review at 1440 read
+ * that as "two or three lazy bulges" bending the marquee's straight gutters
+ * into serpentine ribbons — a greasy pane, not water — while at 390 it was
+ * part of what turned the photographs into a smear. It is 14 now: ±3px
+ * typical, ±7px maximum, the same ~150px waves. The alpha table pins the map
+ * opaque so premultiplication cannot bias the channels.
  *
  * THE THROW FADES TO NOTHING AT THE PANE'S EDGE. Chromium hands this filter
  * the frosted backdrop already clipped to the pane, so a throw at the pane's
@@ -31,10 +34,11 @@
  * (0.5 — no throw) in a band along the edge and ramps up over the next ~16px:
  * a flood over the filter region, blurred at σ=26 and re-thresholded to
  * 14·(α−0.9), is a mask that is 0 about 7px OUTSIDE the pane's edge, 0.5
- * about 16px inside it and 1 by ~26px. Measured on the page at 1440, ripple
- * on against ripple off: 0% of the pixels in the sheet's outer 10px move (was
- * 16–28%), the ramp runs 10→24px, the interior still moves as before (30%);
- * the chip's 6px edge band went from 17.5% to 1.0%.
+ * about 16px inside it and 1 by ~26px. Measured on the page at 1440 with the
+ * scale still at 28, ripple on against ripple off: 0% of the pixels in the
+ * sheet's outer 10px move (was 16–28%), the ramp runs 10→24px, the interior
+ * still moves as before (30%); the chip's 6px edge band went from 17.5% to
+ * 1.0%. The mask was sized for a ±14px throw and is kept as is at ±7px.
  *
  * The band is measured from the FROST LAYER'S OWN BOX. The filter region is
  * `x=0 y=0 width=100% height=100%` — that box — and `glass-frost` oversizes it
@@ -120,7 +124,7 @@ export function GlassFilter() {
         <feDisplacementMap
           in="SourceGraphic"
           in2="mapFaded"
-          scale="28"
+          scale="14"
           xChannelSelector="R"
           yChannelSelector="G"
         />

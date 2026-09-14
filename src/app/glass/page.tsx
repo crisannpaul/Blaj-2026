@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ViewTransition } from "react";
 import DiagonalMarqueeCarousel from "@/components/ui/diagonal-marquee-carousel";
 import { BranchPanels } from "@/components/ui/branch-panels";
@@ -41,21 +42,35 @@ import { BRANCHES, CONTENT } from "@/lib/landing";
  *
  *   The mechanics: the sticky box is first in the flow and `100lvh` tall; the
  *   sheet's column follows with a `-100lvh` top margin so it starts over the
- *   box; a `100lvh` spacer after it is the extra screen. `lvh`, not `svh`: a
- *   phone's toolbar collapses on scroll and the viewport grows, and a backdrop
- *   sized to the small viewport would show a strip of page background under
- *   the marquee at that moment. `main` clips sideways with `overflow-x: clip`
- *   and never `hidden` — a hidden overflow on an ancestor makes it the sticky
+ *   box; the screen after it is the extra scroll. `lvh`, not `svh`: a phone's
+ *   toolbar collapses on scroll and the viewport grows, and a backdrop sized
+ *   to the small viewport would show a strip of page background under the
+ *   marquee at that moment. `main` clips sideways with `overflow-x: clip` and
+ *   never `hidden` — a hidden overflow on an ancestor makes it the sticky
  *   element's scroll container and the backdrop would scroll away with the
  *   page. The marquee's own bottom fade is off: a fade to page-white at the
- *   foot of the first screen says the page ends there.
+ *   foot of the first screen says the page ends there. Its eager preload is
+ *   off too, so the two card artworks are fetched before eleven decorative
+ *   tiles that now precede them in the DOM.
  *
- * - **The pane is CLEAR — a quarter white, 6px of blur.** The first cut was
+ * - **The end of the scroll is not a dead end.** The cold review's point: a
+ *   full screen of marquee with no word and no link on it, 59% of the page,
+ *   and the two branches — the page's whole job — behind you. So the extra
+ *   screen carries, at its foot, a lip of glass with the archive's caption
+ *   and the two branches again as plain links. It arrives only at the end of
+ *   the scroll; at load it is a screen below the fold.
+ *
+ * - **The pane is CLEAR — a quarter white, 3px of blur.** The first cut was
  *   72% white and 18px of blur and the user said "more transparent" twice; the
  *   cold review, independently, said the 18px blur turned the marquee into
  *   grey blotches and the pane into a dirty card. Both are right for the same
- *   reason: a heavy blur over photographs produces stains, not glass. At 6px
- *   the photographs stay photographs and the pane is glass over them.
+ *   reason: a heavy blur over photographs produces stains, not glass. The
+ *   third cut settled on 6px; a second cold review measured that at 390 only
+ *   18% of the photograph's detail survived it — the marquee's frames are
+ *   176px tall on a phone and a 6px blur erases a face at that size — against
+ *   42% at 1440, which is why desktop read as glass and the phone did not.
+ *   The user's own reference was 3px. See the GLASS note in globals.css for
+ *   what was measured on the way to the value.
  *
  * - **Every ink on the pane is near-black.** On `/` the kicker is sky
  *   (`--brand-text`, L=0.12) and the date line is `--muted-foreground`; those
@@ -78,10 +93,13 @@ import { BRANCHES, CONTENT } from "@/lib/landing";
  * page references; it renders once, here.
  *
  * The `short:` / `tight:` height bands and the alternation of the pair are
- * `/`'s and are documented there. The sheet's top padding clears the status
- * bar where the page runs under one: `safe-area-inset-top` is 0 in Safari's
- * own portrait view and ~50px in a standalone one, and the `max()` serves
- * both.
+ * `/`'s and are documented there. `tight:` (521–700px tall — an iPhone SE, a
+ * 320x568) additionally takes 28px out of the sheet's vertical rhythm here,
+ * because on those phones the marquee under the sheet was down to a 44px
+ * sliver and the cue that there is more below went with it. The sheet's top
+ * padding clears the status bar where the page runs under one:
+ * `safe-area-inset-top` is 0 in Safari's own portrait view and ~50px in a
+ * standalone one, and the `max()` serves both.
  */
 export const metadata: Metadata = {
   title: "Glass (experiment)",
@@ -117,6 +135,7 @@ export default function GlassHome() {
             washClassName="bg-background/10"
             columnWash="soft"
             bottomFade={false}
+            priority={false}
           />
         </div>
 
@@ -128,7 +147,7 @@ export default function GlassHome() {
             No `isolate`, no `filter`, no `opacity` on this element: any of
             those would make it a backdrop root and the frost would blur its
             own empty parent instead of the marquee. */}
-          <div className="glass-pane glass-shadow relative rounded-b-[1.75rem] px-6 pt-[max(1.75rem,calc(env(safe-area-inset-top)_+_1rem))] pb-10 short:pt-4 tight:pt-5 sm:mx-6 sm:mt-6 sm:max-w-[29rem] sm:rounded-[1.75rem] lg:mx-0 lg:mt-0 lg:max-w-[38rem] lg:px-10 lg:pt-10">
+          <div className="glass-pane glass-shadow relative rounded-b-[1.75rem] px-6 pt-[max(1.75rem,calc(env(safe-area-inset-top)_+_1rem))] pb-10 short:pt-4 tight:pt-5 tight:pb-8 sm:mx-6 sm:mt-6 sm:max-w-[29rem] sm:rounded-[1.75rem] lg:mx-0 lg:mt-0 lg:max-w-[38rem] lg:px-10 lg:pt-10 lg:pb-10">
             <span aria-hidden="true" className="glass-frost glass-liquid" />
             <span
               aria-hidden="true"
@@ -140,38 +159,65 @@ export default function GlassHome() {
               <h1>
                 <span
                   aria-hidden="true"
-                  className="bg-contrast mb-4 block h-1 w-10 rounded-full"
+                  className="bg-contrast mb-4 tight:mb-3 block h-1 w-10 rounded-full"
                 />
                 <span className="text-foreground font-ui text-h3 block font-medium">
                   {CONTENT.kicker}
                 </span>
                 <span
-                  className="text-display short:text-h2 mt-3 short:mt-2 block font-semibold"
+                  className="text-display short:text-h2 mt-3 short:mt-2 tight:mt-2 block font-semibold"
                   translate="no"
                 >
                   {CONTENT.title}
                 </span>
               </h1>
 
-              <p className="text-foreground font-ui text-ui mt-4 tracking-[0.14em] uppercase">
+              <p className="text-foreground font-ui text-ui mt-4 tight:mt-3 tracking-[0.14em] uppercase">
                 {CONTENT.meta}
               </p>
 
-              <p className="text-body mt-5 short:mt-3 max-w-prose">
+              <p className="text-body mt-5 short:mt-3 tight:mt-4 max-w-prose">
                 {CONTENT.lead}
               </p>
 
               <BranchPanels
                 panels={BRANCHES}
                 finish="glass"
-                className="mt-6 short:mt-5 max-w-[26rem] lg:max-w-[32rem]"
+                className="mt-6 short:mt-5 tight:mt-5 max-w-[26rem] lg:max-w-[32rem]"
               />
             </div>
           </div>
         </div>
 
-        {/* The extra screen of scroll that lets the sheet clear the marquee. */}
-        <div aria-hidden="true" className="h-lvh lg:hidden" />
+        {/* The extra screen of scroll, with the way onward at its foot. The
+          lip is the sheet's recipe at lip scale; its ink is near-black for
+          the same reason the sheet's is. Below lg only — the desktop fold
+          never scrolls the cards away. */}
+        <div className="relative z-20 flex h-lvh items-end px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:hidden">
+          <nav
+            aria-label="Cele două ramuri"
+            className="glass-pane glass-shadow relative w-full rounded-2xl px-5 py-4"
+          >
+            <span aria-hidden="true" className="glass-frost glass-liquid" />
+            <span aria-hidden="true" className="glass-fill [--glass-tint:28%]" />
+            <span aria-hidden="true" className="glass-bevel" />
+            <p className="text-foreground font-ui text-ui relative tracking-[0.14em] uppercase">
+              {CONTENT.archive}
+            </p>
+            <p className="relative mt-1 flex flex-wrap gap-x-6">
+              {BRANCHES.map((branch) => (
+                <Link
+                  key={branch.href}
+                  href={branch.href}
+                  transitionTypes={["nav-forward"]}
+                  className="text-foreground font-display text-h3 decoration-contrast focus-visible:ring-ring focus-visible:ring-offset-background inline-flex min-h-11 items-center font-semibold underline decoration-2 underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                >
+                  {branch.label}
+                </Link>
+              ))}
+            </p>
+          </nav>
+        </div>
       </main>
     </ViewTransition>
   );

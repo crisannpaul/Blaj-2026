@@ -98,4 +98,9 @@ export const CONTENT = {
     "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +
     "împreună în Mica Romă — rugăciune, ateliere, prieteni noi și un oraș " +
     "de descoperit.",
+  /* The caption on the lip at the foot of `/glass`'s scroll, over the archive
+     marquee — `/` has no such lip. The photographs are from a past meeting
+     (SPEC A1); the caption claims no more than that. Placeholder like the
+     rest. */
+  archive: "Din arhivă",
 } as const;

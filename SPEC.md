@@ -757,8 +757,9 @@ the marquee into grey blotches and the pane into a dirty card. The second was a 
 still too dense for the user, who then sent the 21st.dev dock itself as the target. The third is
 that reference, and it is what ships on the branch:
 
-- **The pane is clear — a quarter white, 6px of blur, a directional bevel.** Below `sm` a
-  sheet the full width of the screen, hanging from the top and rounded at the bottom only;
+- **The pane is clear — a quarter white, 3px of blur, a directional bevel.** (6px until the
+  evening's second review; see below.) Below `sm` a sheet the full width of the screen,
+  hanging from the top and rounded at the bottom only;
   from `sm` a card no wider than the branch pair (`29rem` — the review found a 136px frosted
   void at 768 when it followed the copy's 33rem), left-aligned as the copy is at `lg`. The
   first three cuts had it as a bottom sheet; the next bullet is why it moved.
@@ -782,16 +783,18 @@ that reference, and it is what ships on the branch:
   | viewport | sheet at load | marquee under it | the cards at load | with the 8 Sep 305-character lead and a two-line kicker |
   |---|---|---|---|---|
   | 390x844 | 584px | 260px | above the fold | sheet 656px, 188px of marquee |
-  | 375x667 | 623px | 44px | above the fold | 648px, 19px |
-  | 320x568 | 648px | — | lower 40px under the fold | 720px, 112px under |
-  | 768x1024 | 649px card | 351px | above | 721px, 279px |
-  | 844x390 | 479px card | — | 73px under the fold | 552px, 186px under |
+  | 375x667 | 574px | 93px | above the fold | 620px, 47px |
+  | 320x568 | 620px | — | lower 20px under the fold | 692px, 92px under |
+  | 768x1024 | 674px card | 326px | above | 721px, 279px |
+  | 844x390 | 505px card | — | 99px under the fold | 552px, 146px under |
   | 1440x900 | 697px | no scroll | above | 722px, still no scroll |
 
-  Below `lg` every page is the sheet plus exactly one screen. What the third cut lost at
-  320x568 from the *top* — the kicker, 80px, clipped — this one loses at the *bottom* — the
-  cards' lower 40px — and a scroll reaches it. Copy that grows makes the sheet taller and the
-  page longer; nothing else moves.
+  (Final numbers, after the evening's 28px `tight:` trim and the copy sync; the first
+  measurement had 375x667 at 623px with a 44px band and 320x568 at 648px.) Below `lg` every
+  page is the sheet plus exactly one screen. What the third cut lost at 320x568 from the *top*
+  — the kicker, 80px, clipped — this one loses at the *bottom* — the cards' lower 20px — and a
+  scroll reaches it. Copy that grows makes the sheet taller and the page longer; nothing else
+  moves.
 - **Three layers inside a clipping pane**, as the original has them: `glass-frost` (backdrop
   blur, oversized by 1.5rem, clipped) + `glass-liquid` (the SVG refraction), `glass-fill` (the
   tint, `--glass-tint-top` → `--glass-tint`), `glass-bevel` (light from the top left;
@@ -830,7 +833,8 @@ and a third between a visible bend and a clean one:
 2. **Fractal noise has almost no amplitude.** Two octaves sit within ±0.12 of mid-grey, so a
    throw of 22 moved the backdrop by two pixels. A linear transfer (slope 3) widens the map to
    its full range before the blur rounds it; at scale 28 that is ±6px typical, ±14px maximum,
-   waves of ~150px.
+   waves of ~150px. (Scale 14 since the evening's review — ±3px / ±7px; 28 read as a greasy
+   pane at 1440 and helped smear the phone.)
 3. **A throw at the pane's edge bends the edge.** Chromium hands the filter the frosted
    backdrop already clipped to the pane, so a displacement there pulls what lies past the edge
    — nothing — into view: on desktop Chrome the chips' edges went wavy and a light seam opened
@@ -879,9 +883,13 @@ anything below `lg` when the page began to scroll by design; the geometry table 
 measurement now (the third cut had 80px at 320x568 and 101px on a sideways phone, clipped).
 Ink re-measured after the scroll layout and the edge fade, motion frozen, both states: worst
 **7.41:1** at 390 (the lip's label), 7.57:1 at 1440, 10.37:1 at 320 — the same glyphs as
-before, within noise. Frame rate at 390 under 6x CPU throttle: 52.5 fps as shipped, 54.4 with
-the ripple off, 55.2 with no frost at all, 55.6 for `/`; the fade's extra blur and composite
-cost nothing measurable.
+before, within noise; and again after the evening's review (3px blur, chips 36/32% at 5px, the
+lip at the foot): worst **7.14:1** at 390 (the open lip's 23px label), 7.33:1 for the sky
+chip's 16px letters at 36%, 6.81:1 at 1440 (the lip's label), 8.06:1 at 320, 7.33:1 at
+375x667; the foot lip's caption and links 18.8:1 and up. Frame rate at 390 under 6x CPU
+throttle, final: 58.8 fps as shipped, 59.2 with the ripple off, 56.5 with no frost at all,
+56.0 for `/` — the glass page is now no slower than the landing it would replace (the 6px /
+scale-28 cut had been 52.5 against 55.6).
 
 **Cold review of the first cut (opus, 14 Sep)** — five SHOULD-FIX, two NIT, verdict fix-first;
 all five addressed by the third cut: grey blotches (18px → 6px blur, 72% → 25% white), chips
@@ -891,6 +899,51 @@ width). Of the NITs, the lip's hard edge is deliberate — a pane has an edge �
 kicker weight is shared with `/` and left. It also saw, and could not reproduce, the sheet's fill
 and frost vanishing after a scroll at 195px in two shots: a GPU artefact until a real iOS device
 says otherwise.
+
+**Cold review of the scroll layout (opus, 14 Sep evening)** — three BLOCKING, three SHOULD-FIX,
+verdict fix-first; "the composition, the edge work and the mid-scroll moment are right". It
+confirmed the edges (straight, seam-free at 2x, ripple on/off differing only inside) and judged
+the first mobile screen a clear "there is more below" at 390 and the sheet's pass over the
+photographs at mid-scroll "the one state where the glass earns itself". Every finding was
+acted on the same evening:
+
+1. BLOCKING — **the pane erased the photographs at 390**: through the sheet the marquee was an
+   abstract smear, "no face, no crowd, no hillside survives"; its measure was 18% of the
+   photograph's detail surviving at 390 against 42% at 1440, because a phone's frames are 176px
+   tall and a 6px blur erases a face at that size, and the ±14px throw bent the frames' straight
+   gutters into ribbons. **Blur 6px → 3px** (the reference's own number) and **scale 28 → 14**.
+   Decided by eye on A/B crops with the text masked out — a Laplacian ratio of our own barely
+   moved between 6px and 3px (26% → 28%) because it measures the finest frequency any blur
+   kills; at 3px / 14 people are people through the pane, at 6px / 28 they are not.
+2. BLOCKING — **both cards were 52px slivers at first paint**, the open label clipped to "Ate",
+   73% of the row empty, until framer hydrated: 132ms on a desktop, 456ms at 4x CPU, 660ms at
+   6x. The server markup carried `flex-basis:0; flex-shrink:1` and no `flex-grow`, because the
+   value lived only in `animate`. **It had shipped on `/` and in production the whole time.**
+   `flexGrow` is now in `style` as well; with JavaScript off the cards paint at 258 / 76px.
+3. BLOCKING — **the end of the scroll was a dead end**: the last screen, 59% of the page, had
+   no word and no link on it and the two branches were behind the visitor. The extra screen
+   now carries a lip of glass at its foot — the archive caption and the two branches again as
+   plain links (`CONTENT.archive`; near-black on 28% glass, 18.8:1). Below `lg` only.
+4. SHOULD-FIX — **the closed spine was paint, not glass**: 48% over 8px of blur removed 67% of
+   the artwork's variation and made the chip the most saturated block in the fold, always on
+   the secondary branch. Measured with the new `INK_CSS` flag on the built page: the stacked
+   letters hold 8.2:1 at 38% and 8.4:1 at 34% over 5px, so the chips are **36% sky / 32% gold
+   at 5px** (7.33:1 measured after the build). The 35% veil on the open card is unchanged: the
+   primary control is allowed to be the loudest thing on the page.
+5. SHOULD-FIX — **the marquee was preloaded ahead of the card artworks** because the sticky box
+   comes first in the DOM: at 1.6Mbps the tiles landed at ~1s and the two cards' art at
+   1.6–2.2s, painting as raw brand colour meanwhile. The cards' `<img>` are `loading="eager"
+   fetchPriority="high"` now (on `/` too) and the marquee takes `priority={false}` on the
+   glass page.
+6. SHOULD-FIX — **the "more below" cue was gone at 375 and 320**: 44px of marquee under the
+   sheet at 375x667, none at 320x568. `tight:` takes 28px out of the sheet's rhythm (paddings
+   and margins only; the cards and the mark are untouched): 93px of marquee at 375x667 now.
+   320x568 is still all sheet with the cards' lower 20px under the fold — accepted and
+   recorded; that device class is the one the whole project treats as "must not break", not
+   "must be the design".
+
+Its one NIT-level judgement on desktop — the interior ripple at scale 28 read as "a warped or
+greasy pane" rather than water — is what the halving of the throw answers.
 
 **The component was not installed.** The 21st.dev file is a dock and a button on a scrolling
 macOS wallpaper; what survives is the recipe, as `glass-*` utilities, and the filter, cut down
@@ -1412,6 +1465,17 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     viewport-tall marquee with one extra screen of scroll (6.1e). Geometry table there; the
     lead-length ceiling in `src/lib/landing.ts` now applies to `/` only. The marquee gained a
     `bottomFade` prop (default on; `/` pixel-unchanged).
+  - **The second cold review (same evening)** — three BLOCKING: the 6px pane smeared the
+    photographs on a phone (now 3px, the reference's number, and the ripple's throw halved to
+    scale 14); **both branch cards painted as 52px slivers until framer hydrated** — a defect
+    that had been live on `/` since the pair was built, fixed by carrying `flexGrow` in `style`;
+    and the end of the scroll was a dead end (a lip with the archive caption and the two links
+    again). Three SHOULD-FIX: chips 48/44% → 36/32% at 5px, card artwork fetched at high
+    priority ahead of the marquee, and 28px trimmed from the sheet on `tight:` phones. All in
+    6.1e with the measurements; ink worst 7.14:1, frame rate now level with `/`. `ink.js` gained
+    `INK_CSS=<file>` for measuring a candidate on the built page without a rebuild.
+    Landing copy synced from master's 14 Sep edit ("Tinerilor", "în Mica Romă") along with the
+    other agent's note on the 948-character letter the organisers sent for the lead.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`

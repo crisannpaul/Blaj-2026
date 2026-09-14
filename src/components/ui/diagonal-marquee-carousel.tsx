@@ -69,6 +69,13 @@ export interface DiagonalMarqueeCarouselProps {
    *  page ends here", which is the opposite of what a peeking band should say.
    *  @default true */
   bottomFade?: boolean;
+  /** Fetch the first row's opening frames eagerly and at high priority. `/`
+   *  wants that: the band is the fold. A page that puts the band FIRST in its
+   *  DOM behind a sheet must turn it off, or the preload scanner queues eleven
+   *  decorative tiles ahead of the two branch artworks — measured at 1.6Mbps:
+   *  tiles at ~1s, the cards' art at 1.6–2.2s. Off, the tiles still load at
+   *  once (they are in the viewport), just behind the cards. @default true */
+  priority?: boolean;
 }
 
 /**
@@ -266,6 +273,7 @@ export default function DiagonalMarqueeCarousel({
   washClassName = "bg-background/22",
   columnWash = true,
   bottomFade = true,
+  priority = true,
 }: DiagonalMarqueeCarouselProps) {
   // Each row is dealt from a different rotation of the deck, so a frame is
   // never directly above a copy of itself — an unrotated deal reads as tiled
@@ -322,7 +330,7 @@ export default function DiagonalMarqueeCarousel({
             speed={row.speed}
             direction={alternateDirections ? row.direction : -1}
             cardClassName={cardClassName}
-            priority={i === 0}
+            priority={priority && i === 0}
           />
         ))}
       </div>

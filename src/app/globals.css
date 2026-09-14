@@ -422,7 +422,7 @@
    After the 21st.dev "liquid glass" dock (@suraj-xd), and closer to it than
    the first cut was. The user's reference is a quarter-white pane, 3px of
    blur, a bright top-left bevel and a wobble in whatever is behind it. That
-   is what this is: three LAYERS inside a clipping pane —
+   is what this is, to the number: three LAYERS inside a clipping pane —
 
      .glass-pane                  overflow hidden + radius; positioned by the
                                   caller; no colour of its own
@@ -479,7 +479,13 @@
   --glass-fill: var(--background);
   /* Defaults for a new layer, before it is measured. */
   --glass-tint: 25%;
-  --glass-blur: 6px;
+  /* 3px, the reference's own number. The third cut used 6px and a cold review
+     measured what that did at 390: the marquee's frames are 176px tall on a
+     phone and a 6px blur erased every face — an abstract smear, "no face, no
+     crowd, no hillside survives". At 3px people are people through the pane
+     (compared by eye, 14 Sep, A/B crops in SPEC 6.1e); the ink still clears
+     its floor because the floor is set by the tint, not the blur. */
+  --glass-blur: 3px;
   /* Frost greys what it blurs; this puts a little colour back. 1.2 for a pane
      over photographs; ~1 for a chip whose fill already carries a hue. */
   --glass-sat: 1.2;

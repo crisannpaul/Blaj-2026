@@ -32,6 +32,7 @@ The rubric and the harness live in `.claude/skills/web-dev` and
 node .claude/skills/web-verify/audit.js <url> <outDir>     # every change
 node .claude/skills/web-verify/ink.js <url> 390 844        # text over art
 $env:INK_REDUCED=1; $env:INK_TAB=2; node .claude/skills/web-verify/ink.js <url> 390 844   # motion frozen, 2nd branch open
+$env:INK_CSS="tmp\candidate.css"; node .claude/skills/web-verify/ink.js <url> 390 844      # a tint/blur candidate injected, no rebuild
 $env:ROUTES="/,/ateliere"; node .claude/skills/web-verify/hittest.js <baseUrl>
 ```
 
@@ -69,6 +70,12 @@ far was either invisible to the harness or introduced by trusting a number:
   `SourceAlpha` changed **nothing**, because Skia clamps those primitives at
   the input's bounds. The fade is in pixels and coupled to `glass-frost`'s
   24px oversize — change one, change the other. See glass-filter.tsx.
+- **A framer-motion `animate` value is not in the server markup.** The branch
+  pair's `flexGrow` lived only in `animate`, so the first paint had both cards
+  at their 52px floor with the label clipped to "Ate" until hydration — 132ms
+  on a desktop, 660ms at 6x CPU — and it was live on `/` in production until a
+  cold review caught it on 14 Sep. Put the first-paint value in `style` as
+  well; the spring then only animates a change. Check with JavaScript off.
 
 ## Always redeploy :3000 after a change
 
