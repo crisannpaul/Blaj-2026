@@ -186,7 +186,7 @@ re-checking on a real phone on real mobile data before the 19th.
 | | |
 |---|---|
 | Project | `geneous/blaj2026` (Vercel, org `Geneous`, account `crisannpaul`) |
-| URL | https://blaj2026-rjw9derml-geneous.vercel.app |
+| URL | **https://blaj2026.vercel.app** — the stable production alias, which follows every `--prod` deploy. The per-deploy URLs (`blaj2026-<hash>-geneous.vercel.app`) keep working and point at that one build forever, which is what makes them the rollback |
 | Region | `iad1` · Next.js preset · Node 24.x |
 | Custom domain | none yet (D2 still open) |
 | Protection | **Vercel Authentication turned OFF** so the link opens for anyone. Re-enable at Project → Settings → Deployment Protection if it should go private again |
@@ -209,7 +209,12 @@ npx vercel deploy --prod --yes          # from the repo root
 
 **What that command actually ships — read this before running it.** Vercel is NOT connected to a
 git repo. The CLI uploads **the working tree as it exists on disk at that moment**, uncommitted
-edits included, then builds on Vercel's Linux infrastructure. Consequences:
+edits included, then builds on Vercel's Linux infrastructure. **The folder you run it from is
+the site you get** — on 14 Sep a `--prod` deploy run from the main checkout produced a live site
+with no `/glass`, because the glass work lives in the `.claude/worktrees/glass` worktree. A
+branch is deployed by running the command *in its worktree*; without `--prod` that gives a
+preview URL that leaves production alone, and `npx vercel promote <preview-url> --yes` then
+rebuilds that same tree as production. Consequences:
 
 - Whatever you have half-finished in the editor goes live. There is no staging gate.
 - Nothing is committed, so **the only history is Vercel's deployment list.** Rolling back means
@@ -1264,7 +1269,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass`, served on :3002 beside :3000 (6.1e) — the clear, refracting third cut; the 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
+| D15 | **Glass or not.** The landing re-done with a liquid-glass finish is at `/glass` on branch `worktree-glass` — **live at https://blaj2026.vercel.app/glass since 14 Sep** (production carries the branch tree; `/` is unchanged by it), and on :3002 beside :3000 (6.1e) — the clear, refracting third cut; the 66%→40% second cut is on :3003 for comparison. Take it — `/glass/page.tsx` replaces `/page.tsx`, the route goes, and the kicker stays near-black — or drop it — the route, `glass-filter.tsx` and the GLASS section of `globals.css` go. `src/lib/landing.ts`, the `finish` / wash props, `NEXT_DIST_DIR` and the `ink.js` flags stay either way. Unmeasured before taking it: frame rate on a low-end Android, where the refraction runs per frame | user | 16 Sep |
 
 ---
 
@@ -1332,6 +1337,13 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     veil — worst 7.2:1. The cold review's five SHOULD-FIX findings on the first cut (grey
     blotches, chips deleting the art, neon ring, 320 all-pane, the 136px void at 768) are all
     addressed by this cut — see 6.1e — and the third build replaced the first on :3002.
+  - **Deployed.** The user ran `vercel deploy --prod` from the main checkout to see the glass on
+    a phone over the internet and got a 404, because the glass exists only in the worktree. The
+    worktree was then preview-deployed (`blaj2026-79p9cpsfy`) and, since every file in the main
+    checkout still matched the 14 Sep snapshot commit — checked file by file, so promoting could
+    drop nothing — promoted to production (`blaj2026-4l8onuq8f`). **https://blaj2026.vercel.app/glass
+    is live**; `/`, `/ateliere`, `/blajhunt` 200, `/docs/Treasurehunt.docx` 404. `.vercelignore`
+    gained `.next-*/` first, or the 66MB second build would have gone up with it.
 - **2026-09-13 (the copy-review document)** — the organizers asked for the
   placeholder text to be replaced across the site, so every visitor-facing
   string is now inventoried and handed over as a form. `scripts/copy/inventory.mjs`
