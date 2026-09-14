@@ -67,13 +67,26 @@ import { WelcomeLetter } from "@/components/ui/welcome-letter";
  *
  *  - TWO COLUMNS FROM `xl`, NOT `lg`. At 1024–1279 the side-by-side does not
  *    fit: the title is the binding width on the left — "Blaj 2026" at the
- *    ramp's 88px cap is ~435px, so the left column cannot drop below ~1.15 of
- *    the right — and the right column that leaves at 1024 is 394px, on which
- *    the letter runs 777px tall against a 768px viewport (an iPad on its side,
- *    exactly). The page then scrolled 137px and the salutation was cut through
- *    the glyphs at the top of the window. So that band stacks like a tablet
- *    instead, and the grid starts where both columns have room: at 1280 the
- *    card is 484px wide and 649 tall in an 800px viewport, no scroll.
+ *    ramp's 88px cap is ~435px — and the right column that leaves at 1024 is
+ *    under 400px, on which the letter runs 777px tall against a 768px viewport
+ *    (an iPad on its side, exactly). The page then scrolled 137px and the
+ *    salutation was cut through the glyphs at the top of the window. So that
+ *    band stacks like a tablet instead, and the grid starts where both columns
+ *    have room.
+ *
+ *  - THE COLUMNS ARE FIXED AND ANCHORED LEFT, NOT FLUID AND CENTRED. The copy
+ *    column is the copy block's own 38rem and the card's is 32rem, the grid is
+ *    `justify-content: start`, and the padding is the `px-24` that `/` uses —
+ *    so the kicker, title, lead and panels sit at exactly 96px from the left
+ *    edge at every width, which is where `/` has them and where the user
+ *    wants them: "it was perfect where it was before, to the left." The first
+ *    cut used `1.15fr : 1fr` inside a centred `max-w-[96rem]`, and on a wide
+ *    screen that walked the whole fold inward — 288px from the edge at 1920,
+ *    608 at 2560 — which the user saw at once and rightly rejected. Fixed
+ *    columns also keep the letter beside the copy rather than pinned to the
+ *    far edge with a gap in the middle, and leave the right of a wide screen
+ *    to the photographs, as `/` does. Below 38 + 32rem + gap (1472px) both
+ *    columns shrink from their maxima — 1280 still gives the title room.
  *
  *  - BELOW `xl` THE CARD ALIGNS TO THE COPY COLUMN and carries a wash of its
  *    own. From `sm` it is capped at 33rem — the copy block's own width — so
@@ -159,7 +172,7 @@ export default function Scrisoare() {
           <DiagonalMarqueeCarousel bottomFade={false} />
         </div>
 
-        <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] xl:mx-auto xl:grid xl:min-h-[100svh] xl:max-w-[96rem] xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] xl:items-center xl:gap-x-12 xl:px-24 xl:py-10">
+        <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] xl:grid xl:min-h-[100svh] xl:grid-cols-[minmax(0,38rem)_minmax(0,32rem)] xl:items-center xl:justify-start xl:gap-x-16 xl:px-24 xl:py-10">
           {/* THE FOLD. Bottom-left on a phone, 48px short of the screen so the
             letter's kicker shows under the panels; a centred left column from
             xl. */}
@@ -206,7 +219,7 @@ export default function Scrisoare() {
             text margin, because a surface can sit closer to the edge than
             ink can. From sm it is the copy column's width, on its own wash;
             at xl it is the right column, hugging the far side. */}
-          <div className="relative mx-4 sm:mx-6 sm:max-w-[33rem] xl:mx-0 xl:w-full xl:max-w-[32rem] xl:justify-self-end">
+          <div className="relative mx-4 sm:mx-6 sm:max-w-[33rem] xl:mx-0 xl:w-full xl:max-w-[32rem]">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -inset-x-[50vw] -top-6 -bottom-10 -z-10 hidden sm:block xl:hidden"

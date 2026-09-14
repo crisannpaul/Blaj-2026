@@ -1287,6 +1287,23 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     6.6–11: the 6.2 alternation artifact, the core being the tell, exactly as
     documented; `hittest.js` 0 unreachable. Build clean, 28 pages; :3004
     restarted and the served HTML grepped for each change.
+  - **Third cut, on the user's eye: the copy block goes back where `/` has it.**
+    „I don't like the new layout, the letter is ok, but you moved the rest of
+    the content more to the center, it was perfect where it was before, to
+    the left.” Cause: the desktop grid was `max-w-[96rem] mx-auto` with fluid
+    `1.15fr : 1fr` columns, so on any screen wider than 1536 the whole fold
+    walked inward — 288px from the edge at 1920, 608 at 2560, against the 96
+    (`px-24`) that `/` uses. Now the columns are FIXED — the copy block's own
+    38rem and the card's 32rem — the grid is `justify-content: start` with
+    `/`'s padding, and the card sits 64px to the right of the copy rather than
+    on the far edge, leaving the right of a wide screen to the photographs as
+    `/` does. Measured against `/` on the same build: kicker and title at
+    x=96 at 1280/1440/1920/2560, y identical at 1440/1920/2560 (167/257/437),
+    the lead within 1px; the panels ride 24px higher only because the lead is
+    one line shorter. At 1280 both columns shrink (512/512) and the title still
+    fits. No scroll at any of the four; `audit.js` clean. **The copy block's
+    position is not a variable of this layout** — it is `/`'s, and the letter
+    fits around it, not the other way round.
 
 - **2026-09-14, evening (the resend: every room, every pin, four answers)** —
   the four questions this session put to the organizers came back answered, and
