@@ -21,9 +21,9 @@ import { Heart } from "lucide-react";
  *    (vercel: no dead ends).
  *  - THE HEART. The signature in the .docx ends in "<3". It is a heart ICON
  *    now, at the right of the signature block — a glyph for a glyph, and the
- *    card's one accent besides the link. Sky, because sky is the brand and
- *    the palette has no red that is not `--destructive`; a red heart is a
- *    palette decision, not a class.
+ *    card's one accent besides the link. Sky fill, brand-strong outline,
+ *    because sky is the brand and the palette has no red that is not
+ *    `--destructive`; a red heart is a palette decision, not a class.
  *
  * There is no kicker. The first cut had „Cuvânt de bun venit” above the
  * salutation as site chrome, so the card read as a letter at a glance; the
@@ -143,14 +143,25 @@ export function WelcomeLetter({ className = "" }: { className?: string }) {
           390 and left "a Copiilor" alone on a line. Balanced instead, so the
           three lines a phone needs come out even and the two a desktop needs
           break where the name does. The heart is decorative — the name is
-          the signature; the icon is the organizers' "<3". */}
+          the signature; the icon is the organizers' "<3".
+
+          28px, sky FILL under a brand-strong STROKE, and inset from the
+          card's edge. The first version was 24px filled and stroked in the
+          same light sky, flush right, and the user said it did not read as
+          a heart: sky on white is 2.18:1, so at that size the two lobes and
+          the notch melted into a rounded blob. A darker outline gives the
+          silhouette back (3.3:1 against the paper), the extra 4px gives the
+          notch room, and the inset — 8px on a phone, where the signature's
+          longest line already reaches within ~20px of the icon, 16px from
+          xl — stops it reading as pinned to the padding. */}
       <footer className="border-border mt-7 flex items-center justify-between gap-4 border-t pt-5">
         <p className="font-display min-w-0 flex-1 leading-snug font-semibold text-balance">
           {LETTER.signature[0]} {LETTER.signature[1]}
         </p>
         <Heart
           aria-hidden="true"
-          className="text-brand size-6 shrink-0 fill-current"
+          strokeWidth={2}
+          className="text-brand-strong fill-brand mr-2 size-7 shrink-0 xl:mr-4"
         />
       </footer>
     </article>

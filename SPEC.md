@@ -1325,6 +1325,14 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     frozen; `audit.js` clean at 390/768/1440; card 760px tall at 390 (from 793),
     620 at 1440. The copy inventory no longer needs a row for the kicker; the
     letter's only non-verbatim elements are the link and the icon.
+  - **Sixth cut: „put the heart a lil more to the left and make it read like a
+    heart.”** The 24px heart filled and stroked in the same light sky (2.18:1
+    on white) melted into a rounded blob. Now 28px, `--brand` fill under a
+    `--brand-strong` stroke (3.3:1) so the lobes and the notch have an edge,
+    and inset from the padding — 8px on a phone, 16px from `xl`. Measured at
+    390: heart at x=318–346 with the signature's longest line ending at 274,
+    still three balanced lines; at 1440: x=1268–1296, two lines. `audit.js`
+    clean.
 
 - **2026-09-14, evening (the resend: every room, every pin, four answers)** —
   the four questions this session put to the organizers came back answered, and
