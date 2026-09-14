@@ -1235,7 +1235,20 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   byte-identical to the branch in `src/`, `scripts/` and `public/`. `:3000`
   shows the letter after its next rebuild and restart, which the user runs;
   the production deploy likewise. PR #1 is then redundant — the main checkout
-  already has everything — and can be closed once the checkout is committed. Landing it: merge the PR (the branch also
+  already has everything — and can be closed once the checkout is committed.
+
+  **Shipped, ~22:05.** The user came back: „localhost and deploy still don't
+  have the letter.” Checked rather than assumed: the files were in place and a
+  build had run at 21:54, but the `:3000` process dated from 18:56 — `next
+  start` never picks up a rebuild without a restart, exactly the trap
+  CLAUDE.md describes — and production had never been deployed. So the session
+  left the worktree, rebuilt the main checkout, restarted `:3000` (letter,
+  no-break spaces and heart confirmed in the served HTML), and ran `vercel
+  deploy --prod` from the main checkout, which this time went through:
+  deployment **blaj2026-ounj6fnu5-geneous.vercel.app**, promoted to
+  **blaj2026.vercel.app** and verified live — `/` serves the letter, `/ateliere`
+  still serves the hunt card, nothing rolled back. **Vercel is current.** The
+  main checkout is still uncommitted (the user's to commit). Landing it: merge the PR (the branch also
   carries a snapshot commit of the 14 Sep working copy, so master's uncommitted
   edits to the same files will need reconciling — `page.tsx` above all), or
   apply the five files by hand: `src/app/page.tsx`,
