@@ -51,6 +51,13 @@
   --color-scrim: var(--scrim);
 
   --shadow-card: 0 1px 2px rgb(var(--scrim) / 0.07), 0 10px 30px -14px rgb(var(--scrim) / 0.22);
+  /* A sheet that is read against a pale ground — the welcome letter, whose top
+     edge peeks under the landing fold. --shadow-card has NO halo above the box:
+     its direct layer is offset downward with negative spread, so a card sitting
+     below the fold met the wash above it at 1.16:1 and the edge did not exist.
+     This one is layered (vercel Design): a 1px tinted outline, an ambient halo
+     all round, then the same direct shadow below. */
+  --shadow-sheet: 0 0 0 1px rgb(var(--scrim) / 0.07), 0 0 12px rgb(var(--scrim) / 0.08), 0 12px 32px -12px rgb(var(--scrim) / 0.24);
 
   /* Fonts. NOTE the indirection: a `--font-*` key here may not reference a
      `--font-*` variable, that is a cycle Tailwind resolves to nothing and no

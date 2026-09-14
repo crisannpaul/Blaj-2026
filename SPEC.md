@@ -1171,7 +1171,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below | user | done |
-| D15 | The organizers' welcome letter (948 ch, „Dragi tineri” to the Biroul's signature) does not fit the hero slot, which holds ~220. Its first sentence is live; **where does the rest go?** A section of its own below the branch panels is the obvious home, but that is the one place the landing page has no room, so it is a layout decision: shrink the panels, or let the page scroll past one fold. **Candidate built 14 Sep, late: `/scrisoare` on branch `worktree-letter`, :3004** — the letter as a card of its own, beside the fold from `lg` and under it on a phone, over a sticky marquee; the panels do not shrink and the fold does not move. Awaiting the user's eye; see the changelog | user | before the copy is shown to the organizers |
+| D15 | The organizers' welcome letter (948 ch, „Dragi tineri” to the Biroul's signature) does not fit the hero slot, which holds ~220. Its first sentence is live; **where does the rest go?** A section of its own below the branch panels is the obvious home, but that is the one place the landing page has no room, so it is a layout decision: shrink the panels, or let the page scroll past one fold. **Candidate built 14 Sep, late: `/scrisoare` on branch `worktree-letter`, :3004** — the letter as a card of its own, beside the fold from `xl` and under it on everything narrower, over a sticky marquee; the panels do not shrink and the fold does not move. Awaiting the user's eye; see the changelog | user | before the copy is shown to the organizers |
 | ~~D16~~ | ~~«Intereparhială» or «Arhieparhială»?~~ — **decided 14 Sep by the user: Intereparhială.** The returned copy sheet had changed „Tineretului” to „Tinerilor” and left „Intereparhială” untouched, which was not the same as confirming it; the user confirmed it separately. The supratitlu reads **Întâlnirea Intereparhială a Tinerilor** | user | done |
 
 ---
@@ -1211,9 +1211,10 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 
   - **What it is.** The live fold, its geometry untouched, plus the letter — row
     AC-04 of the returned copy, „Dragi tineri” to the Biroul's signature,
-    verbatim down to the „<3” — as a `--card` surface at 92% with the archive
-    ghosting through. Right column from `lg` (a fluid 1.15fr : 1fr grid, because
-    38rem + 32rem + gap does not fit inside 1024px), under the fold on a phone.
+    verbatim down to the „<3” — as a `--card` surface (92% in the first cut,
+    opaque since the review, below). Right column from `xl` (a fluid
+    1.15fr : 1fr grid; why not `lg` is below), under the fold on everything
+    narrower.
     The lead goes back to the organizers' first sentence alone (163 ch): with the
     letter beside it, the programme list folded onto the lead read as the same
     sentence twice. One inline link, „atelierele pe care le-am pregătit special
@@ -1226,12 +1227,12 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     `overflow-x: clip`, not `hidden` — `hidden` makes it a scroll container and
     sticky then sticks to it instead of to the window. `lvh` not `svh`, so the
     strip iOS reveals when its toolbar collapses is still photograph.
-  - **The peek is the scroll cue.** The fold is 20px shorter than the screen so
+  - **The peek is the scroll cue** (first cut; it changed, below). The fold is 20px shorter than the screen so
     the card's top edge — corners, shadow, paper — shows under the panels. 20 and
     not 28 because the card's top padding is 24 and the strip has to be paper:
     the first cut put the top 8px of the kicker's capitals on screen, sliced by
     the viewport edge, which reads as a bug rather than a card.
-  - Measured: peek 20px at 390x844 and 375x667 (panels end at y=800 / 623, card
+  - First cut, measured: peek 20px at 390x844 and 375x667 (panels end at y=800 / 623, card
     starts at 824 / 647); gone at 320x568, where the fold already overflows by
     1px; card 358 wide (~40ch) on a phone, 576 (`max-w-[36rem]`) on a tablet or a
     sideways phone — it was 720 and an 80-character measure before the cap — and
@@ -1249,6 +1250,43 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     stays, D15 closes. BRANCHES and CONTENT are duplicated in the candidate on
     purpose — the live `page.tsx` is edited independently on master. To reject:
     delete the route and the component; nothing else references them.
+  - **Cold review (opus), then a second cut.** Five SHOULD-FIX, no blocking,
+    verdict fix-first — and four of the five were right about something the
+    tier-1 numbers cannot see. (1) The 20px paper peek measured **1.16:1**
+    against the wash under the panels: the one signal that the page continues,
+    invisible. The fold is now **48px** short of the screen, so the peek is the
+    card's top padding plus its whole kicker line — a caption at the foot of
+    the screen, ink at 7.81:1 — and the card carries a new layered token,
+    `--shadow-sheet` (1px tinted outline + ambient halo + the direct shadow),
+    because `--shadow-card` has no halo above the box. The marquee's bottom
+    edge-softener is off on this page through a new `bottomFade` prop (same
+    name as on the glass branch): pinned as a sticky backdrop it whitened the
+    last 64px of every screen. (2) The letter screen had no focal point —
+    everything 13–20px, a 1.54x spread against the fold's 3.4x. The salutation
+    is now the `h2` step: 29px at 390, 44px at 1440, a 2:1 under the 88px
+    title. (3) The 640–1023 band was an accident: the card capped at 36rem
+    with 22–29% of the width raw photography beside it, and at 1024x768 — an
+    iPad on its side — the side-by-side overflowed by 137px and scrolling cut
+    the salutation through the glyphs. The grid now starts at **`xl`** (1280);
+    below it the card is the copy column's width (33rem, its right edge on the
+    lead's) over a full-width wash of the copy scrim's recipe, `sm` to `xl`,
+    so the strip beside it reads as it does beside the copy. (4) The 92% paper
+    let the marquee ghost through the reading surface — 4/255 mean, 16/255
+    peak between frames six seconds apart. The card is opaque now. (5) Whether
+    a marquee may move behind 948 characters of running text at all is D10's
+    scope and the user's call; recorded, not patched. Found by the second
+    sweep, not the review: `xl:py-16` made a 1366x768 laptop scroll 13px and
+    1280x800 6px — a page that scrolls six pixels reads as broken — so it is
+    `xl:py-10`: 0 scroll at 1280x800, 1366x768, 1440x900 and 1536x864; 38px at
+    1280x720, accepted.
+  - Re-measured: peek 48px at 390x844, 375x667, 768x1024 and 1024x768;
+    `audit.js` clean at 390/768/1440; `ink.js` all pass at 390 (fold and
+    letter) and 1440 — the salutation 19.8:1, the kicker in the peek 7.81:1 —
+    after one FAIL at 3.17:1 on a letter of „Ateliere” with a 26px core that a
+    rerun under `reducedMotion: "reduce"` read at 6.8:1 with its twins at
+    6.6–11: the 6.2 alternation artifact, the core being the tell, exactly as
+    documented; `hittest.js` 0 unreachable. Build clean, 28 pages; :3004
+    restarted and the served HTML grepped for each change.
 
 - **2026-09-14, evening (the resend: every room, every pin, four answers)** —
   the four questions this session put to the organizers came back answered, and

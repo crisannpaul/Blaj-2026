@@ -24,12 +24,15 @@ import Link from "next/link";
  * read down to the signature. Add it to the copy inventory as an AC row if the
  * page ships.
  *
- * Type: three steps of the ramp — the kicker at `ui`, the salutation at `h3`
- * and everything else at `body`. A letter's salutation is body-sized on
- * paper; what makes this a letter is the structure (address, paragraphs,
- * signature under a rule), not a headline. `text-h2` was tried in the head and
- * rejected for the same reason: it is fluid, 44px at 1440, and would have sat
- * beside the 88px title as a second headline.
+ * Type: three steps of the ramp — the kicker at `ui`, the salutation at `h2`
+ * and everything else at `body`. The salutation was `h3` (20px) in the first
+ * cut, on the argument that a letter's salutation is body-sized on paper. The
+ * cold review put a number on what that cost: on a phone the card IS the
+ * second screen, and everything on it sat between 13 and 20px — a 1.54x
+ * spread against the fold's 3.4x, with no element the eye could land on
+ * (GUIDELINES 3 and 10.9). `h2` is fluid, 29px at 390 and 44px at 1440, and
+ * 44 beside the fold's 88px title is a 2:1 — the page's second section
+ * carrying the page's second heading, which is what it is.
  */
 type Segment = string | { text: string; href: "/ateliere" };
 
@@ -74,33 +77,38 @@ const LETTER: {
 };
 
 /**
- * The surface is `--card` at 92%, not opaque — the same order of wash the
- * fold's own copy scrim uses (90%), so the two surfaces read as one family
- * and the archive still ghosts through the paper. Near-black ink on a 92%
- * white needs nothing measured: the darkest backdrop it can meet is a black
- * photograph, and 0.92 of white over that is L≈0.83 against the 0.19 floor
- * (SPEC 6.1b). Measured anyway with `ink.js`; see the changelog.
+ * The surface is `--card`, OPAQUE. It was 92% in the first cut, to match the
+ * fold's 90% copy scrim and let the archive ghost through the paper; the cold
+ * review measured the ghost — a 4/255 mean, 16/255 peak drift under the body
+ * copy between two frames six seconds apart — and named it for what it is:
+ * the marquee, an accepted 2.2.2 deviation on the fold (D10), composited into
+ * the reading surface of 948 characters of running text. Paper does not move
+ * while you read it. The band still runs around the card, as on the fold.
+ *
+ * `shadow-sheet`, not `shadow-card`: the card's top edge is what peeks under
+ * the fold, and `shadow-card` has no halo above the box — see globals.css.
  *
  * Padding steps up with the viewport — 20 / 24 / 32 — because the measure
- * does: at 390 the card is 358 wide and 20px a side leaves ~40ch; at `lg` the
- * card is 512 and 32px leaves ~55ch, inside the 45–75 band. The top is 24
- * even at 390: the landing shows this card's top 20px under the fold as the
- * scroll cue, and that strip has to be paper, not the top of the kicker.
+ * does: at 390 the card is 358 wide and 20px a side leaves ~40ch; at `xl` the
+ * card is 484–512 and 32px leaves ~55ch, inside the 45–75 band. The top is 24
+ * even at 390: the landing shows this card's top 48px under the fold — the
+ * padding and the whole kicker line — as the scroll cue, and the geometry
+ * there is `page.tsx`'s to keep.
  */
 export function WelcomeLetter({ className = "" }: { className?: string }) {
   return (
     <article
       aria-labelledby="scrisoare-salut"
-      className={`bg-card/92 text-card-foreground shadow-card rounded-2xl px-5 pt-6 pb-5 sm:p-6 lg:p-8 ${className}`}
+      className={`bg-card text-card-foreground shadow-sheet rounded-2xl px-5 pt-6 pb-5 sm:p-6 xl:p-8 ${className}`}
     >
       <p className="text-muted-foreground font-ui text-ui tracking-[0.14em] uppercase">
         {LETTER.kicker}
       </p>
-      <h2 id="scrisoare-salut" className="text-h3 mt-3 font-semibold">
+      <h2 id="scrisoare-salut" className="text-h2 mt-3 font-semibold">
         {LETTER.salutation}
       </h2>
 
-      <div className="mt-4 space-y-4">
+      <div className="mt-5 space-y-4">
         {LETTER.paragraphs.map((para, i) => (
           <p key={i}>
             {para.map((seg, k) =>

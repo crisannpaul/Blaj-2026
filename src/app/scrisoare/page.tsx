@@ -12,7 +12,8 @@ import { WelcomeLetter } from "@/components/ui/welcome-letter";
  * `/scrisoare` so it can be judged beside the live fold before anything
  * replaces it. It answers SPEC D15: the organizers' welcome letter does not
  * fit the hero slot, so where does it go? Here: a card of its own, beside the
- * copy from `lg` up and under it on a phone, where the page scrolls.
+ * copy from `xl` up and under it on everything narrower, where the page
+ * scrolls.
  *
  * Same fold as `/` — kicker, title, date, lead, the two branch panels, the
  * archive marquee behind — and the fold's geometry does not move: it is still
@@ -44,24 +45,44 @@ import { WelcomeLetter } from "@/components/ui/welcome-letter";
  *    the viewport grows when the toolbar collapses, and a backdrop sized to
  *    the small viewport would leave a strip of bare page under it. `main` is
  *    `overflow-x: clip`, not `hidden`, because `hidden` makes it a scroll
- *    container and sticky then sticks to it instead of to the window.
+ *    container and sticky then sticks to it instead of to the window. The
+ *    band's bottom edge-softener is OFF (`bottomFade`): pinned, it would
+ *    whiten the last 64px of every screen, and the one thing that has to read
+ *    down there is the letter's top edge.
  *
- *  - THE LETTER PEEKS. The fold is 20px shorter than the screen, so the top
- *    edge of the card — corners, shadow, a strip of paper — shows under the
- *    panels on first paint. That is the whole scroll affordance: nothing says
- *    "scroll", the page just visibly continues. 20px, and the card's top
- *    padding is 24: the peek must be PAPER ONLY. The first cut showed 28px,
- *    which put the top 8px of the kicker's capitals on screen, sliced by the
- *    viewport edge — a strip of paper reads as a card, a strip of letters
- *    reads as a bug. On a phone that is already too short for the fold the
+ *  - THE LETTER PEEKS, AND THE PEEK IS A LINE OF TEXT. The fold is 48px
+ *    shorter than the screen, so under the panels sit the card's top padding
+ *    and its whole kicker — „Cuvânt de bun venit” — with 3px to spare below
+ *    the line box. That is the scroll affordance: a caption at the foot of the
+ *    screen saying what comes next. It got here in three steps. 28px showed
+ *    the top 8px of the kicker's capitals, sliced by the viewport — a strip of
+ *    cut letters reads as a bug. 20px was paper only, and the cold review
+ *    measured it at 1.16:1 against the wash under the panels: a near-white
+ *    strip on a near-white band, the one signal the page has that anything is
+ *    below, invisible. A whole line of ink is a signal at any contrast the
+ *    paper can manage, and the card's own halo (`shadow-sheet`) now draws the
+ *    edge as well. On a phone that is already too short for the fold, the
  *    fold grows past the screen and the peek is simply gone, which is the
  *    right failure.
  *
- *  - From `lg` up the content is a two-column grid: copy left, letter right,
- *    both centred on the fold. The columns are fluid (1.15fr : 1fr) rather
- *    than fixed because 38rem + 32rem + gap does not fit inside a 1024px
- *    viewport with its padding; the title is the binding width on the left —
- *    "Blaj 2026" at the ramp's 88px cap is ~435px — and 1024 gives it 467.
+ *  - TWO COLUMNS FROM `xl`, NOT `lg`. At 1024–1279 the side-by-side does not
+ *    fit: the title is the binding width on the left — "Blaj 2026" at the
+ *    ramp's 88px cap is ~435px, so the left column cannot drop below ~1.15 of
+ *    the right — and the right column that leaves at 1024 is 394px, on which
+ *    the letter runs 777px tall against a 768px viewport (an iPad on its side,
+ *    exactly). The page then scrolled 137px and the salutation was cut through
+ *    the glyphs at the top of the window. So that band stacks like a tablet
+ *    instead, and the grid starts where both columns have room: at 1280 the
+ *    card is 484px wide and 649 tall in an 800px viewport, no scroll.
+ *
+ *  - BELOW `xl` THE CARD ALIGNS TO THE COPY COLUMN and carries a wash of its
+ *    own. From `sm` it is capped at 33rem — the copy block's own width — so
+ *    its right edge lands on the lead's right edge rather than 48px past it,
+ *    and behind it a full-width scrim of the same recipe as the copy's, so the
+ *    strip of raw photography beside the card on a tablet (22% of the width
+ *    at 768, 29% on a sideways phone) is washed the way it is beside the copy
+ *    above. Not on a phone: at 390 the flanks are 16px of photograph and a
+ *    92%-white wash there would only erase the card's own sides.
  */
 export const metadata: Metadata = {
   title: "Scrisoare (probă)",
@@ -94,11 +115,23 @@ const CONTENT = {
     "împreună în Mica Romă.",
 } as const;
 
-/** The copy's own scrim below lg — identical to `page.tsx`, see the note there. */
+/** The copy's own scrim below xl — identical to `page.tsx`, see the note there. */
 const COPY_SCRIM =
   "linear-gradient(to bottom, transparent 0%, " +
   "color-mix(in oklab, var(--background) 90%, transparent) 22%, " +
   "color-mix(in oklab, var(--background) 90%, transparent) 88%, transparent 100%)";
+
+/**
+ * The letter's wash, sm to xl. Same recipe, and the same rule: both ramps
+ * complete INSIDE the box, or the wash draws its own edge across the page.
+ * The top ramp is short (12%) and the box starts only 24px above the card, so
+ * the band between the panels and the card — where the peek has to read on a
+ * short tablet — is barely touched: ~20% at the card's top row.
+ */
+const LETTER_SCRIM =
+  "linear-gradient(to bottom, transparent 0%, " +
+  "color-mix(in oklab, var(--background) 90%, transparent) 12%, " +
+  "color-mix(in oklab, var(--background) 90%, transparent) 90%, transparent 100%)";
 
 export default function Scrisoare() {
   return (
@@ -123,17 +156,18 @@ export default function Scrisoare() {
           aria-hidden="true"
           className="pointer-events-none sticky top-0 z-0 -mb-[100lvh] h-[100lvh]"
         >
-          <DiagonalMarqueeCarousel />
+          <DiagonalMarqueeCarousel bottomFade={false} />
         </div>
 
-        <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] lg:mx-auto lg:grid lg:min-h-[100svh] lg:max-w-[96rem] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-x-12 lg:px-16 lg:py-16 xl:px-24">
-          {/* THE FOLD. Bottom-left on a phone, 20px short of the screen so the
-            letter peeks; a centred left column from lg. */}
-          <div className="short:pt-6 tight:pt-8 flex min-h-[calc(100svh-1.25rem)] flex-col justify-end px-6 pt-16 pb-6 lg:min-h-0 lg:px-0 lg:pt-0 lg:pb-0">
-            <div className="relative max-w-[33rem] lg:max-w-[38rem]">
+        <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] xl:mx-auto xl:grid xl:min-h-[100svh] xl:max-w-[96rem] xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] xl:items-center xl:gap-x-12 xl:px-24 xl:py-10">
+          {/* THE FOLD. Bottom-left on a phone, 48px short of the screen so the
+            letter's kicker shows under the panels; a centred left column from
+            xl. */}
+          <div className="short:pt-6 tight:pt-8 flex min-h-[calc(100svh-3rem)] flex-col justify-end px-6 pt-16 pb-6 xl:min-h-0 xl:px-0 xl:pt-0 xl:pb-0">
+            <div className="relative max-w-[33rem] xl:max-w-[38rem]">
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -inset-x-[50vw] -top-36 -bottom-20 -z-10 lg:hidden"
+                className="pointer-events-none absolute -inset-x-[50vw] -top-36 -bottom-20 -z-10 xl:hidden"
                 style={{ background: COPY_SCRIM }}
               />
 
@@ -163,18 +197,23 @@ export default function Scrisoare() {
 
               <BranchPanels
                 panels={BRANCHES}
-                className="short:mt-5 mt-6 max-w-[26rem] lg:max-w-[32rem]"
+                className="short:mt-5 mt-6 max-w-[26rem] xl:max-w-[32rem]"
               />
             </div>
           </div>
 
-          {/* THE LETTER. 16px from the phone's edges — inside the fold's 24px
+          {/* THE LETTER. 16px from a phone's edges — inside the fold's 24px
             text margin, because a surface can sit closer to the edge than
-            ink can. Capped at 36rem from sm, because a tablet or a phone on
-            its side would otherwise hand it the whole width and a 720px card
-            is an 80-character measure. At lg it is the right column, hugging
-            the far side. */}
-          <WelcomeLetter className="mx-4 sm:mx-6 sm:max-w-[36rem] lg:mx-0 lg:w-full lg:max-w-[32rem] lg:justify-self-end" />
+            ink can. From sm it is the copy column's width, on its own wash;
+            at xl it is the right column, hugging the far side. */}
+          <div className="relative mx-4 sm:mx-6 sm:max-w-[33rem] xl:mx-0 xl:w-full xl:max-w-[32rem] xl:justify-self-end">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-[50vw] -top-6 -bottom-10 -z-10 hidden sm:block xl:hidden"
+              style={{ background: LETTER_SCRIM }}
+            />
+            <WelcomeLetter />
+          </div>
         </div>
       </main>
     </ViewTransition>
