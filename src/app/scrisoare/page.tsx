@@ -50,20 +50,22 @@ import { WelcomeLetter } from "@/components/ui/welcome-letter";
  *    whiten the last 64px of every screen, and the one thing that has to read
  *    down there is the letter's top edge.
  *
- *  - THE LETTER PEEKS, AND THE PEEK IS A LINE OF TEXT. The fold is 48px
+ *  - THE LETTER PEEKS, AND THE PEEK IS A LINE OF TEXT. The fold is 60px
  *    shorter than the screen, so under the panels sit the card's top padding
- *    and its whole kicker — „Cuvânt de bun venit” — with 3px to spare below
- *    the line box. That is the scroll affordance: a caption at the foot of the
- *    screen saying what comes next. It got here in three steps. 28px showed
- *    the top 8px of the kicker's capitals, sliced by the viewport — a strip of
- *    cut letters reads as a bug. 20px was paper only, and the cold review
- *    measured it at 1.16:1 against the wash under the panels: a near-white
- *    strip on a near-white band, the one signal the page has that anything is
- *    below, invisible. A whole line of ink is a signal at any contrast the
- *    paper can manage, and the card's own halo (`shadow-sheet`) now draws the
- *    edge as well. On a phone that is already too short for the fold, the
- *    fold grows past the screen and the peek is simply gone, which is the
- *    right failure.
+ *    (24) and its whole salutation — „Dragi tineri,” at the h2 step, 29px
+ *    with a 1.05 line-height at 390 — with ~5px to spare below the line box.
+ *    That is the scroll affordance: the letter's own first words at the foot
+ *    of the screen. It got here in four steps. 28px showed the top 8px of a
+ *    kicker's capitals, sliced by the viewport — a strip of cut letters reads
+ *    as a bug. 20px was paper only, and the cold review measured it at 1.16:1
+ *    against the wash under the panels: a near-white strip on a near-white
+ *    band, the one signal the page has that anything is below, invisible.
+ *    48px showed the whole kicker line, „Cuvânt de bun venit”; then the user
+ *    cut the kicker, and the salutation — bigger ink still — took its place.
+ *    A whole line of ink is a signal at any contrast the paper can manage,
+ *    and the card's own halo (`shadow-sheet`) draws the edge as well. On a
+ *    phone that is already too short for the fold, the fold grows past the
+ *    screen and the peek is simply gone, which is the right failure.
  *
  *  - TWO COLUMNS FROM `xl`, NOT `lg`. At 1024–1279 the side-by-side does not
  *    fit: the title is the binding width on the left — "Blaj 2026" at the
@@ -175,10 +177,10 @@ export default function Scrisoare() {
         </div>
 
         <div className="relative z-10 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+2.5rem))] xl:grid xl:min-h-[100svh] xl:grid-cols-[minmax(0,38rem)_minmax(0,32rem)] xl:items-center xl:justify-between xl:gap-x-16 xl:px-24 xl:py-10">
-          {/* THE FOLD. Bottom-left on a phone, 48px short of the screen so the
-            letter's kicker shows under the panels; a centred left column from
-            xl. */}
-          <div className="short:pt-6 tight:pt-8 flex min-h-[calc(100svh-3rem)] flex-col justify-end px-6 pt-16 pb-6 xl:min-h-0 xl:px-0 xl:pt-0 xl:pb-0">
+          {/* THE FOLD. Bottom-left on a phone, 60px short of the screen so the
+            letter's salutation shows under the panels; a centred left column
+            from xl. */}
+          <div className="short:pt-6 tight:pt-8 flex min-h-[calc(100svh-3.75rem)] flex-col justify-end px-6 pt-16 pb-6 xl:min-h-0 xl:px-0 xl:pt-0 xl:pb-0">
             <div className="relative max-w-[33rem] xl:max-w-[38rem]">
               <div
                 aria-hidden="true"

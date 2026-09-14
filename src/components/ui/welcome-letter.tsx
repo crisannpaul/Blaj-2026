@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 
 /**
  * The organizers' welcome letter, VERBATIM, as a card.
@@ -9,40 +10,43 @@ import Link from "next/link";
  * tineri" to the Biroul's signature, against a hero slot that holds ~220
  * (SPEC D15). The hero keeps their first sentence; everything after it lives
  * here, with its paragraphs intact. The returned .docx has no line breaks in
- * it — every line is its own paragraph — so the one-liners are theirs, and so
- * is the "<3" at the end of the signature.
+ * it — every line is its own paragraph — so the one-liners are theirs.
  *
- * Nothing is rewritten. The single edit is a LINK: "atelierele pe care le-am
- * pregătit special pentru voi" points at /ateliere, because the sentence says
- * this page is where the workshops are, and on a phone the letter is the last
- * thing on the page — a reader who finishes it needs somewhere to go other
- * than back up to the panels (vercel: no dead ends).
+ * Two departures from verbatim, both the user's:
  *
- * The kicker above the salutation is site chrome, not copy: the same
- * uppercase tracked label the hero's date line wears. It is what makes the
- * card read as a letter *from someone* on first glance, before anyone has
- * read down to the signature. Add it to the copy inventory as an AC row if the
- * page ships.
+ *  - A LINK: "atelierele pe care le-am pregătit special pentru voi" points at
+ *    /ateliere, because the sentence says this page is where the workshops
+ *    are, and on a phone the letter is the last thing on the page — a reader
+ *    who finishes it needs somewhere to go other than back up to the panels
+ *    (vercel: no dead ends).
+ *  - THE HEART. The signature in the .docx ends in "<3". It is a heart ICON
+ *    now, at the right of the signature block — a glyph for a glyph, and the
+ *    card's one accent besides the link. Sky, because sky is the brand and
+ *    the palette has no red that is not `--destructive`; a red heart is a
+ *    palette decision, not a class.
  *
- * Type: three steps of the ramp — the kicker at `ui`, the salutation at `h2`
- * and everything else at `body`. The salutation was `h3` (20px) in the first
- * cut, on the argument that a letter's salutation is body-sized on paper. The
- * cold review put a number on what that cost: on a phone the card IS the
- * second screen, and everything on it sat between 13 and 20px — a 1.54x
- * spread against the fold's 3.4x, with no element the eye could land on
- * (GUIDELINES 3 and 10.9). `h2` is fluid, 29px at 390 and 44px at 1440, and
- * 44 beside the fold's 88px title is a 2:1 — the page's second section
- * carrying the page's second heading, which is what it is.
+ * There is no kicker. The first cut had „Cuvânt de bun venit” above the
+ * salutation as site chrome, so the card read as a letter at a glance; the
+ * user cut it. The salutation does that job on its own — and it is now what
+ * peeks under the fold on a phone, see `scrisoare/page.tsx`.
+ *
+ * Type: two steps of the ramp — the salutation at `h2`, everything else at
+ * `body`. The salutation was `h3` (20px) in the first cut, on the argument
+ * that a letter's salutation is body-sized on paper. The cold review put a
+ * number on what that cost: on a phone the card IS the second screen, and
+ * everything on it sat between 13 and 20px — a 1.54x spread against the
+ * fold's 3.4x, with no element the eye could land on (GUIDELINES 3 and
+ * 10.9). `h2` is fluid, 29px at 390 and 44px at 1440, and 44 beside the
+ * fold's 88px title is a 2:1 — the page's second section carrying the page's
+ * second heading, which is what it is.
  */
 type Segment = string | { text: string; href: "/ateliere" };
 
 const LETTER: {
-  kicker: string;
   salutation: string;
   paragraphs: readonly (readonly Segment[])[];
   signature: readonly [string, string];
 } = {
-  kicker: "Cuvânt de bun venit",
   salutation: "Dragi tineri,",
   paragraphs: [
     ["Sunteți pregătiți să petrecem împreună o zi de neuitat?"],
@@ -72,7 +76,7 @@ const LETTER: {
   ],
   signature: [
     "Biroul pentru Pastorația Tinerilor și a Copiilor",
-    "al Arhieparhiei de Alba Iulia și Făgăraș <3",
+    "al Arhieparhiei de Alba Iulia și Făgăraș",
   ],
 };
 
@@ -91,9 +95,9 @@ const LETTER: {
  * Padding steps up with the viewport — 20 / 24 / 32 — because the measure
  * does: at 390 the card is 358 wide and 20px a side leaves ~40ch; at `xl` the
  * card is 484–512 and 32px leaves ~55ch, inside the 45–75 band. The top is 24
- * even at 390: the landing shows this card's top 48px under the fold — the
- * padding and the whole kicker line — as the scroll cue, and the geometry
- * there is `page.tsx`'s to keep.
+ * even at 390: the landing shows this card's top 60px under the fold — the
+ * padding and the whole salutation line — as the scroll cue, and the
+ * geometry there is `page.tsx`'s to keep.
  */
 export function WelcomeLetter({ className = "" }: { className?: string }) {
   return (
@@ -101,10 +105,7 @@ export function WelcomeLetter({ className = "" }: { className?: string }) {
       aria-labelledby="scrisoare-salut"
       className={`bg-card text-card-foreground shadow-sheet rounded-2xl px-5 pt-6 pb-5 sm:p-6 xl:p-8 ${className}`}
     >
-      <p className="text-muted-foreground font-ui text-ui tracking-[0.14em] uppercase">
-        {LETTER.kicker}
-      </p>
-      <h2 id="scrisoare-salut" className="text-h2 mt-3 font-semibold">
+      <h2 id="scrisoare-salut" className="text-h2 font-semibold">
         {LETTER.salutation}
       </h2>
 
@@ -135,16 +136,22 @@ export function WelcomeLetter({ className = "" }: { className?: string }) {
         ))}
       </div>
 
-      {/* The signature, under a hairline. One name in one paragraph — the
-          .docx had it as two, but a signature is a block and a screen reader
-          should say the name once, whole. No forced break either: with one,
-          the first half wrapped on its own at 390 and left "a Copiilor" alone
-          on a line. Balanced instead, so the three lines a phone needs come
-          out even and the two a desktop needs break where the name does. */}
-      <footer className="border-border mt-7 border-t pt-5">
-        <p className="font-display leading-snug font-semibold text-balance">
+      {/* The signature, under a hairline, with the heart at its right. One
+          name in one paragraph — the .docx had it as two, but a signature is
+          a block and a screen reader should say the name once, whole. No
+          forced break either: with one, the first half wrapped on its own at
+          390 and left "a Copiilor" alone on a line. Balanced instead, so the
+          three lines a phone needs come out even and the two a desktop needs
+          break where the name does. The heart is decorative — the name is
+          the signature; the icon is the organizers' "<3". */}
+      <footer className="border-border mt-7 flex items-center justify-between gap-4 border-t pt-5">
+        <p className="font-display min-w-0 flex-1 leading-snug font-semibold text-balance">
           {LETTER.signature[0]} {LETTER.signature[1]}
         </p>
+        <Heart
+          aria-hidden="true"
+          className="text-brand size-6 shrink-0 fill-current"
+        />
       </footer>
     </article>
   );

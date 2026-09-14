@@ -1219,8 +1219,8 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     letter beside it, the programme list folded onto the lead read as the same
     sentence twice. One inline link, „atelierele pe care le-am pregătit special
     pentru voi” → `/ateliere`, so the end of the letter is not a dead end on a
-    phone. The kicker over the salutation, „Cuvânt de bun venit”, is site chrome,
-    not organizers' copy — it needs an AC row in the inventory if this ships.
+    phone. (A kicker over the salutation, „Cuvânt de bun venit”, was site chrome
+    in the first four cuts; the user cut it in the fifth, below.)
   - **The marquee is a sticky backdrop**, one `lvh` tall, pulled back under the
     content by its own height: the page is 1.9 screens on a phone, and a band
     sized to the fold would stop dead where the letter begins. `main` is
@@ -1311,6 +1311,20 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
     1312 (1920), 1952 (2560); the copy block unchanged at every width; at
     1280 there is no free space to distribute, so the card stays beside the
     copy at x=672 as before. `audit.js` clean.
+  - **Fifth cut: no kicker, and a heart icon.** „Let's delete cuvânt de bun
+    venit from there, and on the footer, instead of the <3 heart, let's
+    actually add a heart icon to the right of the footer.” The kicker is gone;
+    the signature's „<3” is a lucide `Heart`, 24px, filled in `--brand` sky,
+    `aria-hidden`, at the right of the signature block (flex, space-between) —
+    sky because the palette has no red that is not `--destructive`; a red
+    heart would be a new token, i.e. a palette decision. Knock-on: the kicker
+    was the line that peeked under the fold, so the fold is now **60px** short
+    of the screen and the peek is the whole salutation — 24px padding + the
+    h2's 30.8px line box at 390, ~5px spare. Measured: peek 60px at 390x844,
+    375x667 and 768x1024; „Dragi tineri,” in the peek 19.8:1 with motion
+    frozen; `audit.js` clean at 390/768/1440; card 760px tall at 390 (from 793),
+    620 at 1440. The copy inventory no longer needs a row for the kicker; the
+    letter's only non-verbatim elements are the link and the icon.
 
 - **2026-09-14, evening (the resend: every room, every pin, four answers)** —
   the four questions this session put to the organizers came back answered, and
