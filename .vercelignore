@@ -11,3 +11,7 @@ legacy/
 .claude/
 SPEC.md
 scripts/
+# A second local build (NEXT_DIST_DIR=.next-b, 66MB). Vercel drops `.next`
+# on its own but knows nothing about this name, and with a .vercelignore
+# present it does NOT fall back to .gitignore.
+.next-*/
