@@ -51,6 +51,13 @@
   --color-scrim: var(--scrim);
 
   --shadow-card: 0 1px 2px rgb(var(--scrim) / 0.07), 0 10px 30px -14px rgb(var(--scrim) / 0.22);
+  /* A sheet that is read against a pale ground — the welcome letter, whose top
+     edge peeks under the landing fold. --shadow-card has NO halo above the box:
+     its direct layer is offset downward with negative spread, so a card sitting
+     below the fold met the wash above it at 1.16:1 and the edge did not exist.
+     This one is layered (vercel Design): a 1px tinted outline, an ambient halo
+     all round, then the same direct shadow below. */
+  --shadow-sheet: 0 0 0 1px rgb(var(--scrim) / 0.07), 0 0 12px rgb(var(--scrim) / 0.08), 0 12px 32px -12px rgb(var(--scrim) / 0.24);
 
   /* Fonts. NOTE the indirection: a `--font-*` key here may not reference a
      `--font-*` variable, that is a cycle Tailwind resolves to nothing and no
@@ -117,6 +124,24 @@
   --contrast: #fdc700;
   --contrast-text: #6f5600;
 
+  /* The gilt on the ten Blajhunt stop glyphs, top of the drawing to the ground
+     line. Read only by `stop-glyphs.tsx`, through a `userSpaceOnUse` gradient
+     — see the header of that file for why the units matter.
+
+     NOT registered in `@theme inline`, and that is deliberate: these are
+     consumed as raw `var()` inside SVG gradient stops, never as a Tailwind
+     utility, so a `--color-*` alias would only manufacture two utilities
+     nobody calls. They live here because a raw hex in a component is a defect.
+
+     The drawings were `--contrast-text` at 70% before this, which over the
+     near-white plate composites to about #97874b — olive, not gold. The floor
+     that bounds the lit end is 3:1 for a graphic: on `--muted` #f4f4f5, the
+     plate's darkest ground, --glyph-gold-lit reads 3.26:1 and the deep end
+     7.5:1. Brightening the lit end is the move to be careful with — #b8880e
+     is already under, at 2.9:1. */
+  --glyph-gold-lit: #ad8010;
+  --glyph-gold-deep: #5f4703;
+
   /* The generated sky field behind the Blajhunt hero, bottom stop to top stop.
      Read at runtime by adisyon-shader.tsx and painted verbatim by the
      `field-fallback` utility below, so the WebGL field and its no-WebGL
@@ -141,6 +166,29 @@
   --face-body: var(--font-inter), system-ui, sans-serif;
   --face-ui: var(--font-inter), system-ui, sans-serif;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHORT VIEWPORTS  —  `short:` variant
+   A phone turned sideways is 390px tall, and the landing fold's vertical
+   rhythm is tuned for 844. At 390 the same copy block measures 601px, so the
+   two branch actions sit entirely below the fold — on a page whose only job is
+   routing to those two branches. Only 5% of the pair was on screen.
+
+   Height, not orientation: a short window in portrait has the same problem.
+
+   SHORT PORTRAIT PHONES ARE NOT UNAFFECTED, which this comment claimed until
+   it was measured on 8 Sep. A 320x568 fold overflowed by 103px even before the
+   longer lead landed, and 375x667 — an iPhone SE 2/3, not an exotic device —
+   had exactly 0px of margin. They fall between the two stools: too tall for
+   `short:` at 520, too short for the 844 the rhythm is tuned to.
+
+   Hence `tight:`, a BAND rather than a ceiling. It has to be a band because a
+   sideways phone is ~390px tall and would otherwise match both variants at
+   once, leaving which padding wins to source order in the compiled sheet. The
+   two are mutually exclusive by construction instead.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@custom-variant short (@media (max-height: 520px));
+@custom-variant tight (@media (min-height: 521px) and (max-height: 700px));
 
 @layer base {
   * {
