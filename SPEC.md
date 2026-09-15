@@ -1204,6 +1204,48 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 
 ## 14. Changelog
 
+- **2026-09-15, evening (the fold's finish: a weight pair and a handle)** —
+  the user, with the home page done: „is there anything nice we can sprinkle
+  on it design wise to make it look more professional… very minimal, it has to
+  respect the current layout.” Three moves, none of which moves a pixel of
+  layout, on branch `worktree-landing-polish` and served on **:3004** for
+  their eye (:3000 still holds the uncommitted phase-two banner, which the
+  branch does not carry). Not merged, not deployed; Vercel is behind.
+
+  1. **The title is a weight pair.** „Blaj” stays semibold; „2026” is Outfit
+     300 (`font-light` — the variable font is already loaded, no new
+     request). Still one string in `CONTENT`, because the copy inventory
+     asserts the literal; split at render on `\s`, because the separator is
+     U+00A0 and a split on U+0020 rendered „Blaj 202 Blaj 2026” for one
+     build. Display tracking −0.02em → −0.035em on the title span only. Same
+     face, same size, same ink: no ramp step, no colour, no height spent.
+  2. **A handle on the open panel.** A 40px `bg-background/90` circle with
+     lucide `ArrowRight` in ink, bottom-right, opposite the word; 32px under
+     `short:`. `aria-hidden`, inside the link (hittest: 3 interactive, 0
+     unreachable at 390 and 1440). Rides `MOTION`; opacity 0 / scale 0.6 in
+     the spine, still in the DOM so open/close is one interpolation. The
+     word's open-state bottom padding 16 → 24px so word and chip share an
+     axis. **Hidden below 300px of viewport**: at 200% zoom on a 390 phone the
+     open panel is 87px, the word already overflows and the chip sat on
+     „lie”; a 320 phone (208px panel) keeps it. Both looked at.
+  3. The date line in `tabular-nums`.
+
+  Considered and not done: a hairline ring on the cards (invisible over the
+  saturated tints, and `ring-inset` would have leaked into the focus ring);
+  colour in the title (the fold already has four accent moments — rule,
+  kicker, sky panel, gold panel); anything to the rule or the kicker. The
+  user asked about „a different font” for the title: Instrument Serif and
+  Fraunces were rendered as **screenshot-only** variants (runtime injection,
+  nothing in code) for them to judge. This session's read is that both cut
+  the one-family link with „Ateliere” and the Blajhunt mark and re-open the
+  serif → Outfit decision; the weight pair is the recommendation.
+
+  Verified on :3004: `audit.js` clean at 390/768/1440 — no overflow, no
+  contrast failures, no text under 12px, no tap target under 44px, no console
+  errors; `ink.js` all pass — open-label glyph cores worst 7.98:1 at 390 and
+  8.53:1 at 1440, spine worst 9.49:1 / 10.75:1, title 19.63:1 / 19.80:1;
+  `hittest.js` clean at both. 320×568 and 195×422 looked at by eye.
+
 - **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
   in `poze-org` the morning after the document, so the stock frame comes out
   and `STOCK` is empty for the fourth time in eight days. **No card on the

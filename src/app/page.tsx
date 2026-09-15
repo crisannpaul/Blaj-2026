@@ -25,6 +25,9 @@ import { LetterBell } from "@/components/ui/letter-bell";
  * The two BRANCHES are the page's whole job: this is the common trunk and the
  * day has exactly two things in it. They are labels only, by decision — no
  * descriptive sub-line — so the pair reads as a poster rather than a menu.
+ * Since 15 Sep the open panel also carries a round arrow chip opposite its
+ * word (the "handle", see `branch-panels.tsx`): not copy, an affordance, so
+ * the two read as doors and not as two captioned pictures.
  *
  * The two images are the commissioned artwork (A1/A3), supplied 8 Sep and
  * converted to webp from the originals kept out of the bundle in `docs/`. They
@@ -105,6 +108,25 @@ const CONTENT = {
 } as const;
 
 /**
+ * The title is set as a WEIGHT PAIR: the town in semibold, the year in light.
+ * One string in CONTENT — the copy inventory asserts the literal — split at
+ * the space here. Same face, same size, same ink: the pair adds a second
+ * voice to the fold's focal point without spending a colour, a ramp step or
+ * a pixel of height, which is what "authored, not templated" costs at its
+ * cheapest. Outfit loads as a variable font (no `weight` in layout.tsx), so
+ * 300 is already on the page.
+ *
+ * The separator is whatever whitespace the string carries — a NO-BREAK SPACE,
+ * per the Vercel baseline for brand names — and it is put back between the two
+ * halves as-is. Searching for a plain U+0020 found nothing, and the title
+ * rendered as "Blaj 202 Blaj 2026" for one build.
+ */
+const TITLE_SPACE = CONTENT.title.search(/\s/);
+const TITLE_WORD = CONTENT.title.slice(0, TITLE_SPACE);
+const TITLE_SEP = CONTENT.title.charAt(TITLE_SPACE);
+const TITLE_YEAR = CONTENT.title.slice(TITLE_SPACE + 1);
+
+/**
  * The copy's own scrim, below lg. Two things matter here.
  *
  * It is anchored to the COPY BLOCK, not the viewport. A wash with
@@ -179,15 +201,21 @@ export default function Home() {
               <span className="text-brand-text font-ui text-h3 block font-medium">
                 {CONTENT.kicker}
               </span>
+              {/* Tighter than the base h1's -0.02em: at display size Outfit's
+                geometric bowls open up and the word starts to read as
+                letters. -0.035em is the step where it reads as a word again
+                without the "aj" pair touching. */}
               <span
-                className="text-display short:text-h2 mt-3 short:mt-2 block font-semibold"
+                className="text-display short:text-h2 mt-3 short:mt-2 block font-semibold tracking-[-0.035em]"
                 translate="no"
               >
-                {CONTENT.title}
+                {TITLE_WORD}
+                {TITLE_SEP}
+                <span className="font-light">{TITLE_YEAR}</span>
               </span>
             </h1>
 
-            <p className="text-muted-foreground font-ui text-ui mt-4 tracking-[0.14em] uppercase">
+            <p className="text-muted-foreground font-ui text-ui mt-4 tracking-[0.14em] uppercase tabular-nums">
               {CONTENT.meta}
             </p>
 

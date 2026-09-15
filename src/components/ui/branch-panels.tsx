@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
@@ -405,7 +406,7 @@ export function BranchPanels({
                 staying put), which is why the panel height and the mark were
                 sized together: see below. */}
               <span
-                className={`text-foreground absolute inset-0 flex flex-col ${open ? "justify-end px-4 pt-4 pb-4 short:px-3" : "justify-center p-3"}`}
+                className={`text-foreground absolute inset-0 flex flex-col ${open ? "justify-end px-4 pt-4 pb-6 short:px-3 short:pb-5" : "justify-center p-3"}`}
               >
                 <span
                   className={`font-display flex leading-none font-semibold ${open ? "text-h3 short:text-body flex-row items-end" : "text-body short:text-ui flex-col items-center gap-[0.3em] uppercase short:gap-[0.2em]"}`}
@@ -480,6 +481,41 @@ export function BranchPanels({
                   ))}
                 </span>
               </span>
+
+              {/* THE HANDLE. A round chip with an arrow in the open panel's
+                bottom-right corner, opposite the word. Without it the pair
+                reads as two captioned pictures; with it, as two doors — which
+                is what they are, and the only thing this page does.
+
+                Decorative: the link's accessible name is the word, and an
+                icon-only sibling would only announce the same door twice.
+                Inside the link, so a tap on it is a tap on the door and
+                hittest.js sees no dead pixel.
+
+                It rides the same spring as everything else (MOTION), fading
+                and growing in with the panel rather than popping after it.
+                In the spine it is at opacity 0 and still in the DOM so the
+                open/close flight is one interpolation, not a mount.
+
+                The word's bottom padding went 16px -> 24px in the open state
+                for this: a 23px line box beside a 40px chip sat 8px low, so
+                the pair is centred on one axis instead. `short:` keeps the
+                same arithmetic at 16px against a 32px chip.
+
+                Gone below 300px of viewport. That is 200% zoom on a 390
+                phone (a 195px viewport, an 87px open panel), where the word
+                already overflows its box and the chip landed on top of "lie".
+                A 320 phone is 208px of open panel and keeps it. Measured,
+                both — this is the one place the handle can do harm. */}
+              <motion.span
+                aria-hidden="true"
+                className="bg-background/90 text-foreground short:right-3 short:bottom-3 short:size-8 absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full max-[300px]:hidden"
+                initial={false}
+                animate={{ opacity: open ? 1 : 0, scale: open ? 1 : 0.6 }}
+                transition={move}
+              >
+                <ArrowRight className="short:size-4 size-5" strokeWidth={2} />
+              </motion.span>
             </Link>
           </motion.li>
         );
