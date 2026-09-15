@@ -108,7 +108,7 @@ docs/                         the three .docx sources, and docs/ateliere/ — te
 | Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip); **and since 15 Sep the organizers' welcome letter is behind a bell** in the top-right corner — a badge until read, tap to open the letter as a modal sheet, tap to close; the fold itself is one unscrollable screen again (it carried the letter as a card for one evening, 14 Sep — D15). The **Blajhunt panel got its own artwork on 14 Sep**, the same treasure-map illustration as the hunt's card so the two read as one thing; the workshops panel is still placeholder |
 | `/ateliere` | **built** — full-bleed light stage carousel, **twelve cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the eleven workshops, numbered **01–12 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks, and **twelve settled thumbnails** from `poze-org/` — no card is a stock frame. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
 | `/ateliere/[slug]` | **built** — the workshop sheet: photograph first, then kicker, title, tagline, hook, a ruled facts list with a Maps search link, the disabled signup control with its note, the full description, tags, a native-ratio photo strip, prev/next and a route back to the list. Two-column with a sticky photograph above lg |
-| `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14. **Since 15 Sep every stop card is two-faced**: the front is the roadmap (drawing, title, a two-line standfirst, proof chips, Maps), the back is the place's WHOLE history — `body`, the stop page's own text, the direction being to retire the stop pages — with no title and no buttons on either face: a tap or Enter turns it, and each newly centred card turns over and back once so the back gets found. All ten cards are 480px with the chips and the Maps button at the same y. **Open:** four histories outgrow the back at 390 and scroll — see the 15 Sep evening entry |
+| `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14. **Since 15 Sep every stop card is two-faced**: the front is the roadmap (drawing, title, a two-line standfirst, proof chips and a 48px Maps disc), the back is the place's WHOLE history — `body`, the stop page's own text, the direction being to retire the stop pages — with nothing on the back but the text, and no buttons on either face: a tap or Enter turns it, and each newly centred card turns over and back once so the back gets found. All ten cards are 480px with the chips and the Maps button at the same y. **Open:** three histories (01, 02, 08) outgrow the back at 390 and scroll — see the 15 Sep late entry |
 | `/blajhunt-legacy` | **built, dead** — the vertical roadmap `/blajhunt` used to be, kept only so the two can still be compared. Nothing links to it; delete once nobody wants it |
 | Blajhunt guide | still the static file at `/blajhunt.html`. It and `/blajhunt` now list **different stops** — see section 10.1 |
 | Backend | not started. Nothing below section 5 exists yet |
@@ -1214,6 +1214,69 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 
 ## 14. Changelog
 
+- **2026-09-15, late (one border, a pin for Maps, a bare back)** — the user,
+  on the evening's cards: „this card is the only one with black edges, make it
+  so that is the same edges as the others. next, instead of descridere in maps
+  huge ugly button, let's make a smaller button with a google map icon/glyph
+  that opens the google maps link. and on the back of the card there is no
+  point to display the numbering and the points, that's on the front already,
+  let's remove that”. Same branch, same port (**:3003**).
+
+  **The border.** The finale stop (tone `sun`, 09 Câmpia Libertății) drew its
+  faces at `--border-strong`, the way its number and points are gold; on the
+  screen that was one card with black edges among nine without. Both faces
+  are `--border` on all ten now — measured `rgb(229, 229, 229)` on every
+  front — and the gold badge and pill still mark the finale.
+
+  **The Maps button.** The full-width 48px bar „Deschide în Maps” is a **48px
+  disc at the right end of the chip row**: `bg-primary`, the one blue the
+  card spends on actions, with `MapPin` in it — a pin drawn in the UI icons'
+  24-box, 2px-stroke style, not Google's four-colour mark (a raw brand colour
+  is a defect here). Named `Deschide în Google Maps` for a screen reader; no
+  visible label, the user's choice. 48 not 44 because the neighbour cards
+  draw at 0.96 and 44 × 0.96 is under the floor — `audit.js` counts it clean.
+  The row is `mt-auto` and wraps: at 320 the two stops with two long chips
+  (04, 06: CĂUTARE + RĂSPUNS, 188px in a 220px row) put the chips on a line
+  above the disc; everywhere else the row is one line. **The disc sits at
+  y=410 on all ten cards at 320, 390 and 1440**, the chips centred beside it
+  at 421. The bar's 60px went to the plate — 253/274px at 390, from 213/234.
+
+  **The back** has no header: the number badge and points pill that sat above
+  the text for a day are gone, and the text box is the card less its padding —
+  **438px, eighteen lines**, from 394 and sixteen.
+
+  **The flag, re-measured.** Overflow in px, `scrollHeight` against
+  `clientHeight`:
+
+  | stop | chars | 320 | 390 | 768 | 1440 |
+  |---|---|---|---|---|---|
+  | 01 catedrala | 629 | 186 | **66** | 0 | 0 |
+  | 02 liceul | 696 | 234 | **114** | 0 | 0 |
+  | 03 biserica-grecilor | 493 | 54 | 0 | 0 | 0 |
+  | 04 castelul | 444 | 0 | 0 | 0 | 0 |
+  | 05 casa-maniu | 415 | 0 | 0 | 0 | 0 |
+  | 06 gostat | 456 | 6 | 0 | 0 | 0 |
+  | 07 casa-ioan-suciu | 528 | 66 | 0 | 0 | 0 |
+  | 08 colegiul | 720 | 258 | **114** | 0 | 0 |
+  | 09 campia | 498 | 30 | 0 | 0 | 0 |
+  | 10 protopopiatul | 405 | 0 | 0 | 0 | 0 |
+
+  **Seven of ten fit at 390** (07 joined them), all ten at 768 and up; three
+  still scroll at 390 — 01 by under three lines, 02 and 08 by under five —
+  and seven at 320. Remedies, injected live and measured the same way:
+  **(A)** the back's text at `--text-ui` (13px, leading 1.5): all ten fit at
+  390 and up, at 320 two still scroll (02 by 15px, 08 by 35); **(B)** the
+  card at 34rem: 01 fits, 02/08 over by 50; **(C)** 36rem: 02/08 by 18;
+  **(D)** A with 34rem: **all ten fit at every width, 320 included**;
+  **(E)** editorial: cut 02 and 08 by about a fifth, 01 by an eighth. Still
+  the user's pick; the box scrolls behind the edge fade meanwhile.
+
+  **Verified:** lint and build clean; `audit.js` 390/768/1440 — no overflow,
+  no contrast failures, no console errors, tap targets < 44px 7 (the title
+  links); `hittest.js` 0 unreachable on `/blajhunt` and a stop page; looked
+  at: 01 (two chips and the disc on one line), 09 (the border), 10 (the disc
+  alone), 04 at 320 (the wrap), and the bare back of 01.
+
 - **2026-09-15, evening (the back carries everything)** — the user's polish on
   the afternoon's cards: „make it so that the turning animation happens faster
   after we land on the card, and remove the "povestea" and "inapoi" buttons, it
@@ -1277,6 +1340,8 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   by 15px; **(E)** editorial: cut 02 and 08 by ~30%, 01 by ~22%, 07 by ~9%
   — trimming is safe under the no-hallucination rule, adding is not. Open
   until the user picks; the stop page is the safety net meanwhile.
+  **Re-measured late that evening** with the back's header gone — the entry
+  above: 07 fits now, three remain.
 
   **Verified:** build and lint clean; `audit.js` 390/768/1440 — no overflow,
   no contrast failures, no console errors, tap targets < 44px back to 7 (the

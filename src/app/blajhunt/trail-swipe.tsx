@@ -280,6 +280,29 @@ const Arrow = ({ className }: { className?: string }) => (
   </svg>
 );
 
+/**
+ * The Maps button's glyph: a map pin in the same 24-box, 2px-stroke style as
+ * `Arrow`. Not Google's mark — that is a four-colour brand asset, and a raw
+ * colour outside globals.css is a defect here — but the pin is the one shape
+ * everyone reads as "map", and a map is what the button opens.
+ */
+const MapPin = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    className={className}
+  >
+    <path d="M12 21.5s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" />
+    <circle cx="12" cy="10.5" r="2.5" />
+  </svg>
+);
+
 type SwipeNode =
   | { kind: "terminal"; terminal: BlajhuntTerminal; tone: "ink" | "sun" }
   | { kind: "step"; step: BlajhuntStop; number: number };
@@ -895,7 +918,13 @@ export default function TrailSwipe({
                       }
                     }}
                   >
-                    {/* ── Front ─────────────────────────────────────── */}
+                    {/* ── Front ───────────────────────────────────────
+                        One border for all ten, `--border`. The finale stop
+                        (tone `sun`) had `--border-strong`, the way its
+                        number and points are gold; on the screen that read
+                        as one card with black edges among nine without, and
+                        the user asked for the same edges as the others. The
+                        gold badge and pill still mark it. */}
                     <div
                       data-face="front"
                       inert={flipped === i}
@@ -903,8 +932,7 @@ export default function TrailSwipe({
                       className={cn(
                         styles.face,
                         styles.lift,
-                        "bg-card relative flex min-h-[30rem] flex-1 flex-col rounded-[var(--radius)] border p-5",
-                        sun ? "border-border-strong" : "border-border",
+                        "bg-card border-border relative flex min-h-[30rem] flex-1 flex-col rounded-[var(--radius)] border p-5",
                       )}
                     >
                       {/* ── The card is 30rem tall, and the PLATE takes up
@@ -913,9 +941,9 @@ export default function TrailSwipe({
                           a back that size holds seven lines of history —
                           two sentences, not a story. 30rem (480px) is what
                           the card measured before the standfirst was fixed
-                          at two lines, and it gives the back fourteen lines
-                          at body size, which is a place's history in two
-                          short paragraphs.
+                          at two lines, and it gives the back eighteen lines
+                          at body size now that the back is text alone — most
+                          of a history, not all of them: see the back.
 
                           Where the extra goes matters. Left as air between
                           the standfirst and the chips it is a hollow band on
@@ -928,8 +956,9 @@ export default function TrailSwipe({
                           itself.
 
                           128px, up from 88 in the 112px plate this was: the
-                          plate is now ~220px and an 88px mark in it read as a
-                          stamp in a frame. The stroke drops 1.5 -> 1.15 in
+                          plate is ~275px now (the Maps bar's 60px went to it
+                          too) and an 88px mark in it read as a stamp in a
+                          frame. The stroke drops 1.5 -> 1.15 in
                           user units so the rendered weight stays near 3px
                           rather than growing with the size.
 
@@ -1036,44 +1065,56 @@ export default function TrailSwipe({
                         {place?.standfirst ?? node.step.description}
                       </p>
 
-                      {/* The bottom group: the proof chips, the Maps button
-                          under them. `mt-auto` on the GROUP, so the whole
-                          thing sits at the same y on every card — the chips
+                      {/* The bottom row: the proof chips on the left, the
+                          Maps button at the right end. `mt-auto` on the ROW,
+                          so it sits at the same y on every card — the chips
                           used to be in flow above an `mt-auto` button, which
                           is exactly how they ended up at a different height
                           on each stop.
 
-                          The row keeps its height (`min-h-7`) on the one stop
-                          with no proofs, so the Maps button does not climb
-                          28px on that card alone. */}
-                      <div className="mt-auto pt-4">
-                        <div className="flex min-h-7 items-center">
-                          {/* Neutral chips: they only label what proof the
-                              stop wants. --muted-foreground on --muted is
-                              7.4:1. */}
-                          {node.step.proofs?.length ? (
-                            <ul className="flex flex-wrap gap-2">
-                              {node.step.proofs.map((proof) => (
-                                <li
-                                  key={proof}
-                                  className="border-border bg-muted text-muted-foreground font-ui text-ui rounded-full border px-2.5 py-0.5 font-medium tracking-[0.08em] uppercase"
-                                >
-                                  {proof}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : null}
-                        </div>
+                          The Maps control was a full-width 48px bar under
+                          the chips, „Deschide în Maps”; the user called it
+                          huge and ugly and asked for a small button with a
+                          map glyph. It is a 48px disc — 48 not 44, because
+                          the neighbour cards draw at 0.96 and 44 × 0.96 is
+                          under the floor — in the one blue the card spends
+                          on actions, with `MapPin` in it. Named for a screen
+                          reader; no visible label, by the user's choice.
+
+                          The row wraps, so at 320 the two stops with two
+                          chips (188px of chips in a 220px row) drop the
+                          button to a second line, right-aligned, rather
+                          than overflow; at 390 the row is 278px and all ten
+                          are one line. On the one stop with no proofs the
+                          button stands alone at the right, at the same y as
+                          everywhere else: the row's `min-h-12` is the
+                          button's own height. */}
+                      <div className="mt-auto flex min-h-12 flex-wrap items-center gap-2 pt-4">
+                        {/* Neutral chips: they only label what proof the
+                            stop wants. --muted-foreground on --muted is
+                            7.4:1. */}
+                        {node.step.proofs?.length ? (
+                          <ul className="flex flex-wrap gap-2">
+                            {node.step.proofs.map((proof) => (
+                              <li
+                                key={proof}
+                                className="border-border bg-muted text-muted-foreground font-ui text-ui rounded-full border px-2.5 py-0.5 font-medium tracking-[0.08em] uppercase"
+                              >
+                                {proof}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
 
                         {place ? (
                           <a
                             href={mapsUrl(place)}
                             target="_blank"
                             rel="noreferrer noopener"
-                            className="bg-primary text-primary-foreground font-ui focus-visible:ring-ring focus-visible:ring-offset-card mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-base font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
+                            aria-label="Deschide în Google Maps"
+                            className="bg-primary text-primary-foreground focus-visible:ring-ring focus-visible:ring-offset-card ml-auto inline-flex size-12 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-[1.04] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.95]"
                           >
-                            Deschide în Maps
-                            <span aria-hidden="true">&#8599;</span>
+                            <MapPin className="size-6" />
                           </a>
                         ) : null}
                       </div>
@@ -1093,33 +1134,16 @@ export default function TrailSwipe({
                         styles.face,
                         styles.back,
                         styles.lift,
-                        "bg-card absolute inset-0 flex flex-col rounded-[var(--radius)] border p-5",
-                        sun ? "border-border-strong" : "border-border",
+                        "bg-card border-border absolute inset-0 flex flex-col rounded-[var(--radius)] border p-5",
                       )}
                     >
-                      {/* The header carries the number and the points —
-                          the two things a captain is tracking — as the same
-                          badge and pill the plate's corners carry, so the
-                          two faces read as one card. Nothing else: the
-                          „Înapoi” pill that stood at its right went with the
-                          front's, and the title that sat under it — the way
-                          to the stop page from this side — went for the room:
-                          40–68px of a box that now has to hold the whole
-                          history. The front's title is still that way. */}
-                      <div className="flex h-8 items-center gap-2">
-                        <span
-                          className={`bg-card border-border-strong font-ui text-ui flex size-8 items-center justify-center rounded-full border leading-none font-semibold tabular-nums ${
-                            sun ? "text-contrast-text" : "text-foreground"
-                          }`}
-                        >
-                          {String(node.number).padStart(2, "0")}
-                        </span>
-                        {typeof node.step.points === "number" ? (
-                          <span className="bg-contrast text-foreground font-ui text-ui rounded-full px-2.5 py-1 leading-none font-semibold tabular-nums">
-                            {node.step.points}&nbsp;p
-                          </span>
-                        ) : null}
-                      </div>
+                      {/* No header. The back carried the number badge and
+                          the points pill for a day — the plate's own pair,
+                          so the two faces would read as one card — and the
+                          user took them off: they are on the front, a tap
+                          away, and the 44px they cost is two more lines of
+                          history in a box that is short of them. The text
+                          starts at the card's top padding. */}
                       {/* THE WHOLE HISTORY — `place.body`, the paragraphs
                           the stop page shows — not a condensed copy of it.
                           The card had a `back` field for an afternoon, two
@@ -1128,9 +1152,10 @@ export default function TrailSwipe({
                           what they carry, and a second copy of the facts is
                           a second thing to fact-check. leading-normal (1.5)
                           rather than the body's 1.6: sixteen lines in a card
-                          is a block, not a page. The box holds ~16 lines at
-                          390 and ~19 at 1440; which histories need more than
-                          that at which width is measured and recorded in
+                          is a block, not a page. The box is the card less
+                          its padding — eighteen lines at every width; the
+                          measure is what changes; which histories need more
+                          than that at which width is measured and recorded in
                           SPEC, and is the open question on this card. Until
                           it is answered the box scrolls rather than clips —
                           overflow-y auto, the edge cue below, nothing hidden,
@@ -1140,7 +1165,7 @@ export default function TrailSwipe({
                         onScroll={(e) => cueScroll(e.currentTarget)}
                         className={cn(
                           styles.scrollbox,
-                          "mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain",
+                          "min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain",
                         )}
                       >
                         {(place?.body ?? [node.step.description]).map((para) => (
