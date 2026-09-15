@@ -201,6 +201,7 @@ const WORKSHOPS = [
   { slug: "voluntari-in-misiune", no: 9, title: "Voluntari în misiune" },
   { slug: "inima-misiunilor", no: 10, title: "Expediție în Inima Misiunilor" },
   { slug: "salvator-de-vieti", no: 11, title: "Salvator de vieți" },
+  { slug: "escape-mode", no: 12, title: "ESCAPE MODE" },
 ];
 
 /**
@@ -237,9 +238,11 @@ const RAW = [
  * a backdrop still is, because a stage where most slides fade to a soft field
  * and one snaps into a sharp photograph reads as a bug.
  *
- * EMPTY, for the third time in a week. It held A7 until 8 Sep, A8/A10/A11 for
- * six hours on 14 Sep, and the Blajhunt for about an hour that evening. All
- * eleven cards on the strip are settled artwork from poze-org.
+ * In use for A12. It held A7 until 8 Sep, A8/A10/A11 for six hours on 14 Sep,
+ * and the Blajhunt for about an hour that evening; each time the artwork
+ * followed within days. ESCAPE MODE arrived on 15 Sep as a document with no
+ * photographs at all, so it is the only card on the strip that is not the
+ * organizers' or the user's own image.
  *
  * TO USE IT: add { slug, src } naming a file already in public/ateliere/ (the
  * 1.jpg-6.jpg stock frames are kept there for exactly this) and set
@@ -249,7 +252,11 @@ const RAW = [
  * over this list anyway, so a leftover line would be dead config that nothing
  * warns about — which is why they are removed rather than left.
  */
-const STOCK = [];
+const STOCK = [
+  // Young people working something out together at a table — the nearest the
+  // stock set gets to a room full of teams solving puzzles.
+  { slug: "escape-mode", src: "2.jpg" },
+];
 
 /**
  * Detail-page images from the raw deliveries, in display order. Same

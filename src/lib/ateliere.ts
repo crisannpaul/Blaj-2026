@@ -57,7 +57,14 @@
  *   - A10 moved off 13:30 to 13:45, in step with everything else.
  *   - A3 was re-cut from 25 minutes in two groups of 20 to 20 minutes in
  *     THREE groups of 15. It is the only workshop that runs three.
- *   - All ten cards are settled artwork; `imagePlaceholder` is unused again.
+ *   - All ten cards are settled artwork.
+ *
+ * ── A12, which arrived alone on 15 Sep ──────────────────────────────────────
+ * ESCAPE MODE came as a document with no photographs at all — nothing in
+ * poze-raw, nothing in poze-org — so it sits on a stock frame and says so, and
+ * it is the only workshop with no gallery on its page. Its GPS link is an
+ * address rather than a point, like A3's and A11's. Everything else in it is
+ * internally consistent: 13:45 + 90 minutes lands exactly on its stated 15:15.
  *
  * ── What the resend did NOT settle (SPEC 10.8, 10.9) ────────────────────────
  *   - A11 still has no "Locația:" line at all. Its room name here is read off
@@ -461,6 +468,47 @@ export const ATELIERE: readonly Atelier[] = [
     tags: ["primajutor", "RCP", "salvator", "viață", "curaj", "învățare", "CentrulMedicalSMD"],
     image: "/ateliere/salvator-de-vieti.webp",
     accent: "gold",
+  },
+  {
+    slug: "escape-mode",
+    number: 12,
+    title: "ESCAPE MODE: Misiunea ta începe aici!",
+    cardTitle: "Escape\nMode",
+    // No tagline. The document has no "…" second title line, and the one
+    // invented here read "… misiunea ta începe aici!" directly under a
+    // title ending in "Misiunea ta începe aici!" — the same sentence twice,
+    // a line apart. A7 and A8 carry none either.
+    hook:
+      "Nu vii să asculți o lecție, vii să rezolvi misiuni: informații reale vs. fake, presiunea grupului, algoritmi. Găsești codul de evadare?",
+    leadLabel: "Coordonator atelier",
+    leads: ["Mirela Ghircău, psiholog specialist în consiliere psihologică"],
+    durationMin: 90,
+    seats: 20,
+    // One session, and the only workshop whose document states an age
+    // recommendation without splitting into levels. It rides in the session
+    // label because that is where A7 and A11 already put ages, and because the
+    // facts list is the one place a visitor compares workshops before choosing.
+    sessions: [{ label: "Recomandat 14–16 ani", time: "13:45–15:15" }],
+    location: "Casa Maniu — Piața 1848 nr. 8",
+    // The GPS link is a street address, not a point, like A3's and A11's — so
+    // it stays a search. Casa Maniu is at nr. 8; A8's Radio Blaj is at nr. 11
+    // and the other nine are at nr. 1. Three different buildings on one square.
+    mapsQuery: "Piața 1848 8, 515400 Blaj",
+    body: [
+      "Atelier despre sănătate mintală, comportamente adictive, gândire critică și luarea deciziilor.",
+      "Crezi că iei mereu deciziile tale? Sau uneori te influențează prietenii, TikTok-ul, presiunea grupului, emoțiile sau dorința de a încerca ceva nou?",
+      "În ESCAPE MODE nu vii să asculți o lecție. Vii să rezolvi misiuni, să descoperi indicii și să vezi cât de bine poți să gândești atunci când lucrurile nu sunt atât de simple pe cât par.",
+      "Vei avea de trecut prin provocări despre: informații reale vs. fake; manipularea și presiunea grupului; algoritmi și comportamente repetitive; stres, emoții și alegeri; și situații în care trebuie să alegi: EXIT sau CONTINUE?",
+      "Ai voie să te răzgândești. Ai voie să spui „nu știu”. Ai voie să pui întrebări. Dar nu ai voie să accepți o informație doar pentru că „așa spune toată lumea”.",
+      "La final, trebuie să descoperi CODUL DE EVADARE. Ai suficientă gândire critică pentru a ieși din ESCAPE MODE?",
+      "Vino! Intră în joc! Pune întrebări! Fă alegeri! Ai 90 de minute. 5 misiuni. 1 singur cod. Ai curaj să intri? Misiunea începe cu tine.",
+    ],
+    tags: [],
+    // No photograph and no artwork: the document arrived alone, with nothing in
+    // poze-raw either. Stock frame and says so, like the other four before it.
+    image: "/ateliere/2.jpg",
+    imagePlaceholder: true,
+    accent: "sky",
   },
 ];
 

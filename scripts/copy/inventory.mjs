@@ -40,6 +40,7 @@ const { BLAJHUNT_PLACES } = await import("../../src/lib/blajhunt-places.ts");
 const F = {
   layout: "src/app/layout.tsx",
   home: "src/app/page.tsx",
+  letter: "src/components/ui/welcome-letter.tsx",
   ateliere: "src/app/ateliere/page.tsx",
   atelier: "src/app/ateliere/[slug]/page.tsx",
   atelierData: "src/lib/ateliere.ts",
@@ -121,13 +122,13 @@ add("AC-04", {
   ...SEC_AC,
   element: "Textul de prezentare (paragraful de sub dată)",
   current:
-    "La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi împreună în Mica Romă — rugăciune, ateliere, prieteni noi și un oraș de descoperit.",
+    "La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi împreună în Mica Romă.",
   src: lit(
     F.home,
-    '"La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia " +\n    "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +\n    "împreună în Mica Romă — rugăciune, ateliere, prieteni noi și un oraș " +\n    "de descoperit."',
+    '"La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia " +\n    "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +\n    "împreună în Mica Romă."',
   ),
   deletable: true,
-  note: "Spațiul e limitat: pe telefon încap circa 220 de caractere (4–5 rânduri). Un text mai lung împinge titlul în afara ecranului.",
+  note: "Prima propoziție a scrisorii de bun venit; restul scrisorii este cardul de mai jos (AC-07…AC-13). Spațiul e limitat: pe telefon încap circa 220 de caractere (4–5 rânduri). Un text mai lung împinge titlul în afara ecranului.",
 });
 add("AC-05", {
   ...SEC_AC,
@@ -142,6 +143,89 @@ add("AC-06", {
   current: "Blajhunt",
   src: lit(F.home, 'label: "Blajhunt"'),
   note: "Un singur cuvânt: literele se animează una câte una.",
+});
+
+// The welcome letter — the rest of what came back as AC-04 on 14 Sep, as a
+// card of its own on the landing page (SPEC D15). Verbatim from the returned
+// document, with two edits the user asked for: one phrase is a link to the
+// workshops, and the closing "<3" is a heart icon. Pinned by exact text in
+// welcome-letter.tsx; the multi-line paragraphs are the file's own
+// concatenations, eight spaces in.
+const SEC_SC = {
+  page: "acasa",
+  section: "Scrisoarea de bun venit (cardul de lângă titlu / de sub panouri)",
+};
+add("AC-07", {
+  ...SEC_SC,
+  element: "Formula de adresare (titlul cardului)",
+  current: "Dragi tineri,",
+  src: lit(F.letter, 'salutation: "Dragi tineri,"'),
+});
+add("AC-08", {
+  ...SEC_SC,
+  element: "Scrisoarea — paragraful 1",
+  current: "Sunteți pregătiți să petrecem împreună o zi de neuitat?",
+  src: lit(F.letter, '"Sunteți pregătiți să petrecem împreună o zi de neuitat?"'),
+  deletable: true,
+});
+add("AC-09", {
+  ...SEC_SC,
+  element: "Scrisoarea — paragraful 2",
+  current:
+    "Vă așteptăm cu voie bună și cu un program în care se împletesc rugăciunea, bucuria întâlnirii, prieteniile noi și dorința de a descoperi împreună un oraș cu o istorie și o spiritualitate aparte.",
+  src: lit(
+    F.letter,
+    '"Vă așteptăm cu voie bună și cu un program în care se împletesc " +\n        "rugăciunea, bucuria întâlnirii, prieteniile noi și dorința de a " +\n        "descoperi împreună un oraș cu o istorie și o spiritualitate aparte."',
+  ),
+  deletable: true,
+});
+add("AC-10", {
+  ...SEC_SC,
+  element: "Scrisoarea — paragraful 3",
+  current:
+    "Nerăbdători să vă întâlnim, venim în întâmpinarea voastră și prin intermediul acestei pagini, unde puteți descoperi atelierele pe care le-am pregătit special pentru voi.",
+  src: [
+    lit(
+      F.letter,
+      '"Nerăbdători să vă întâlnim, venim în întâmpinarea voastră și prin " +\n        "intermediul acestei pagini, unde puteți descoperi "',
+    ),
+    lit(F.letter, 'text: "atelierele pe care le-am pregătit special pentru voi"'),
+  ],
+  deletable: true,
+  note: "«atelierele pe care le-am pregătit special pentru voi» este un link către lista atelierelor.",
+});
+add("AC-11", {
+  ...SEC_SC,
+  element: "Scrisoarea — paragraful 4",
+  current:
+    "Mai mult decât atât, aveți posibilitatea să vă înscrieți la atelierul sau atelierele care vă stârnesc interesul și pe care le considerați potrivite pentru voi.",
+  src: lit(
+    F.letter,
+    '"Mai mult decât atât, aveți posibilitatea să vă înscrieți la atelierul " +\n        "sau atelierele care vă stârnesc interesul și pe care le considerați " +\n        "potrivite pentru voi."',
+  ),
+  deletable: true,
+});
+add("AC-12", {
+  ...SEC_SC,
+  element: "Scrisoarea — paragraful 5 (încheierea)",
+  current:
+    "Haideți să ne întâlnim, să ne bucurăm împreună și să facem din această zi o experiență de neuitat!",
+  src: lit(
+    F.letter,
+    '"Haideți să ne întâlnim, să ne bucurăm împreună și să facem din " +\n        "această zi o experiență de neuitat!"',
+  ),
+  deletable: true,
+});
+add("AC-13", {
+  ...SEC_SC,
+  element: "Semnătura (sub linie, cu inima în dreapta)",
+  current:
+    "Biroul pentru Pastorația Tinerilor și a Copiilor al Arhieparhiei de Alba Iulia și Făgăraș",
+  src: [
+    lit(F.letter, '"Biroul pentru Pastorația Tinerilor și a Copiilor"'),
+    lit(F.letter, '"al Arhieparhiei de Alba Iulia și Făgăraș"'),
+  ],
+  note: "Inima «<3» din document este afișată ca pictogramă, în dreapta semnăturii.",
 });
 
 // ── Workshops carousel ──────────────────────────────────────────────────────
@@ -253,6 +337,7 @@ const AT_ID = {
   "pescari-de-oameni": 8,
   "inima-misiunilor": 9,
   "salvator-de-vieti": 10,
+  "escape-mode": 11,
 };
 
 // ── Each workshop ───────────────────────────────────────────────────────────
@@ -266,8 +351,15 @@ ATELIERE.forEach((a, i) => {
   }
   const p = `AT-${n}`;
   const SEC = {
+    // The heading is how an organizer finds the workshop on the page, so it
+    // must print what the PAGE prints. That was `i + 1` until the Blajhunt
+    // took Atelier 01 on 14 Sep and pushed every workshop down one — after
+    // which this said "Atelier 01 — Cu mașina timpului" about a card the site
+    // labels 02. `a.number` is the site's number and the organizers' both, and
+    // cannot drift from either. NOT the same as the AT-n id above, which is
+    // pinned to the slug and deliberately no longer tracks the numbering.
     page: "atelier",
-    section: `Atelier ${pad2(i + 1)} — ${a.title}`,
+    section: `Atelier ${pad2(a.number)} — ${a.title}`,
     slug: a.slug,
     docNumber: a.number,
   };
