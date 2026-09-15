@@ -303,7 +303,7 @@
 
 /* ── The turn ───────────────────────────────────────────────────────────────
    Every stop card has two faces. The FRONT is the roadmap's card; the BACK is
-   the place's history condensed to the same box. The card turns when tapped,
+   the place's whole history in the same box. The card turns when tapped,
    and turns over and back once, by itself, each time a new stop arrives in
    the centre — that peek is how a visitor finds out there is a back at all.
 
@@ -355,17 +355,17 @@
   transform: rotateY(180deg);
 }
 
-/* The arrival peek. Over and back in 1.2s: 40% of it going, 20% resting on
+/* The arrival peek. Over and back in 1s: 40% of it going, 20% resting on
    the back — long enough to see that there are words there, not long enough
    to start reading them — and 40% returning. The timing function applies per
    keyframe segment, so each turn eases on its own. `both` so the card sits
    at 0deg on either side of the run rather than snapping to the transition's
-   own value at the boundaries. 1200 is PEEK_MS in the component, which reads
+   own value at the boundaries. 1000 is PEEK_MS in the component, which reads
    a tap during the run against it — change both or neither. It was 1400,
-   and after a 1000ms rest that is as long as a card may stay turned away
-   from someone reaching for its Maps button. */
+   then 1200; it came down with the delay before it (450ms now) when the user
+   asked for the turn to follow the landing more closely. */
 .peek {
-  animation: peek 1200ms cubic-bezier(0.45, 0, 0.2, 1) both;
+  animation: peek 1000ms cubic-bezier(0.45, 0, 0.2, 1) both;
 }
 
 @keyframes peek {
@@ -387,8 +387,8 @@
   /* The turn still happens — it is a state change the visitor asked for —
      but it swaps rather than rotates. The peek does not run at all: the
      component checks the same query before arming it, and this is the belt
-     for the class arriving anyway. The turn button on each face is the
-     affordance in its place. */
+     for the class arriving anyway. A tap, or Enter on the focused card, is
+     the way over in its place; there is no standing sign of the back. */
   .flip {
     transition: none;
   }

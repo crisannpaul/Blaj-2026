@@ -16,10 +16,12 @@ import styles from "./trail-swipe.module.css";
  * to fold the stop's own page into the card — and since 15 Sep the card has
  * TWO FACES to do it with. The front is the roadmap: the drawing at full
  * size, the title, a two-line standfirst, the proofs, the points and the Maps
- * button, at the same place on every card. The back is the place's history,
- * condensed to the card (`place.back`). A tap turns it; each newly centred
- * card turns over and back once by itself, so the back gets found. The detail
- * page stays for the rest of the history. See "The back of the card" below.
+ * button, at the same place on every card. The back is the place's history —
+ * the whole of `place.body`, the same text the stop's page carries. A tap
+ * turns it; each newly centred card turns over and back once by itself, so
+ * the back gets found. The stop page stays as a safety net, the direction
+ * being to retire it once the card carries everything. See "The back of the
+ * card" below.
  *
  * ── The road runs UNDER the cards ───────────────────────────────────────────
  * The route is one continuous wave spanning the whole track, painted beneath
@@ -145,17 +147,18 @@ const TOP = 12;
  * `active` flips at the MIDPOINT of the travel, not at the end — it is
  * nearest-centre — so on an arrow click the card is still moving for ~310ms of
  * this, and on a flick for ~200. What is left is how long the card RESTS,
- * front up, before it turns itself away, and a cold review measured the first
- * value (420) at 133ms of rest: "not a pause, the tail of the scroll", with
- * the Maps button — the one control that matters on the day — turned away for
- * the next 1.4s on every one of ten arrivals. 1000 leaves ~700ms of rest,
- * long enough to reach for the button and press it; the peek then reads as
- * something the card does after you have arrived rather than as part of the
- * arriving. The length of the turn itself is PEEK_MS, mirrored by `.peek` in
- * the module.
+ * front up, before it turns itself away. It has been 420 — a cold review
+ * measured that at 133ms of rest, "not a pause, the tail of the scroll", with
+ * the Maps button turned away on every arrival — and then 1000, ~700ms of
+ * rest, which the user saw and found slow: the turn should follow the landing
+ * rather than wait on it. 450 puts it about 140ms after the card stops on an
+ * arrow click and ~250ms after a flick settles: a beat, not a pause, and the
+ * user's call over the review's. The length of the turn itself is PEEK_MS,
+ * mirrored by `.peek` in the module; it came down from 1200 at the same time
+ * so the whole flourish is over within 1.5s of the card stopping.
  */
-const PEEK_DELAY = 1000;
-const PEEK_MS = 1200;
+const PEEK_DELAY = 450;
+const PEEK_MS = 1000;
 
 /**
  * The part of the peek during which the BACK is the face showing, as a
@@ -277,31 +280,6 @@ const Arrow = ({ className }: { className?: string }) => (
   </svg>
 );
 
-/**
- * The turn-over mark on both faces of a stop card: two halves mirrored about
- * a dashed axis — a FLIP, which is what happens. The first version was a
- * three-quarter arc with an arrowhead, and a cold review read it as what it
- * is everywhere else: reload. One drawing for both directions, because the
- * gesture is the same either way; the label beside it says which way.
- */
-const TurnMark = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-    className={className}
-  >
-    <path d="m3 7 5 5-5 5V7" />
-    <path d="m21 7-5 5 5 5V7" />
-    <path d="M12 20v2M12 14v2M12 8v2M12 2v2" />
-  </svg>
-);
-
 type SwipeNode =
   | { kind: "terminal"; terminal: BlajhuntTerminal; tone: "ink" | "sun" }
   | { kind: "step"; step: BlajhuntStop; number: number };
@@ -338,8 +316,12 @@ export default function TrailSwipe({
      without being told. It is a CSS animation (`.peek` in the module): the
      class goes on after PEEK_DELAY and comes off on animationend, and a tap
      during it cancels it and turns the card for real. Not under reduced
-     motion — there the turn button on each face is the whole affordance,
-     which is also why that button is visible rather than hover-only.
+     motion — there a tap, or Enter on the focused card, is the whole way
+     over, and the stop page behind the title link is the safety net. There
+     is NO standing sign of the back. There was one for an afternoon — a
+     labelled pill on each face — and the user took both off: a card that
+     turns when touched, and shows you so on arrival, does not need a button
+     saying it does.
 
      `arrive` is called from the measure loop, at the moment the nearest slide
      changes — an event callback, not an effect body, which is what the React
@@ -395,35 +377,16 @@ export default function TrailSwipe({
     return () => window.removeEventListener("resize", all);
   }, [cueScroll]);
 
-  /* Turning with the BUTTON moves focus to the other face's button, so a
-     keyboard user is not left focused on an element that just went inert.
-     Turning with a tap on the card body does not — there is nothing focused
-     to lose. The face is looked up by data attribute after React commits. */
-  const focusAfterTurn = useRef<{ index: number; face: "front" | "back" } | null>(
-    null,
-  );
-
-  const turn = useCallback((i: number, viaButton = false) => {
+  /* No focus to hand over when the card turns: the ARTICLE is the focusable
+     thing (tabIndex 0, Enter/Space turn it, Escape turns it back) and it
+     never goes inert — only its faces do — so a keyboard user who turns the
+     card keeps their place on it. It used to be a button on each face and a
+     focus handoff between them after commit. */
+  const turn = useCallback((i: number) => {
     window.clearTimeout(peekTimer.current);
     setPeek(null);
-    setFlipped((prev) => {
-      const next = prev === i ? null : i;
-      if (viaButton) {
-        focusAfterTurn.current = { index: i, face: next === i ? "back" : "front" };
-      }
-      return next;
-    });
+    setFlipped((prev) => (prev === i ? null : i));
   }, []);
-
-  useEffect(() => {
-    const want = focusAfterTurn.current;
-    if (!want) return;
-    focusAfterTurn.current = null;
-    const slide = slideRefs.current[want.index];
-    slide
-      ?.querySelector<HTMLButtonElement>(`[data-face="${want.face}"] [data-turn]`)
-      ?.focus();
-  }, [flipped]);
 
   /**
    * Which slide is in the MIDDLE — measured, not observed.
@@ -836,8 +799,10 @@ export default function TrailSwipe({
                 /* ── A two-faced card ────────────────────────────────────
                    The FRONT is the roadmap's card as it was: the drawing,
                    the title, a two-line standfirst, the proofs and the Maps
-                   button. The BACK is the place's history, condensed to fit
-                   (`place.back`); the stop's own page stays for the rest.
+                   button. The BACK is the place's history in full
+                   (`place.body`, the stop page's own paragraphs); the page
+                   stays as a safety net until the card is known to carry
+                   everything it does.
 
                    Why there is a back. The front used to carry the first
                    paragraph of history clamped to three lines under a
@@ -866,10 +831,11 @@ export default function TrailSwipe({
                    with it by hand.
 
                    The face that is turned away is `inert` as well as hidden
-                   from assistive tech: its link and button must not be
-                   reachable by Tab or by a screen reader while the other
-                   face is the one being shown. React 19 renders the boolean
-                   as the bare attribute. */
+                   from assistive tech: its links must not be reachable by
+                   Tab or by a screen reader while the other face is the one
+                   being shown. React 19 renders the boolean as the bare
+                   attribute. The article itself is never inert — it is the
+                   thing a keyboard user holds while the faces swap. */
                 <div
                   className={cn(
                     styles.card,
@@ -879,19 +845,23 @@ export default function TrailSwipe({
                   )}
                 >
                   <article
+                    tabIndex={0}
                     aria-label={`Oprirea ${String(node.number).padStart(2, "0")}: ${node.step.title}`}
                     className={cn(
                       styles.flip,
-                      "relative flex flex-1 flex-col",
+                      "focus-visible:ring-ring relative flex flex-1 flex-col rounded-[var(--radius)] focus-visible:ring-2 focus-visible:outline-none",
                       flipped === i && styles.flipped,
                       peek === i && styles.peek,
                     )}
                     /* A tap anywhere on the card turns it — except on the
-                       things that are already links or buttons, which keep
-                       their own job. A tap on a card that is NOT the centred
-                       one brings it to the centre instead: on a desktop three
-                       cards are in view, and turning a card at 0.96 scale off
-                       to one side is not what anyone meant. */
+                       things that are already links, which keep their own
+                       job. A tap on a card that is NOT the centred one brings
+                       it to the centre instead: on a desktop three cards are
+                       in view, and turning a card at 0.96 scale off to one
+                       side is not what anyone meant. The keyboard gets the
+                       same two rules on Enter and Space, when the article
+                       itself is what is focused — never when the key lands
+                       on the title link inside it. */
                     onClick={(e) => {
                       if ((e.target as Element).closest("a, button")) return;
                       if (i !== active) {
@@ -908,7 +878,16 @@ export default function TrailSwipe({
                       turn(i);
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === "Escape" && flipped === i) turn(i, true);
+                      if (e.key === "Escape" && flipped === i) {
+                        turn(i);
+                        return;
+                      }
+                      if (e.target !== e.currentTarget) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        if (i !== active) goTo(i);
+                        else turn(i);
+                      }
                     }}
                     onAnimationEnd={(e) => {
                       if (e.target === e.currentTarget) {
@@ -957,7 +936,11 @@ export default function TrailSwipe({
                           The wrapper is here so the station badge can sit on
                           the plate's corner. The badge is a SIBLING of the
                           plate, not a child: the plate is aria-hidden — it is
-                          decoration — and the stop's number is not. */}
+                          decoration — and the stop's number is not. The
+                          plate's bottom corner is empty on purpose: a
+                          „Povestea” pill sat there for an afternoon as the
+                          standing sign of the back, and the user took it off
+                          — the arrival peek is the sign. */}
                       <div className="relative flex flex-1 flex-col">
                         <div
                           aria-hidden="true"
@@ -994,37 +977,6 @@ export default function TrailSwipe({
                             {node.step.points}&nbsp;p
                           </span>
                         ) : null}
-                        {/* The way to the back, ON the plate's bottom corner,
-                            a labelled pill: mark + "Povestea". It started as
-                            a borderless 20px arc at the end of the chip row,
-                            and a cold review measured it as the lowest-chrome
-                            thing on the card — 0px border, transparent fill,
-                            next to two bordered chips and a solid CTA — and
-                            read the arc as reload. A label can only live up
-                            here: in the chip row, "POVESTEA" plus two chips
-                            is 300px against a 280px row at 390.
-
-                            32px tall, not 36: on the shortest plate (196px at
-                            320, a three-line title) the glyph's ground line
-                            sits at y=149 and this pill's top at 154. 36 would
-                            touch it. The 44px hit box is the ::after overlay,
-                            6px above and below, which lands on plate and on
-                            card padding — nothing else is under it.
-
-                            Visible, bordered at --border-strong (3:1, the
-                            UI-border floor) — it is the keyboard's and the
-                            reduced-motion visitor's way to the back, and the
-                            only standing sign that there is one. */}
-                        <button
-                          type="button"
-                          data-turn
-                          onClick={() => turn(i, true)}
-                          aria-label="Întoarce cardul: povestea locului"
-                          className="border-border-strong bg-card text-foreground font-ui text-ui focus-visible:after:ring-ring active:bg-foreground/5 absolute right-2.5 bottom-2.5 flex h-8 items-center gap-1.5 rounded-full border pr-3 pl-2.5 font-semibold tracking-[0.08em] uppercase transition-colors after:absolute after:inset-x-0 after:-inset-y-1.5 after:rounded-full after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
-                        >
-                          <TurnMark className="size-4" />
-                          Povestea
-                        </button>
                       </div>
 
                       <h3 className="text-h3 text-card-foreground relative mt-4">
@@ -1131,7 +1083,7 @@ export default function TrailSwipe({
                         Absolute over the front, so the front alone sets the
                         card's height and the back gets exactly that much.
                         The text box scrolls if it must — see the note on it
-                        below — so a `back` that outgrows the card is still
+                        below — so a history that outgrows the card is still
                         readable rather than cut at the edge. */}
                     <div
                       data-face="back"
@@ -1146,12 +1098,14 @@ export default function TrailSwipe({
                       )}
                     >
                       {/* The header carries the number and the points —
-                          the two things a captain is tracking, and the two
-                          things the back was missing — with the way back on
-                          the right. Same badge and pill as the plate's
-                          corners, so the two faces read as one card. The
-                          pill is the front's, relabelled: same mark, same
-                          chrome, "Înapoi". */}
+                          the two things a captain is tracking — as the same
+                          badge and pill the plate's corners carry, so the
+                          two faces read as one card. Nothing else: the
+                          „Înapoi” pill that stood at its right went with the
+                          front's, and the title that sat under it — the way
+                          to the stop page from this side — went for the room:
+                          40–68px of a box that now has to hold the whole
+                          history. The front's title is still that way. */}
                       <div className="flex h-8 items-center gap-2">
                         <span
                           className={`bg-card border-border-strong font-ui text-ui flex size-8 items-center justify-center rounded-full border leading-none font-semibold tabular-nums ${
@@ -1165,50 +1119,22 @@ export default function TrailSwipe({
                             {node.step.points}&nbsp;p
                           </span>
                         ) : null}
-                        <button
-                          type="button"
-                          data-turn
-                          onClick={() => turn(i, true)}
-                          aria-label="Întoarce cardul: înapoi la oprire"
-                          className="border-border-strong bg-card text-foreground font-ui text-ui focus-visible:after:ring-ring active:bg-foreground/5 relative ml-auto flex h-8 items-center gap-1.5 rounded-full border pr-3 pl-2.5 font-semibold tracking-[0.08em] uppercase transition-colors after:absolute after:inset-x-0 after:-inset-y-1.5 after:rounded-full after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
-                        >
-                          <TurnMark className="size-4" />
-                          Înapoi
-                        </button>
                       </div>
-                      {/* The title is the way to the stop's page from this
-                          side, exactly as it is on the front — same stretched
-                          overlay, same mark. It replaced a "Citește tot" row
-                          under the text, which cost 52px of a box the
-                          history needs. */}
-                      <p className="text-h3 text-card-foreground relative mt-3">
-                        {place ? (
-                          <Link
-                            href={`/blajhunt/${place.slug}`}
-                            className="focus-visible:after:ring-ring rounded-sm after:absolute after:inset-x-0 after:-inset-y-3 after:rounded-md after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
-                          >
-                            {node.step.title}
-                            <span
-                              aria-hidden="true"
-                              className="text-contrast-text ml-1.5 inline-block"
-                            >
-                              &#8599;
-                            </span>
-                          </Link>
-                        ) : (
-                          node.step.title
-                        )}
-                      </p>
-                      {/* leading-normal (1.5) rather than the body's 1.6:
-                          fourteen lines in a card is a block, not a page,
-                          and the tighter set is what makes the two
-                          paragraphs fit at 390px. Every `back` in
-                          blajhunt-places.ts is written against that box and
-                          measured to fit at 390 and 1440. At 320px the
-                          measure drops to ~29ch and the longest fall a few
-                          lines short, so the box scrolls rather than clips:
-                          overflow-y auto, nothing hidden, nothing spilling
-                          out of a rotated face. */}
+                      {/* THE WHOLE HISTORY — `place.body`, the paragraphs
+                          the stop page shows — not a condensed copy of it.
+                          The card had a `back` field for an afternoon, two
+                          paragraphs cut to fit; the user's direction is to
+                          retire the stop pages, so the card has to carry
+                          what they carry, and a second copy of the facts is
+                          a second thing to fact-check. leading-normal (1.5)
+                          rather than the body's 1.6: sixteen lines in a card
+                          is a block, not a page. The box holds ~16 lines at
+                          390 and ~19 at 1440; which histories need more than
+                          that at which width is measured and recorded in
+                          SPEC, and is the open question on this card. Until
+                          it is answered the box scrolls rather than clips —
+                          overflow-y auto, the edge cue below, nothing hidden,
+                          nothing spilling out of a rotated face. */}
                       <div
                         data-scrollbox
                         onScroll={(e) => cueScroll(e.currentTarget)}
@@ -1217,7 +1143,7 @@ export default function TrailSwipe({
                           "mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain",
                         )}
                       >
-                        {(place?.back ?? [node.step.description]).map((para) => (
+                        {(place?.body ?? [node.step.description]).map((para) => (
                           <p
                             key={para.slice(0, 32)}
                             className="text-foreground/90 leading-normal"

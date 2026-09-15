@@ -45,18 +45,16 @@ export interface BlajhuntPlace {
   title: string;
   /** One line under the heading. Sets the scene, gives nothing away. */
   standfirst: string;
-  /** Two to four short paragraphs. Context only — never the probă. */
-  body: string[];
   /**
-   * The same history, condensed to fit the BACK of the stop's card on
-   * `/blajhunt` — two short paragraphs, about 500 characters, which is what a
-   * card the height of its own front can hold at body size. Written from
-   * `body` and from nothing else: no fact appears here that is not already
-   * above it, so the `confidence` flag covers both. Keep it that way — the
-   * card is read standing in the street, and a claim that only exists here
-   * would have no `verify` line to catch it.
+   * Two to four short paragraphs. Context only — never the probă.
+   *
+   * Since 15 Sep this is ALSO the back of the stop's card on `/blajhunt`, in
+   * full — the card is meant to carry everything the stop page does, so the
+   * page can be retired. It is read standing in the street, on a phone, in a
+   * box that holds about sixteen lines at 390px; which entries outgrow that
+   * is measured and recorded in SPEC. One text, one `confidence` flag.
    */
-  back: string[];
+  body: string[];
   /** What to search for. Always ends in Blaj so the search cannot wander. */
   mapsQuery: string;
   /** See the header. "check" means an organizer must confirm before launch. */
@@ -76,10 +74,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "Catedrala a fost ridicată în deceniile care au urmat, în stil baroc. Blajul este centrul Bisericii Române Unite cu Roma, Greco-Catolică, iar din 2005, când Biserica a fost ridicată la rang de Arhiepiscopie Majoră, poartă titlul de catedrală arhiepiscopală majoră.",
       "Atunci când a ajuns la Blaj, Mihai Eminescu a numit orașul în mod simbolic: Mica Romă.",
     ],
-    back: [
-      "În 1737 episcopul Inochentie Micu-Klein a mutat scaunul episcopal greco-catolic de la Făgăraș la Blaj. În jurul reședinței au apărut școlile, tipografia și biblioteca care au făcut dintr-un oraș mic un centru cultural mult mai mare decât el.",
-      "Catedrala a fost ridicată în deceniile următoare, în stil baroc; din 2005 este catedrală arhiepiscopală majoră. Eminescu a numit orașul Mica Romă.",
-    ],
     mapsQuery: "Catedrala Sfânta Treime, Blaj",
     confidence: "solid",
   },
@@ -91,10 +85,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "Școlile Blajului s-au deschis la mijlocul secolului al XVIII-lea, sub episcopul Petru Pavel Aron, și au fost primele școli cu predare sistematică în limba română din Transilvania. Aici apare Școala Ardeleană, mișcarea care a argumentat, cu gramatici și cu istorii, originea latină a limbii și a poporului român.",
       "Ștefan Manciulea (1894–1985), al cărui nume îl poartă astăzi liceul, a fost geograf și istoric, profesor și bibliotecar la Blaj. A trecut, ca mulți dintre colegii lui, prin persecuția regimului comunist.",
       "Grădina Botanică ține de aceeași curte a școlilor. Un oraș mic cu o grădină botanică nu este un accident: este ce se întâmplă când o școală ia botanica în serios timp de două secole.",
-    ],
-    back: [
-      "Școlile Blajului s-au deschis la mijlocul secolului al XVIII-lea, sub episcopul Petru Pavel Aron: primele școli cu predare în limba română din Transilvania. De aici pleacă Școala Ardeleană, care a argumentat originea latină a limbii și a poporului român.",
-      "Ștefan Manciulea, al cărui nume îl poartă liceul, a fost geograf, istoric și profesor la Blaj. Grădina Botanică ține de aceeași curte a școlilor.",
     ],
     mapsQuery: "Liceul Teoretic Ștefan Manciulea, Blaj",
     confidence: "check",
@@ -110,10 +100,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "În secolul al XVIII-lea s-au așezat la Blaj mai mulți călugări greci uniți cu Roma. Cel mai proeminent a fost ieromonahul Leontie Moschonas, un învățat călugăr grec din insula Naxos, care a venit la Blaj împreună cu episcopul Inocențiu Micu, care l-a numit arhimandrit. Moschonas a pus bazele bibliotecii din Blaj și a murit la Blaj în 1758. Biserica își are numele de la călugării greci care au deservit-o inițial.",
       "În perioada Belle Époque paroh al bisericii a fost protopopul Gheorghe Bărbat.",
     ],
-    back: [
-      "În secolul al XVIII-lea s-au așezat la Blaj mai mulți călugări greci uniți cu Roma, iar biserica își are numele de la ei. Cel mai proeminent a fost ieromonahul Leontie Moschonas, un învățat din insula Naxos, venit la Blaj împreună cu episcopul Inocențiu Micu, care l-a numit arhimandrit.",
-      "Moschonas a pus bazele bibliotecii din Blaj și a murit aici în 1758. În perioada Belle Époque, paroh al bisericii a fost protopopul Gheorghe Bărbat.",
-    ],
     mapsQuery: "Biserica Grecilor, Blaj",
     confidence: "check",
     verify:
@@ -126,10 +112,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
     body: [
       "Clădirea este mai veche decât rolul pe care îl joacă azi: a fost ridicată ca reședință nobiliară în secolul al XVI-lea, în perioada Principatului Transilvaniei, și abia după 1737 a devenit reședința episcopilor greco-catolici mutați la Blaj.",
       "Este singura clădire din traseu care a fost, pe rând, palat nobiliar, centru administrativ al unei Biserici și în anii regimului comunist, după scoaterea în afara legii a Bisericii Greco-Catolice, muzeu.",
-    ],
-    back: [
-      "Clădirea este mai veche decât rolul pe care îl joacă azi: a fost ridicată ca reședință nobiliară în secolul al XVI-lea, în perioada Principatului Transilvaniei, și abia după 1737 a devenit reședința episcopilor greco-catolici mutați la Blaj.",
-      "Este singura clădire din traseu care a fost, pe rând, palat nobiliar, centru administrativ al unei Biserici și, în anii regimului comunist, după scoaterea în afara legii a Bisericii Greco-Catolice, muzeu.",
     ],
     mapsQuery: "Castelul Mitropolitan, Blaj",
     confidence: "check",
@@ -145,10 +127,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "Iuliu Maniu (1873–1953) a fost unul dintre artizanii Unirii de la 1918 și de trei ori prim-ministru al Regatului României. A condus Partidul Național Țărănesc, a fost una dintre puținele voci care au refuzat compromisul atât cu dictatura regală, cât și cu cea comunistă, și a murit în 1953 în închisoarea de la Sighet.",
       "De asemenea, era un greco-catolic convins și a îndeplinit funcția de avocat mitropolitan la Blaj.",
     ],
-    back: [
-      "Iuliu Maniu (1873–1953) a fost unul dintre artizanii Unirii de la 1918 și de trei ori prim-ministru al Regatului României. A condus Partidul Național Țărănesc și a fost una dintre puținele voci care au refuzat compromisul, atât cu dictatura regală, cât și cu cea comunistă.",
-      "A murit în 1953 în închisoarea de la Sighet. Greco-catolic convins, a îndeplinit la Blaj funcția de avocat mitropolitan.",
-    ],
     mapsQuery: "Casa Maniu, Blaj",
     confidence: "check",
     verify:
@@ -162,10 +140,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
     body: [
       "„Gostat” este prescurtarea de la Gospodărie Agricolă de Stat, o rețea de ferme de stat din perioada comunistă. Magazinele lor erau prezente în aproape fiecare oraș.",
       "Pe parcursul istoriei, în clădirea care găzduiește actualul magazin „Gostat” au funcționat diverse alte magazine. Le putem identifica fie cu ajutorul documentelor de arhivă și a fotografiilor de epocă, fie cu ajutorul literaturii. Ion Agârbiceanu menționează, în unele opere, aceste magazine.",
-    ],
-    back: [
-      "„Gostat” este prescurtarea de la Gospodărie Agricolă de Stat, o rețea de ferme de stat din perioada comunistă. Magazinele lor erau prezente în aproape fiecare oraș.",
-      "Înainte, în clădirea care găzduiește actualul magazin au funcționat, pe rând, alte prăvălii. Le putem identifica din documente de arhivă și fotografii de epocă, dar și din literatură: Ion Agârbiceanu le menționează în unele dintre operele sale.",
     ],
     mapsQuery: "Magazin Gostat, Blaj",
     confidence: "check",
@@ -182,10 +156,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "În 1948 regimul comunist a scos în afara legii Biserica Greco-Catolică. Episcopii care au refuzat să treacă la Ortodoxie au fost arestați. Ioan Suciu a murit în 1953 în închisoarea de la Sighet.",
       "Pe 2 iunie 2019, pe Câmpia Libertății, Papa Francisc i-a beatificat pe cei șapte episcopi greco-catolici martiri. Ioan Suciu este unul dintre ei.",
     ],
-    back: [
-      "Ioan Suciu (1907–1953) a fost episcop greco-catolic, remarcabil de tânăr pentru funcția lui și cunoscut pentru munca cu tinerii.",
-      "În 1948 regimul comunist a scos în afara legii Biserica Greco-Catolică; episcopii care au refuzat să treacă la Ortodoxie au fost arestați. Ioan Suciu a murit în 1953 la Sighet. Pe 2 iunie 2019, pe Câmpia Libertății, Papa Francisc l-a beatificat, cu ceilalți șase episcopi martiri.",
-    ],
     mapsQuery: "Casa Ioan Suciu, Blaj",
     confidence: "check",
     verify:
@@ -201,10 +171,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "Osemintele i-au fost aduse înapoi la Blaj abia în 1997, după mai bine de două secole.",
       "Colegiul îi poartă numele. Capela Arhiereilor, din aceeași incintă, este locul unde odihnesc o parte din arhiereii Blajului și a Bisericii Române Unite.",
     ],
-    back: [
-      "Inochentie Micu-Klein (1692–1768) a mutat scaunul episcopal de la Făgăraș la Blaj și a cerut drepturi politice pentru românii din Transilvania, pe atunci doar tolerați. Chemat la Viena să dea socoteală, a plecat la Roma și a murit în exil după 26 de ani.",
-      "Osemintele i-au fost aduse la Blaj abia în 1997. Colegiul îi poartă numele; în Capela Arhiereilor, alături, odihnesc arhierei ai Blajului.",
-    ],
     mapsQuery: "Colegiul Inochentie Micu Clain, Blaj",
     confidence: "check",
     verify:
@@ -219,10 +185,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
       "Pe 3/15 mai 1848 s-a ținut aici Marea Adunare Națională de la Blaj. Au venit zeci de mii de oameni și au cerut drepturi egale pentru români. Câmpul, din spatele Catedralei, pe care s-au strâns se numește de atunci Câmpia Libertății.",
       "Este singurul loc din traseu care nu este o clădire. Tot aici, pe 2 iunie 2019, Papa Francisc i-a beatificat pe cei șapte episcopi greco-catolici martiri, în fața a peste o sută de mii de oameni. Același câmp, aceeași idee, o sută șaptezeci și unu de ani mai târziu.",
     ],
-    back: [
-      "Pe 3/15 mai 1848 s-a ținut aici Marea Adunare Națională de la Blaj: zeci de mii de oameni au cerut drepturi egale pentru români. Câmpul din spatele Catedralei pe care s-au strâns se numește de atunci Câmpia Libertății.",
-      "Tot aici, pe 2 iunie 2019, Papa Francisc i-a beatificat pe cei șapte episcopi greco-catolici martiri, în fața a peste o sută de mii de oameni. Același câmp, aceeași idee, o sută șaptezeci și unu de ani mai târziu.",
-    ],
     mapsQuery: "Câmpia Libertății, Blaj",
     confidence: "solid",
   },
@@ -233,10 +195,6 @@ export const BLAJHUNT_PLACES: readonly BlajhuntPlace[] = [
     body: [
       "Protopopiatul este unitatea administrativă care coordonează parohiile dintr-o zonă — un fel de district, condus de un protopop. Nu este o clădire de vizitat, ci un birou care funcționează.",
       "Într-un oraș în care Biserica Greco-Catolică a fost desființată prin lege în 1948 și repusă în drepturi abia după 1989, existența unui protopopiat care își vede de treaba lui este, în felul ei, tot un fel de monument.",
-    ],
-    back: [
-      "Protopopiatul este unitatea administrativă care coordonează parohiile dintr-o zonă, un fel de district condus de un protopop. Nu este o clădire de vizitat, ci un birou care funcționează.",
-      "Într-un oraș în care Biserica Greco-Catolică a fost desființată prin lege în 1948 și repusă în drepturi abia după 1989, un protopopiat care își vede de treaba lui este, în felul lui, tot un fel de monument.",
     ],
     mapsQuery: "Protopopiatul Greco-Catolic, Blaj",
     confidence: "check",
