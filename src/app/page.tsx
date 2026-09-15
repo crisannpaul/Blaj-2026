@@ -25,9 +25,8 @@ import { LetterBell } from "@/components/ui/letter-bell";
  * The two BRANCHES are the page's whole job: this is the common trunk and the
  * day has exactly two things in it. They are labels only, by decision — no
  * descriptive sub-line — so the pair reads as a poster rather than a menu.
- * Since 15 Sep the open panel also carries a round arrow chip opposite its
- * word (the "handle", see `branch-panels.tsx`): not copy, an affordance, so
- * the two read as doors and not as two captioned pictures.
+ * An arrow chip on the open panel was tried on 15 Sep and rejected by the
+ * user on sight; the panels carry their word and nothing else.
  *
  * The two images are the commissioned artwork (A1/A3), supplied 8 Sep and
  * converted to webp from the originals kept out of the bundle in `docs/`. They

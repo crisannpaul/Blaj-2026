@@ -1204,74 +1204,67 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 
 ## 14. Changelog
 
-- **2026-09-15, evening (the fold's finish: a weight pair and a handle)** —
-  the user, with the home page done: „is there anything nice we can sprinkle
-  on it design wise to make it look more professional… very minimal, it has to
-  respect the current layout.” Two moves that survived a cold review (a third
-  did not, below), neither of which moves a pixel of layout, on branch
-  `worktree-landing-polish` and served on **:3004** for their eye (:3000
-  still holds the uncommitted phase-two banner, which the branch does not
-  carry). Not merged, not deployed; Vercel is behind.
+- **2026-09-15, evening (the title becomes a weight pair; a handle was tried
+  and rejected)** — the user, with the home page done: „is there anything nice
+  we can sprinkle on it design wise to make it look more professional… very
+  minimal, it has to respect the current layout.” Three moves were built on
+  branch `worktree-landing-polish` and shown on :3004. **One shipped.** The
+  user's verdict on the rest, on sight: „the only thing i like is the title
+  style. i like it, the rest is ass.” So master carries the title and nothing
+  else, and this entry records the other two so they are not re-proposed.
 
-  1. **The title is a weight pair.** „Blaj” stays semibold; „2026” is Outfit
-     300 (`font-light` — the variable font is already loaded, no new
-     request). Still one string in `CONTENT`, because the copy inventory
-     asserts the literal; split at render on `\s`, because the separator is
-     U+00A0 and a split on U+0020 rendered „Blaj 202 Blaj 2026” for one
-     build. Display tracking −0.02em → −0.035em on the title span only. Same
-     face, same size, same ink: no ramp step, no colour, no height spent.
-  2. **A handle on the open panel.** A 40px `bg-background/90` circle with
-     lucide `ArrowRight` in ink, bottom-right, opposite the word; 32px under
-     `short:`. `aria-hidden`, inside the link (hittest: 3 interactive, 0
-     unreachable at 390 and 1440). Rides `MOTION`; opacity 0 / scale 0.6 in
-     the spine, still in the DOM so open/close is one interpolation. The
-     word's open-state bottom padding 16 → 24px so word and chip share an
-     axis. **Hidden below 300px of viewport**: at 200% zoom on a 390 phone the
-     open panel is 87px, the word already overflows and the chip sat on
-     „lie”; a 320 phone (208px panel) keeps it. Both looked at. After the
-     review: **solid fill and `--shadow-sheet`**, the bell's own edge — a
-     bare `/90` disc measured 1.43:1 against the parchment at its weakest
-     arc and let the photograph through the fill; and a **press state**,
-     `group-active` (and `group-hover` for a mouse, never alone) inverting
-     the disc to ink with a white arrow, the one acknowledgement an
-     already-open panel gives before it navigates with the tap highlight
-     globally off.
-  3. ~~The date line in `tabular-nums`~~ — reverted on review: no second
-     number to align against, so it only made the run 4.45px wider.
+  **Shipped — the title is a weight pair.** „Blaj” stays semibold; „2026” is
+  Outfit 300 (`font-light`; the variable font is already loaded, so this costs
+  no request). Still ONE string in `CONTENT`, because the copy inventory
+  asserts the literal — it is split at render, on `\s` rather than on a space
+  character, **because the separator is U+00A0**. A split on U+0020 found
+  nothing, `slice(0, -1)` returned the whole string, and the fold rendered
+  „Blaj 202 Blaj 2026” for one build. Display tracking goes −0.02em → −0.035em
+  on the title span only: at 88px Outfit's geometric bowls open up and the word
+  starts to read as separate letters. Same face, same size, same ink — no ramp
+  step, no colour, no height spent, no layout moved.
 
-  Considered and not done: a hairline ring on the cards (invisible over the
-  saturated tints, and `ring-inset` would have leaked into the focus ring);
-  colour in the title (the fold already has four accent moments — rule,
-  kicker, sky panel, gold panel); anything to the rule or the kicker. The
-  user asked about „a different font” for the title: Instrument Serif and
-  Fraunces were rendered as **screenshot-only** variants (runtime injection,
-  nothing in code) for them to judge. This session's read is that both cut
-  the one-family link with „Ateliere” and the Blajhunt mark and re-open the
-  serif → Outfit decision; the weight pair is the recommendation.
+  **Rejected — a handle on the open panel.** A 40px disc with lucide
+  `ArrowRight`, bottom-right of the open panel opposite its word, riding
+  `MOTION`, `aria-hidden`, inside the link. It went through a full cold-review
+  round (a bare `bg-background/90` disc measured 1.43:1 against the parchment
+  at its weakest arc, so it took `--shadow-sheet` — the bell's own edge — and
+  a `group-active` invert for press feedback) and the user still did not want
+  it. **Do not re-propose an affordance glyph on these panels.** The pair is a
+  poster, not a menu; that is the same decision as the no-sub-line rule above.
+  The code is on the branch at 173745b if it is ever wanted.
 
-  **The cold review (opus), and what was not taken from it.** Verdict
-  fix-first; the weight pair „holds at every size the title takes … reads as
-  a designed lockup rather than a heading”. Taken: the chip's edge and press
-  state, the tabular revert, and a comment in `branch-panels.tsx` that still
-  said the pair swaps every 2.6s when `SWAP_MS` has been 1500 — fixed. Not
-  taken, with reasons: (a) „the chip hands the page a primary CTA picked by
-  timing” — the open state already does that with 3.4:1 of width, the chip
-  follows the state it belongs to, and a 76px spine has no room for one;
-  (b) the copy column and the pair stopping at two right edges (33rem vs
-  26rem) — the layout, which this pass was told to respect; (c) **the fold
-  scrolls on short viewports** — 320×568 and phone landscape 844×390 both
-  push the pair past the fold. Measured against :3000 (master + the banner)
-  with the same script: identical numbers on both builds, so it is
-  pre-existing, and it is the coupled lead/card-height decision the 8 Sep
-  entry and the `tight:` note describe; the 15 Sep lead restoration re-opened
-  it. Not this pass's to take. Recorded here so it is not lost.
+  **Rejected — `tabular-nums` on the date line.** Dropped during the review,
+  before the user saw it: there is no second number to align against, so it
+  only made the run 4.45px wider.
 
-  Verified on :3004 after the fixes: `audit.js` clean at 390/768/1440 — no
-  overflow, no contrast failures, no text under 12px, no tap target under
-  44px, no console errors; `ink.js` all pass — open-label glyph cores worst
-  7.98:1 at 390 and 8.53:1 at 1440, spine worst 9.49:1 / 10.75:1, title
-  19.63:1 / 19.80:1; `hittest.js` clean at both. 320×568 and 195×422 looked
-  at by eye.
+  **A different font for the title, asked about and answered.** Instrument
+  Serif and Fraunces were rendered as **screenshot-only** variants — injected
+  at runtime, nothing in code — for the user to judge. Both cut the one-family
+  link with „Ateliere” and the Blajhunt mark and re-open the serif → Outfit
+  decision, so the weight pair was the recommendation and is what shipped.
+
+  **Two pre-existing defects the cold review surfaced. Neither is fixed.**
+
+  1. **The fold scrolls on short viewports.** 320×568 overflows by 92px and
+     phone landscape 844×390 by 97px, pushing the branch pair past the fold —
+     the open panel's word and then the spine's letters go first. Measured on
+     master and on the branch with the same script: **identical numbers**, so
+     the title change did not cause it. It is the coupled lead-length /
+     card-height decision the 8 Sep entry and the `tight:` note describe,
+     re-opened by the 15 Sep lead restoration. 375×667 and 390×844 clear it.
+  2. **The copy column and the branch pair have two right edges** —
+     `max-w-[33rem]`/`[38rem]` against `max-w-[26rem]`/`[32rem]`, so they stop
+     112px apart at 768 and 96px apart at 1440. They agree at 390. Whether the
+     pair shares the copy's measure or sits on its own narrower one has never
+     been decided; right now neither reads as chosen.
+
+  Verified on master after the merge: build clean, `tsc` and `eslint` clean;
+  `audit.js` at 390/768/1440 — no overflow, no contrast failures, no text
+  under 12px, no tap target under 44px, no console errors; `ink.js` all pass,
+  the title at 18.96:1 worst over the marquee; `hittest.js` 3 interactive, 0
+  unreachable at both widths. :3000 rebuilt and restarted, served build
+  confirmed by grep. **Vercel is behind until someone deploys it.**
 
 - **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
   in `poze-org` the morning after the document, so the stock frame comes out

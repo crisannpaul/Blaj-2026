@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
@@ -282,7 +281,7 @@ export function BranchPanels({
             <Link
               href={panel.href}
               transitionTypes={["nav-forward"]}
-              className="group shadow-card focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="shadow-card focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               onPointerEnter={(e) => {
                 /* Mouse only. A touch "enter" fires just before the tap that
                    is already navigating, so reacting to it would flip the
@@ -406,7 +405,7 @@ export function BranchPanels({
                 staying put), which is why the panel height and the mark were
                 sized together: see below. */}
               <span
-                className={`text-foreground absolute inset-0 flex flex-col ${open ? "justify-end px-4 pt-4 pb-6 short:px-3 short:pb-5" : "justify-center p-3"}`}
+                className={`text-foreground absolute inset-0 flex flex-col ${open ? "justify-end px-4 pt-4 pb-4 short:px-3" : "justify-center p-3"}`}
               >
                 <span
                   className={`font-display flex leading-none font-semibold ${open ? "text-h3 short:text-body flex-row items-end" : "text-body short:text-ui flex-col items-center gap-[0.3em] uppercase short:gap-[0.2em]"}`}
@@ -481,55 +480,6 @@ export function BranchPanels({
                   ))}
                 </span>
               </span>
-
-              {/* THE HANDLE. A round chip with an arrow in the open panel's
-                bottom-right corner, opposite the word. Without it the pair
-                reads as two captioned pictures; with it, as two doors — which
-                is what they are, and the only thing this page does.
-
-                Decorative: the link's accessible name is the word, and an
-                icon-only sibling would only announce the same door twice.
-                Inside the link, so a tap on it is a tap on the door and
-                hittest.js sees no dead pixel.
-
-                It rides the same spring as everything else (MOTION), fading
-                and growing in with the panel rather than popping after it.
-                In the spine it is at opacity 0 and still in the DOM so the
-                open/close flight is one interpolation, not a mount.
-
-                The word's bottom padding went 16px -> 24px in the open state
-                for this: a 23px line box beside a 40px chip sat 8px low, so
-                the pair is centred on one axis instead. `short:` keeps the
-                same arithmetic at 16px against a 32px chip.
-
-                Gone below 300px of viewport. That is 200% zoom on a 390
-                phone (a 195px viewport, an 87px open panel), where the word
-                already overflows its box and the chip landed on top of "lie".
-                A 320 phone is 208px of open panel and keeps it. Measured,
-                both — this is the one place the handle can do harm.
-
-                It is the same disc-and-glyph language as the bell in the
-                opposite corner, so it wears the same edge: `shadow-sheet`,
-                the 1px tinted outline plus halo, because a bare white disc
-                measured 1.43:1 against the parchment at its weakest arc — a
-                cold review caught it. Solid fill, not /90: the photograph
-                showing through the disc read as a smear, not as glass.
-
-                And it answers the link's press. `group-active` inverts it to
-                ink with a white arrow for as long as the finger is down —
-                the one acknowledgement an already-open panel gives before it
-                navigates, since the global tap highlight is off.
-                `group-hover` does the same for a mouse; it compiles under
-                `@media (hover: hover)` and is never the only signal. */}
-              <motion.span
-                aria-hidden="true"
-                className="bg-background text-foreground shadow-sheet group-hover:bg-foreground group-hover:text-background group-active:bg-foreground group-active:text-background short:right-3 short:bottom-3 short:size-8 absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full transition-colors duration-150 max-[300px]:hidden"
-                initial={false}
-                animate={{ opacity: open ? 1 : 0, scale: open ? 1 : 0.6 }}
-                transition={move}
-              >
-                <ArrowRight className="short:size-4 size-5" strokeWidth={2} />
-              </motion.span>
             </Link>
           </motion.li>
         );
