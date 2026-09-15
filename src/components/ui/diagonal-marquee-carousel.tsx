@@ -54,6 +54,12 @@ export interface DiagonalMarqueeCarouselProps {
   className?: string;
   cardClassName?: string;
   fadeClassName?: string;
+  /** The 64px edge softener along the bottom, below lg. On by default; a page
+   *  that pins this band to the viewport as a sticky backdrop turns it off,
+   *  because pinned, it whitens the last 64px of EVERY screen — including the
+   *  one where the welcome letter's top edge has to read against something.
+   *  @default true */
+  bottomFade?: boolean;
 }
 
 /**
@@ -241,6 +247,7 @@ export default function DiagonalMarqueeCarousel({
   className = "",
   cardClassName = "",
   fadeClassName = "",
+  bottomFade = true,
 }: DiagonalMarqueeCarouselProps) {
   // Each row is dealt from a different rotation of the deck, so a frame is
   // never directly above a copy of itself — an unrotated deal reads as tiled
@@ -313,7 +320,9 @@ export default function DiagonalMarqueeCarousel({
           phone all dropped the kicker onto raw photography. The copy carries
           its own scrim instead — see page.tsx. */}
       <div className="from-background pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-gradient-to-b to-transparent" />
-      <div className="from-background pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t to-transparent lg:hidden" />
+      {bottomFade ? (
+        <div className="from-background pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t to-transparent lg:hidden" />
+      ) : null}
 
     </div>
   );
