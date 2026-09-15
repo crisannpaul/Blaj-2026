@@ -5,7 +5,7 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    TOKENS — the only place colour, type and radius live.
    ───────────────────────────────────────────────────────────────────────────
-   Light theme only, on purpose (see SPEC §6). There is no .dark block and no
+   Light theme only, on purpose (see CLAUDE.md). There is no .dark block and no
    `dark:` variant in this codebase; adding one is a decision, not a tweak.
 
    The contract is shadcn's so anything pulled from 21st.dev or ui.shadcn.com
@@ -48,6 +48,7 @@
 
   --color-contrast: var(--contrast);
   --color-contrast-text: var(--contrast-text);
+  --color-heart: var(--heart);
   --color-scrim: var(--scrim);
 
   --shadow-card: 0 1px 2px rgb(var(--scrim) / 0.07), 0 10px 30px -14px rgb(var(--scrim) / 0.22);
@@ -124,6 +125,14 @@
   --contrast: #fdc700;
   --contrast-text: #6f5600;
 
+  /* The heart that signs the welcome letter and fronts its notification —
+     Twemoji's ❤️ red, because the user asked for "actually red, like a
+     heart emoji" after sky and brand-strong. NOT an accent: it is one glyph
+     in two places, and it is the only red on the site besides
+     --destructive, which stays for errors and the unread badge. 4.6:1 on
+     white, over the 3:1 floor for a graphic. */
+  --heart: #dd2e44;
+
   /* The gilt on the ten Blajhunt stop glyphs, top of the drawing to the ground
      line. Read only by `stop-glyphs.tsx`, through a `userSpaceOnUse` gradient
      — see the header of that file for why the units matter.
@@ -148,7 +157,7 @@
      stand-in are the same four colours and both are themed from here.
 
      Every stop is deliberately pale. Near-black ink sits directly on this
-     field, and that needs a backdrop luminance of >= 0.19 (SPEC 6.1b); the
+     field, and that needs a backdrop luminance of >= 0.19 (CLAUDE.md); the
      darkest stop here, --field-3, is 0.58. Darkening any of these is the same
      decision as flipping a surface's ink, not a colour tweak. */
   --field-0: #fff4d1;
@@ -266,7 +275,7 @@
    Every stop is a continuation of the SAME four field colours. It is not a
    second palette, and it must not become one.
 
-   The luminance rule (SPEC 6.1b) is what bounds this: near-black ink sits
+   The luminance rule (CLAUDE.md) is what bounds this: near-black ink sits
    directly on it, so every stop has to stay >= 0.19. The darkest here is
    --field-2 at 0.87 — this ramp has a lot of headroom, and that is deliberate.
    Deepening any stop is the same decision as flipping a surface's ink. */
@@ -307,7 +316,7 @@
 
    It is DELIBERATELY still. The 21st.dev original looped its dash offset
    forever; on a page whose whole job is being read that is motion competing
-   with the text, and it would be a third WCAG 2.2.2 deviation (see SPEC D10)
+   with the text, and it would be a third WCAG 2.2.2 deviation (CLAUDE.md)
    bought for nothing.
    ════════════════════════════════════════════════════════════════════════════ */
 

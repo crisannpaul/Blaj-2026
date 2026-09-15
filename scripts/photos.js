@@ -125,7 +125,19 @@ const OUT_LANDING = process.env.LANDING_OUT || path.join(ROOT, "public", "landin
  * surviving fraction of a source at ratio S in a box at ratio B is
  * min(S,B)/max(S,B). The geometric mean of that range is 1.21, and 5:4 is the
  * nearest ratio an image generator will actually emit: it keeps >=86% at 390
- * and >=92% at lg. See the export-geometry table in SPEC.
+ * and >=92% at lg. The open panel's box, measured off the running page rather
+ * than derived from the CSS:
+ *
+ *   viewport            open panel   ratio   spine     ratio
+ *   320                 204x240      0.85    60x240    0.25
+ *   390                 258x240      1.08    76x240    0.32
+ *   430                 289x240      1.20    85x240    0.35
+ *   768                 315x256      1.23    93x256    0.36
+ *   >=1024              390x288      1.35    115x288   0.40
+ *   844x390 landscape   315x160      1.97    93x160    0.58
+ *
+ * 320px keeps only 68% of a 5:4 source and the landscape spine ~25%, so
+ * nothing load-bearing may sit outside the central column of the art.
  *
  * 1200x960 is a CEILING, not a target: "native" keeps a source at its own
  * resolution and never upscales. The largest a panel is ever painted is 390x288

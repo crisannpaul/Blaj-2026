@@ -2,26 +2,38 @@
 
 # Blaj 2026 — working agreement
 
-A throwaway platform for a Greek-Catholic youth meeting in Transylvania. It has
-to work the week before the event and on the day, then be deleted. Read
-`SPEC.md` before doing anything of substance — it is the living record of what
-was decided, what was measured and what is still open.
+A throwaway site for a Greek-Catholic youth meeting in Transylvania on
+19 September 2026. It has to work the week before the event and on the day,
+then be deleted. It is static: the landing fold, the workshops at `/ateliere`,
+the hunt roadmap at `/blajhunt`, and a page per workshop and per stop. There is
+no backend and no database.
 
-## Docs ↔ code ping-pong (keep specs true)
+What is still open lives in `TODO.md` — read it when a task touches content,
+copy, the hunt route or deploy. Decisions and measurements live in the header
+comment of the file they govern; that is where to look, and where to write.
 
-`SPEC.md`, `CLAUDE.md` and `AGENTS.md` are a **living contract, not write-once
-docs**. After implementing anything of substance: check the change against them,
-**report any drift to the user** (what changed vs. what the docs claimed), and
-fix the docs to match reality **in the same pass** — consulting the user on
-anything non-obvious. Never leave a doc describing a system that no longer
-exists. Fixing drift is part of "done", not follow-up.
+## Keep the docs true
 
-This is not hypothetical. Real drift found so far: `SPEC.md` claimed EB Garamond
-after the fonts moved to Outfit; and a parallel session deployed to Vercel and
-recorded it, so the spec described a live site this session did not know about
-while the live site served a build two fixes behind. **Both were found by
-checking, not by remembering.** When something looks off, verify it against the
-running system before you trust either the doc or your own memory.
+`CLAUDE.md`, `AGENTS.md`, `TODO.md` and the file-header comments are a **living
+contract, not write-once docs**. After implementing anything of substance: check
+the change against them, **report any drift to the user** (what changed vs. what
+the docs claimed), and fix the docs to match reality **in the same pass** —
+consulting the user on anything non-obvious. Never leave a doc describing a
+system that no longer exists. Fixing drift is part of "done", not follow-up.
+
+History belongs in git. **Commit after every change worth looking at**, with the
+why in the message. There is no changelog file and none should be started. The
+3352-line `SPEC.md` that carried one was retired on 15 September 2026: two
+thirds of it was a journal and five sections described a backend that was never
+built. Its text is in git history before that commit, and a copy sits at
+`docs/SPEC-archive.md` (gitignored, local only) for the odd date lookup.
+
+Drift is not hypothetical. The spec once claimed EB Garamond after the fonts
+moved to Outfit; a parallel session deployed to Vercel and recorded it, so the
+docs described a live site this session did not know about while the live site
+served a build two fixes behind. **Both were found by checking, not by
+remembering.** When something looks off, verify it against the running system
+before you trust either the doc or your own memory.
 
 ## Verify by looking, not by asserting
 
@@ -41,7 +53,7 @@ far was either invisible to the harness or introduced by trusting a number:
   `contrast failures: none` on text sitting over imagery. Measure the **rendered**
   ink with `ink.js`: it screenshots twice, once normally and once with the ink set
   to `transparent`, and reads both at the same glyph-core pixels. The declared
-  colour hides `opacity`, colour alpha and blend modes. See SPEC 6.2.
+  colour hides `opacity`, colour alpha and blend modes.
 - That glyph-mask is code too, so **calibrate it before believing it**. Point it
   at a control whose two colours are flat and known and check it reproduces the
   arithmetic. Its cutoff decides everything: at 75% of the strongest per-box
@@ -50,7 +62,8 @@ far was either invisible to the harness or introduced by trusting a number:
 - A scrim gradient must reach transparent **inside its own box**, or its edge
   draws a hard line across the layout. This shipped twice.
 - An element can pass every check and still be dead, because a later sibling
-  paints over it. That is what `hittest.js` is for.
+  paints over it. That is what `hittest.js` is for. Run it from **PowerShell**
+  on Windows: MSYS rewrites `"/,/ateliere"` into a Windows path.
 - `hover:` compiles under `@media (hover: hover)` and **does not exist on a
   phone**. Never signal a state with it alone.
 
@@ -89,10 +102,46 @@ broken because the URL under test was behind, and a verification pass ran agains
 a stale build and produced misleading numbers. If you iterate on a scratch port,
 :3000 drifts — restart it before telling the user anything is ready.
 
-**Vercel is separate and is not yours to run.** The live deployment lags until
-someone ships it, the deploy command needs the user's approval, and a local fix
-is not a shipped fix. When you finish something, say plainly whether the live URL
-is behind.
+## Vercel — separate, and not yours to run
+
+The live deployment lags until someone ships it, the deploy command needs the
+user's approval, and a local fix is not a shipped fix. When you finish
+something, say plainly whether the live URL is behind.
+
+| | |
+|---|---|
+| Project | `geneous/blaj2026` (Vercel, org `Geneous`, account `crisannpaul`) |
+| Production | https://blaj2026-rjw9derml-geneous.vercel.app |
+| Region | `iad1` · Next.js preset · Node 24.x |
+| Custom domain | none yet — see `TODO.md` |
+| Protection | Vercel Authentication is **off** so the link opens for anyone. Project → Settings → Deployment Protection to change it |
+
+```
+npx vercel deploy --prod --yes          # from the repo root, with approval
+```
+
+**What that command ships.** Vercel is NOT connected to git. The CLI uploads
+**the working tree as it is on disk at that moment**, uncommitted edits
+included, then builds on Vercel's Linux infrastructure. So:
+
+- Whatever is half-finished in the editor goes live. There is no staging gate.
+  Commit before deploying, so there is something to come back to.
+- Rolling back means promoting an older deployment in the dashboard, not
+  `git revert`. Vercel's deployment list is the only record of what shipped.
+- A **local** Vercel build cannot work on this machine: `vercel build` and
+  `--prebuilt` need symlinks, and Windows refuses those without Developer Mode
+  or admin. Never pass `--prebuilt`; let the remote build run.
+- `.vercelignore` keeps `docs/`, `legacy/`, `.claude/`, `scripts/` and
+  `TODO.md` off the upload. `docs/` is the one that matters: it holds the hunt
+  answers. `vercel link` wrote a `.env.local` holding a `VERCEL_OIDC_TOKEN`; it
+  is a live credential and gitignored, keep it that way.
+
+After any deploy, prove it from the outside, unauthenticated:
+
+```bash
+curl -o /dev/null -w "%{http_code}\n" https://blaj2026-rjw9derml-geneous.vercel.app/                        # 200
+curl -o /dev/null -w "%{http_code}\n" https://blaj2026-rjw9derml-geneous.vercel.app/docs/Treasurehunt.docx  # must be 404
+```
 
 ## Non-negotiables
 
@@ -107,7 +156,9 @@ is behind.
   reverse.** Dark ink needs a backdrop luminance of >= 0.19, near-white ink needs
   <= 0.17. They do not overlap, so "bright background + white text" cannot be
   tuned into working. On the workshops stage this also governs the accents: they
-  are sky-400 and yellow-400 only because the stage is light. See SPEC 6.1b.
+  are sky-400 and yellow-400 only because the stage is light. If the stage ever
+  goes dark, the accents go dark with it: yellow-400 on a dark stage measured
+  1.63:1 on an 11px label.
 - **A raw colour or font stack outside `src/app/globals.css` is a defect.** And a
   token used in a component must be registered in `@theme inline`, or the utility
   silently resolves to nothing. Tailwind v4 raises no error for this.
@@ -116,7 +167,7 @@ is behind.
   for the whole subtree — invalid at computed-value time, declaration dropped, no
   error. That shipped: every `/blajhunt` stop card was transparent and the dashed
   route showed through it. Suffix local values with what they are (`--card-w`)
-  and check `globals.css` before choosing a name. See SPEC 6.2.
+  and check `globals.css` before choosing a name.
 - **Never pass a type-ramp size and a text colour through `cn()` together.**
   `cn("text-h3", "text-card-foreground")` returns `"text-card-foreground"` alone:
   tailwind-merge does not know `--text-h3` exists, reads `text-h3` as a colour,
@@ -125,18 +176,22 @@ is behind.
   are never merged, so they are safe. This shipped once already.
 - **`docs/` contains the treasure-hunt answers.** Never commit it to a public
   repo, never serve it, never let it near a client bundle. It is in `.gitignore`
-  and `.vercelignore`; verify after any deploy config change.
-- **Do not rate-limit primarily by IP.** Everyone at the event shares the venue
-  Wi-Fi or one carrier NAT, so a tight IP limit locks out the whole event.
+  and `.vercelignore`; verify after any deploy config change. The GitHub remote
+  is public and was last pushed at the initial commit; pushing is the user's
+  call.
+- **Do not rate-limit primarily by IP**, if anything dynamic is ever built.
+  Everyone at the event shares the venue Wi-Fi or one carrier NAT, so a tight IP
+  limit locks out the whole event.
 - Read the version-matched Next docs in `node_modules/next/dist/docs/` before
   writing app code. Next 16 differs from most training data.
 
 ## Known deviations — deliberate, do not "fix" silently
 
-Both are recorded in `SPEC.md` with reasoning. Changing either is a decision for
-the user, not a tidy-up.
+Both were decided by the user on 4 September 2026. Changing either is a decision
+for the user, not a tidy-up.
 
-- **No marquee pause control** (D10), against a Vercel MUST and WCAG 2.2.2.
-  `prefers-reduced-motion` carries the case instead.
-- **No skip-to-content link** (D9), because there is no navigation to skip and it
+- **No marquee pause control**, against a Vercel MUST and WCAG 2.2.2.
+  `prefers-reduced-motion` carries the case instead. If it ever comes back it
+  must not be hover-only.
+- **No skip-to-content link**, because there is no navigation to skip and it
   would be the only sr-only control. This lapses the moment a header exists.

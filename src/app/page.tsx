@@ -14,8 +14,8 @@ import { LetterBell } from "@/components/ui/letter-bell";
  *
  * The letter was ON the fold for one evening, 14 Sep: a card beside the copy
  * on a desktop and a second, scrolling screen under it on a phone, with the
- * marquee pinned as a sticky backdrop (SPEC D15 and the 14 Sep, late,
- * changelog have every number). The user reverted it on 15 Sep: the desktop
+ * marquee pinned as a sticky backdrop (commit 9b36e8f has every number).
+ * The user reverted it on 15 Sep: the desktop
  * was fine, the phone "looks completely ass", and nobody reads a wall of text
  * on a page whose job is routing to two branches. So the fold is what it was
  * — bottom-anchored copy, `min-h-[100svh]`, the marquee as its own absolute
@@ -25,13 +25,16 @@ import { LetterBell } from "@/components/ui/letter-bell";
  * The two BRANCHES are the page's whole job: this is the common trunk and the
  * day has exactly two things in it. They are labels only, by decision — no
  * descriptive sub-line — so the pair reads as a poster rather than a menu.
+ * An arrow chip on the open panel was tried on 15 Sep and rejected by the
+ * user on sight; the panels carry their word and nothing else.
  *
  * The two images are the commissioned artwork (A1/A3), supplied 8 Sep and
  * converted to webp from the originals kept out of the bundle in `docs/`. They
  * are 1152x928, i.e. 5:4 — sized to the largest the open panel is ever painted
  * (390x288 CSS px, 1170x864 on a 3x phone) so nothing upscales. See the export
- * geometry table in SPEC before commissioning any replacement: the open panel's
- * ratio moves from 1.08 at 390 to 1.35 at lg, and `object-cover` centre-crops.
+ * geometry table in scripts/photos.js before commissioning any replacement:
+ * the open panel's ratio moves from 1.08 at 390 to 1.35 at lg, and
+ * `object-cover` centre-crops.
  *
  * The tint is what keeps them from reading as more of the marquee behind them.
  * Sky goes to the workshops because /ateliere already carries a sky cast, and
@@ -103,6 +106,32 @@ const CONTENT = {
     "împreună — rugăciune, voie bună, ateliere, prieteni noi și un oraș " +
     "de descoperit.",
 } as const;
+
+/**
+ * The title is set as a WEIGHT PAIR: the town in semibold, the year in light.
+ * One string in CONTENT — the copy inventory asserts the literal — split at
+ * the space here. Same face, same size, same ink: the pair adds a second
+ * voice to the fold's focal point without spending a colour, a ramp step or
+ * a pixel of height, which is what "authored, not templated" costs at its
+ * cheapest. Outfit loads as a variable font (no `weight` in layout.tsx), so
+ * every step between is already on the page and none of this costs a request.
+ *
+ * THE WORD IS 500, NOT 600. It shipped at `font-semibold` and the user came
+ * back with „that Blaj is a lil too bold”. 500 against the year's 300 keeps a
+ * 200-step gap, which is what makes the pair read as two voices; 450 was
+ * looked at too and closes the gap to 150, where at a glance the line starts
+ * to read as one weight and the idea evaporates. Below 500 is not a smaller
+ * version of this, it is a different title.
+ *
+ * The separator is whatever whitespace the string carries — a NO-BREAK SPACE,
+ * per the Vercel baseline for brand names — and it is put back between the two
+ * halves as-is. Searching for a plain U+0020 found nothing, and the title
+ * rendered as "Blaj 202 Blaj 2026" for one build.
+ */
+const TITLE_SPACE = CONTENT.title.search(/\s/);
+const TITLE_WORD = CONTENT.title.slice(0, TITLE_SPACE);
+const TITLE_SEP = CONTENT.title.charAt(TITLE_SPACE);
+const TITLE_YEAR = CONTENT.title.slice(TITLE_SPACE + 1);
 
 /**
  * The copy's own scrim, below lg. Two things matter here.
@@ -179,11 +208,17 @@ export default function Home() {
               <span className="text-brand-text font-ui text-h3 block font-medium">
                 {CONTENT.kicker}
               </span>
+              {/* Tighter than the base h1's -0.02em: at display size Outfit's
+                geometric bowls open up and the word starts to read as
+                letters. -0.035em is the step where it reads as a word again
+                without the "aj" pair touching. */}
               <span
-                className="text-display short:text-h2 mt-3 short:mt-2 block font-semibold"
+                className="text-display short:text-h2 mt-3 short:mt-2 block font-medium tracking-[-0.035em]"
                 translate="no"
               >
-                {CONTENT.title}
+                {TITLE_WORD}
+                {TITLE_SEP}
+                <span className="font-light">{TITLE_YEAR}</span>
               </span>
             </h1>
 

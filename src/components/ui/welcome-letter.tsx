@@ -8,9 +8,9 @@ import { Heart } from "lucide-react";
  * This is row AC-04 of the copy review that came back on 14 Sep — the text
  * the organizers wrote for the landing's lead slot. 948 characters, "Dragi
  * tineri" to the Biroul's signature, against a hero slot that holds ~220
- * (SPEC D15). The hero keeps their first sentence; everything after it lives
- * here, with its paragraphs intact. The returned .docx has no line breaks in
- * it — every line is its own paragraph — so the one-liners are theirs.
+ * (see letter-bell.tsx). The hero keeps their first sentence; everything after
+ * it lives here, with its paragraphs intact. The returned .docx has no line
+ * breaks in it — every line is its own paragraph — so the one-liners are theirs.
  *
  * Two departures from verbatim, both the user's:
  *
@@ -20,21 +20,24 @@ import { Heart } from "lucide-react";
  *    who finishes it needs somewhere to go other than back up to the panels
  *    (vercel: no dead ends).
  *  - THE HEART. The signature in the .docx ends in "<3". It is a heart ICON
- *    now, at the right of the signature block — a glyph for a glyph, and the
- *    card's one accent besides the link. Sky fill, brand-strong outline,
- *    because sky is the brand and the palette has no red that is not
- *    `--destructive`; a red heart is a palette decision, not a class.
+ *    now, at the right of the signature block — a glyph for a glyph. Red,
+ *    `--heart`, an emoji red: it was sky with a brand-strong outline while
+ *    the palette had no red but `--destructive`, and the user asked for
+ *    "actually red, like a heart emoji" — so the palette got one, as a
+ *    token, in globals.css.
  *
  * There is no kicker. The first cut had „Cuvânt de bun venit” above the
  * salutation as site chrome, so the card read as a letter at a glance; the
  * user cut it. The salutation does that job on its own.
  *
- * WHERE IT SHOWS: behind the bell (`letter-bell.tsx`), in a modal sheet,
- * since 15 Sep. It was a card on the fold itself for one evening — beside
- * the copy on a desktop, a second scrolling screen on a phone — and the
- * user reverted that: the fold is one screen again and the letter is a
- * message you open. This component is the paper either way; the sheet
- * around it is phase one and the way it arrives is phase two.
+ * WHERE IT SHOWS: inside the notification (`letter-bell.tsx`), since
+ * 15 Sep — a banner that drops in from the top and expands into this
+ * paper. It was a card on the fold itself for one evening — beside the
+ * copy on a desktop, a second scrolling screen on a phone — and the user
+ * reverted that: the fold is one screen again and the letter is a message
+ * you open. This component is the paper either way; `frame` decides
+ * whether it brings its own surface. The banner reads its sender and
+ * preview from LETTER, which is why LETTER is exported.
  *
  * Every string in LETTER is in the copy inventory as AC-07 to AC-13
  * (`scripts/copy/inventory.mjs`), pinned by exact text: change one here,
@@ -52,7 +55,7 @@ import { Heart } from "lucide-react";
  */
 type Segment = string | { text: string; href: "/ateliere" };
 
-const LETTER: {
+export const LETTER: {
   salutation: string;
   paragraphs: readonly (readonly Segment[])[];
   signature: readonly [string, string];
@@ -95,7 +98,7 @@ const LETTER: {
  * fold's 90% copy scrim and let the archive ghost through the paper; the cold
  * review measured the ghost — a 4/255 mean, 16/255 peak drift under the body
  * copy between two frames six seconds apart — and named it for what it is:
- * the marquee, an accepted 2.2.2 deviation on the fold (D10), composited into
+ * the marquee, the accepted 2.2.2 deviation (CLAUDE.md), composited into
  * the reading surface of 948 characters of running text. Paper does not move
  * while you read it. The band still runs around the card, as on the fold.
  *
@@ -109,11 +112,19 @@ const LETTER: {
  * the card is 512 and 32px leaves ~55ch, inside the 45–75 band. The top is
  * 24 at 390 so the close control in the sheet's corner has air.
  */
-export function WelcomeLetter({ className = "" }: { className?: string }) {
+export function WelcomeLetter({
+  className = "",
+  frame = true,
+}: {
+  className?: string;
+  /** The paper's own surface, shadow and corners. Off when the letter
+   *  sits inside a box that is already all three — the notification. */
+  frame?: boolean;
+}) {
   return (
     <article
       aria-labelledby="scrisoare-salut"
-      className={`bg-card text-card-foreground shadow-sheet rounded-2xl px-5 pt-6 pb-5 sm:p-6 xl:p-8 ${className}`}
+      className={`text-card-foreground px-5 pt-6 pb-5 sm:p-6 xl:p-8 ${frame ? "bg-card shadow-sheet rounded-2xl" : ""} ${className}`}
     >
       <h2 id="scrisoare-salut" className="text-h2 font-semibold">
         {LETTER.salutation}
@@ -155,15 +166,15 @@ export function WelcomeLetter({ className = "" }: { className?: string }) {
           break where the name does. The heart is decorative — the name is
           the signature; the icon is the organizers' "<3".
 
-          28px, sky FILL under a brand-strong STROKE, and inset from the
-          card's edge. The first version was 24px filled and stroked in the
-          same light sky, flush right, and the user said it did not read as
-          a heart: sky on white is 2.18:1, so at that size the two lobes and
-          the notch melted into a rounded blob. A darker outline gives the
-          silhouette back (3.3:1 against the paper), the extra 4px gives the
-          notch room, and the inset — 8px on a phone, where the signature's
-          longest line already reaches within ~20px of the icon, 16px from
-          xl — stops it reading as pinned to the padding. */}
+          28px, emoji red (`--heart`, fill and stroke alike — an emoji heart
+          has no outline), inset from the card's edge. The first version was
+          24px in light sky, flush right, and the user said it did not read
+          as a heart: sky on white is 2.18:1, so the lobes and the notch
+          melted into a blob. Red at 4.6:1 gives the silhouette back on its
+          own, the extra 4px gives the notch room, and the inset — 8px on a
+          phone, where the signature's longest line already reaches within
+          ~20px of the icon, 16px from xl — stops it reading as pinned to
+          the padding. */}
       <footer className="border-border mt-7 flex items-center justify-between gap-4 border-t pt-5">
         <p className="font-display min-w-0 flex-1 leading-snug font-semibold text-balance">
           {LETTER.signature[0]} {LETTER.signature[1]}
@@ -171,7 +182,7 @@ export function WelcomeLetter({ className = "" }: { className?: string }) {
         <Heart
           aria-hidden="true"
           strokeWidth={2}
-          className="text-brand-strong fill-brand mr-2 size-7 shrink-0 xl:mr-4"
+          className="text-heart fill-heart mr-2 size-7 shrink-0 xl:mr-4"
         />
       </footer>
     </article>

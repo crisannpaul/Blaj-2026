@@ -41,6 +41,7 @@ const F = {
   layout: "src/app/layout.tsx",
   home: "src/app/page.tsx",
   letter: "src/components/ui/welcome-letter.tsx",
+  bell: "src/components/ui/letter-bell.tsx",
   ateliere: "src/app/ateliere/page.tsx",
   atelier: "src/app/ateliere/[slug]/page.tsx",
   atelierData: "src/lib/ateliere.ts",
@@ -146,7 +147,8 @@ add("AC-06", {
 });
 
 // The welcome letter — the rest of what came back as AC-04 on 14 Sep, as a
-// card of its own on the landing page (SPEC D15). Verbatim from the returned
+// card of its own on the landing page (14 Sep; a sheet behind a bell since
+// 15 Sep, see letter-bell.tsx). Verbatim from the returned
 // document, with two edits the user asked for: one phrase is a link to the
 // workshops, and the closing "<3" is a heart icon. Pinned by exact text in
 // welcome-letter.tsx; the multi-line paragraphs are the file's own
@@ -226,6 +228,20 @@ add("AC-13", {
     lit(F.letter, '"al Arhieparhiei de Alba Iulia și Făgăraș"'),
   ],
   note: "Inima «<3» din document este afișată ca pictogramă, în dreapta semnăturii.",
+});
+add("AC-14", {
+  ...SEC_SC,
+  element: "Eticheta de timp a notificării (colțul din dreapta al bannerului)",
+  current: "acum",
+  src: lit(F.bell, 'const NOW = "acum";'),
+  note: "Scrisoarea sosește ca o notificare de telefon: expeditorul este AC-15, previzualizarea este formula de adresare plus primul paragraf (AC-07, AC-08).",
+});
+add("AC-15", {
+  ...SEC_SC,
+  element: "Expeditorul notificării (rândul îngroșat din banner)",
+  current: "Arhieparhia de Alba Iulia și Făgăraș",
+  src: lit(F.bell, 'const SENDER = "Arhieparhia de Alba Iulia și Făgăraș";'),
+  note: "Pe telefon încap circa 36 de caractere înainte de trunchiere cu «…».",
 });
 
 // ── Workshops carousel ──────────────────────────────────────────────────────

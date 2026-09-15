@@ -27,7 +27,7 @@
  *             verified. `verify` says exactly what to confirm.
  *
  * **Everything marked "check" needs an organizer to confirm it before the site
- * goes public.** SPEC section 7 tracks this as an open content dependency. Do
+ * goes public.** TODO.md tracks this as an open content dependency. Do
  * not quietly promote an entry to "solid" — promote it when someone has
  * actually checked, and say who.
  *
@@ -51,8 +51,10 @@ export interface BlajhuntPlace {
    * Since 15 Sep this is ALSO the back of the stop's card on `/blajhunt`, in
    * full — the card is meant to carry everything the stop page does, so the
    * page can be retired. It is read standing in the street, on a phone, in a
-   * box that holds about sixteen lines at 390px; which entries outgrow that
-   * is measured and recorded in SPEC. One text, one `confidence` flag.
+   * box that holds eighteen lines at 390px. Three entries outgrow it there —
+   * catedrala, liceul-si-gradina-botanica and colegiul-si-capela, by three to
+   * five lines — and scroll; TODO.md carries the remedies measured. One text,
+   * one `confidence` flag.
    */
   body: string[];
   /** What to search for. Always ends in Blaj so the search cannot wander. */

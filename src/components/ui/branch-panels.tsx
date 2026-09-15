@@ -34,7 +34,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  */
 
 /**
- * AUTO-ALTERNATION. The pair swaps every 2.6s so a phone sees both states
+ * AUTO-ALTERNATION. The pair swaps every 1.5s so a phone sees both states
  * without a hover it does not have, and **stops for good at the first sign of
  * a human** — pointer, touch, wheel, key or scroll.
  *
@@ -42,7 +42,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * 5s alongside other content needs a pause control; motion that ends the
  * moment you touch anything, and that never restarts, does not. That matters
  * here specifically because the marquee behind this pair is already an
- * accepted 2.2.2 deviation (SPEC D10) — a second uncontrolled loop on the same
+ * accepted 2.2.2 deviation (CLAUDE.md) — a second uncontrolled loop on the same
  * fold would be compounding a deviation, not repeating one.
  *
  * `prefers-reduced-motion` skips it entirely and the panels do not animate at
@@ -174,12 +174,12 @@ export type BranchPanel = {
  * spine is 76-115px of colour chip with a word on it and has, as the note above
  * says, almost no photograph to lose.
  *
- * MEASURED, not computed — glyph-core rendered ink (SPEC 6.2) over the real
+ * MEASURED, not computed — glyph-core rendered ink (ink.js) over the real
  * artwork, both panels, both states, at 320/390/1440. Worst per state:
  *
  *   open sky 5.53:1 · sky spine 5.44:1 · open gold 6.89:1 · gold spine 11.20:1
  *
- * darkest backdrop under any glyph L=0.232, against the 0.19 floor (SPEC 6.1b).
+ * darkest backdrop under any glyph L=0.232, against the 0.19 floor (CLAUDE.md).
  * Re-measured 9 Sep against the second workshops photograph; the first one read
  * a full 3 points higher on the sky panel, which is the clearest statement
  * available that these numbers describe ARTWORK and not this file. 1440 binds on
@@ -190,7 +190,7 @@ export type BranchPanel = {
  * part and worth stating plainly: a hand-computed worst case for this stack said
  * the sky label would land at 2.6:1, because it assumed a dark pixel under the
  * glyphs. The actual pixels there are a light wooden table. **The arithmetic was
- * wrong and the measurement corrected it** — which is the whole reason SPEC 6.2
+ * wrong and the measurement corrected it** — which is the whole reason ink.js
  * exists. The corollary is that this margin belongs to THIS photograph: it is
  * not a property of the alphas, and swapping the workshops art for something
  * dark in its lower-left re-opens the question. Re-run ink.js when the art

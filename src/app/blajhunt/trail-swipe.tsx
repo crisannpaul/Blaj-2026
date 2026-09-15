@@ -187,8 +187,8 @@ const PEEK_BACK_WINDOW = [0.22, 0.82] as const;
  *
  * Rendered ink is therefore (dash + 5) and the rendered gap is (gap - 5). To
  * land ~27px of ink and ~18px of clear air the values have to be around 22 and
- * 23. Verified by counting pixel runs in a screenshot — see the note in SPEC
- * 6.2; a measurement of the wrong quantity is what produced the solid line.
+ * 23. Verified by counting pixel runs in a screenshot; a measurement of the
+ * wrong quantity is what produced the solid line.
  *
  * SIX pairs, not one. A single repeated value draws a machine-perfect row of
  * ticks, which is the one thing a hand-drawn route on a treasure map is not.
@@ -1177,9 +1177,11 @@ export default function TrailSwipe({
                           rather than the body's 1.6: sixteen lines in a card
                           is a block, not a page. The box is the card less
                           its padding — eighteen lines at every width; the
-                          measure is what changes; which histories need more
-                          than that at which width is measured and recorded in
-                          SPEC, and is the open question on this card. Until
+                          measure is what changes. Three histories need more
+                          than that at 390 — 01, 02 and 08, by three to five
+                          lines; TODO.md has the numbers and the remedies
+                          measured — and that is the open question on this
+                          card. Until
                           it is answered the box scrolls rather than clips —
                           overflow-y auto, the edge cue below, nothing hidden,
                           nothing spilling out of a rotated face. */}
