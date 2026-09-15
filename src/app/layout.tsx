@@ -23,7 +23,7 @@ const body = Inter({
  * shared link would carry a preview image nobody else can load.
  *
  * Read from the environment rather than hard-coded because the domain is still
- * open (SPEC D2): Vercel injects the production hostname itself, so this is
+ * open (TODO.md): Vercel injects the production hostname itself, so this is
  * already right on the deployment and stays right if the domain changes.
  */
 const SITE_URL =

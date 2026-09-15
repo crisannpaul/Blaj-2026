@@ -150,8 +150,8 @@ const TOP = 12;
  *
  * Rendered ink is therefore (dash + 5) and the rendered gap is (gap - 5). To
  * land ~27px of ink and ~18px of clear air the values have to be around 22 and
- * 23. Verified by counting pixel runs in a screenshot — see the note in SPEC
- * 6.2; a measurement of the wrong quantity is what produced the solid line.
+ * 23. Verified by counting pixel runs in a screenshot; a measurement of the
+ * wrong quantity is what produced the solid line.
  *
  * SIX pairs, not one. A single repeated value draws a machine-perfect row of
  * ticks, which is the one thing a hand-drawn route on a treasure map is not.

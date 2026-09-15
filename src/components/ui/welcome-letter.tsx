@@ -8,9 +8,9 @@ import { Heart } from "lucide-react";
  * This is row AC-04 of the copy review that came back on 14 Sep — the text
  * the organizers wrote for the landing's lead slot. 948 characters, "Dragi
  * tineri" to the Biroul's signature, against a hero slot that holds ~220
- * (SPEC D15). The hero keeps their first sentence; everything after it lives
- * here, with its paragraphs intact. The returned .docx has no line breaks in
- * it — every line is its own paragraph — so the one-liners are theirs.
+ * (see letter-bell.tsx). The hero keeps their first sentence; everything after
+ * it lives here, with its paragraphs intact. The returned .docx has no line
+ * breaks in it — every line is its own paragraph — so the one-liners are theirs.
  *
  * Two departures from verbatim, both the user's:
  *
@@ -95,7 +95,7 @@ const LETTER: {
  * fold's 90% copy scrim and let the archive ghost through the paper; the cold
  * review measured the ghost — a 4/255 mean, 16/255 peak drift under the body
  * copy between two frames six seconds apart — and named it for what it is:
- * the marquee, an accepted 2.2.2 deviation on the fold (D10), composited into
+ * the marquee, the accepted 2.2.2 deviation (CLAUDE.md), composited into
  * the reading surface of 948 characters of running text. Paper does not move
  * while you read it. The band still runs around the card, as on the fold.
  *

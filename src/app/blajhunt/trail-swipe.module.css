@@ -1,6 +1,6 @@
 /*
- * Scoped CSS for the /blajhunt carousel. Built for the D14 variant run and
- * kept as-is when that treatment won the route.
+ * Scoped CSS for the /blajhunt carousel. Built for the horizontal-vs-vertical
+ * variant run of 5 Sep and kept as-is when this treatment won the route.
  *
  * A CSS MODULE, not globals.css and not a scoped global sheet. Next's own CSS
  * guide warns that a global stylesheet imported by a route is NOT removed when
@@ -9,7 +9,7 @@
  * route and stay there.
  *
  * Every colour here is an existing token from globals.css. This file adds
- * NO new colour — same bar the glyphs merge cleared in D13.
+ * NO new colour — the same bar the glyphs merge of 5 Sep cleared.
  */
 
 /* The field under the carousel -- a HANDOVER, then plain white.
@@ -28,7 +28,8 @@
    on ACTIONS only. Field white, plate neutral, chips neutral, and the one blue
    in view is the button you are meant to press.
 
-   SPEC 6.1b is trivially satisfied now -- near-black ink on --background. */
+   The luminance rule (CLAUDE.md) is trivially satisfied now -- near-black ink
+   on --background. */
 .field {
   background-image: linear-gradient(
     to bottom,

@@ -26,9 +26,9 @@ import { galleryFor } from "@/lib/ateliere-gallery";
  * Accent economy (GUIDELINES 5): the workshop's own accent as a short rule,
  * the sky kicker, the Maps link. The tags are neutral on purpose.
  *
- * Signup does not exist yet (SPEC section 9), so the primary control is the
- * same disabled, labelled button the carousel used to carry — honest about
- * being not-yet rather than a live button to nowhere.
+ * Signup does not exist (no backend at all, see TODO.md), so the primary
+ * control is the same disabled, labelled button the carousel used to carry —
+ * honest about being not-yet rather than a live button to nowhere.
  */
 
 export function generateStaticParams() {

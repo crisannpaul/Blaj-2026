@@ -4,7 +4,7 @@
  * ── Why hand-drawn SVG and not photographs ──────────────────────────────────
  * The mockup (`creatives/Roadmap Glyphs.png`) shows detailed greyscale 3D
  * renders. Those do not exist in this repo and there is no photograph of any
- * of the ten objectives yet (SPEC section 7, A1/A2). Two reasons not to fill
+ * of the ten objectives (none were ever sent). Two reasons not to fill
  * the hole with stock imagery:
  *
  *  1. Mismatched stock reads worse than nothing. A generic church photo next
@@ -43,8 +43,8 @@
  *    (the card plate, 88px at 1.5) and `blajhunt/[slug]/page.tsx` (the detail
  *    tile, 56px at 1.8). `how-it-works.tsx` draws them twice more — a 32px
  *    phone tile and a 112px desktop drawing — but it is only mounted on
- *    `/blajhunt-legacy`, the variant D13 retired, so it is kept in step with
- *    this set rather than designed against.
+ *    `/blajhunt-legacy`, the vertical roadmap the swipe retired, so it is
+ *    kept in step with this set rather than designed against.
  *  · Decorative: every instance is `aria-hidden`, and the card beside it
  *    already carries the stop's name. Nothing here is the only copy of
  *    anything.

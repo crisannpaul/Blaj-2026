@@ -9,7 +9,7 @@ import { WelcomeLetter } from "@/components/ui/welcome-letter";
  * the only way into the organizers' welcome letter.
  *
  * The letter lived on the fold itself for one evening — a card beside the
- * copy on desktop and a second screen under it on a phone (SPEC D15, 14 Sep).
+ * copy on desktop and a second screen under it on a phone (14 Sep, 9b36e8f).
  * The user's verdict on 15 Sep: on a phone it "looks completely ass", nobody
  * will read a wall of text on a page whose job is routing to two branches,
  * and the fold should go back to one unscrollable screen. The letter becomes
