@@ -215,7 +215,7 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-muted-foreground font-ui text-ui mt-4 tracking-[0.14em] uppercase tabular-nums">
+            <p className="text-muted-foreground font-ui text-ui mt-4 tracking-[0.14em] uppercase">
               {CONTENT.meta}
             </p>
 

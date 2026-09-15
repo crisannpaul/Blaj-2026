@@ -1207,10 +1207,11 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 - **2026-09-15, evening (the fold's finish: a weight pair and a handle)** —
   the user, with the home page done: „is there anything nice we can sprinkle
   on it design wise to make it look more professional… very minimal, it has to
-  respect the current layout.” Three moves, none of which moves a pixel of
-  layout, on branch `worktree-landing-polish` and served on **:3004** for
-  their eye (:3000 still holds the uncommitted phase-two banner, which the
-  branch does not carry). Not merged, not deployed; Vercel is behind.
+  respect the current layout.” Two moves that survived a cold review (a third
+  did not, below), neither of which moves a pixel of layout, on branch
+  `worktree-landing-polish` and served on **:3004** for their eye (:3000
+  still holds the uncommitted phase-two banner, which the branch does not
+  carry). Not merged, not deployed; Vercel is behind.
 
   1. **The title is a weight pair.** „Blaj” stays semibold; „2026” is Outfit
      300 (`font-light` — the variable font is already loaded, no new
@@ -1227,8 +1228,16 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
      word's open-state bottom padding 16 → 24px so word and chip share an
      axis. **Hidden below 300px of viewport**: at 200% zoom on a 390 phone the
      open panel is 87px, the word already overflows and the chip sat on
-     „lie”; a 320 phone (208px panel) keeps it. Both looked at.
-  3. The date line in `tabular-nums`.
+     „lie”; a 320 phone (208px panel) keeps it. Both looked at. After the
+     review: **solid fill and `--shadow-sheet`**, the bell's own edge — a
+     bare `/90` disc measured 1.43:1 against the parchment at its weakest
+     arc and let the photograph through the fill; and a **press state**,
+     `group-active` (and `group-hover` for a mouse, never alone) inverting
+     the disc to ink with a white arrow, the one acknowledgement an
+     already-open panel gives before it navigates with the tap highlight
+     globally off.
+  3. ~~The date line in `tabular-nums`~~ — reverted on review: no second
+     number to align against, so it only made the run 4.45px wider.
 
   Considered and not done: a hairline ring on the cards (invisible over the
   saturated tints, and `ring-inset` would have leaked into the focus ring);
@@ -1240,11 +1249,29 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   the one-family link with „Ateliere” and the Blajhunt mark and re-open the
   serif → Outfit decision; the weight pair is the recommendation.
 
-  Verified on :3004: `audit.js` clean at 390/768/1440 — no overflow, no
-  contrast failures, no text under 12px, no tap target under 44px, no console
-  errors; `ink.js` all pass — open-label glyph cores worst 7.98:1 at 390 and
-  8.53:1 at 1440, spine worst 9.49:1 / 10.75:1, title 19.63:1 / 19.80:1;
-  `hittest.js` clean at both. 320×568 and 195×422 looked at by eye.
+  **The cold review (opus), and what was not taken from it.** Verdict
+  fix-first; the weight pair „holds at every size the title takes … reads as
+  a designed lockup rather than a heading”. Taken: the chip's edge and press
+  state, the tabular revert, and a comment in `branch-panels.tsx` that still
+  said the pair swaps every 2.6s when `SWAP_MS` has been 1500 — fixed. Not
+  taken, with reasons: (a) „the chip hands the page a primary CTA picked by
+  timing” — the open state already does that with 3.4:1 of width, the chip
+  follows the state it belongs to, and a 76px spine has no room for one;
+  (b) the copy column and the pair stopping at two right edges (33rem vs
+  26rem) — the layout, which this pass was told to respect; (c) **the fold
+  scrolls on short viewports** — 320×568 and phone landscape 844×390 both
+  push the pair past the fold. Measured against :3000 (master + the banner)
+  with the same script: identical numbers on both builds, so it is
+  pre-existing, and it is the coupled lead/card-height decision the 8 Sep
+  entry and the `tight:` note describe; the 15 Sep lead restoration re-opened
+  it. Not this pass's to take. Recorded here so it is not lost.
+
+  Verified on :3004 after the fixes: `audit.js` clean at 390/768/1440 — no
+  overflow, no contrast failures, no text under 12px, no tap target under
+  44px, no console errors; `ink.js` all pass — open-label glyph cores worst
+  7.98:1 at 390 and 8.53:1 at 1440, spine worst 9.49:1 / 10.75:1, title
+  19.63:1 / 19.80:1; `hittest.js` clean at both. 320×568 and 195×422 looked
+  at by eye.
 
 - **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
   in `poze-org` the morning after the document, so the stock frame comes out

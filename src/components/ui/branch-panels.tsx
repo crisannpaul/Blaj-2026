@@ -35,7 +35,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  */
 
 /**
- * AUTO-ALTERNATION. The pair swaps every 2.6s so a phone sees both states
+ * AUTO-ALTERNATION. The pair swaps every 1.5s so a phone sees both states
  * without a hover it does not have, and **stops for good at the first sign of
  * a human** — pointer, touch, wheel, key or scroll.
  *
@@ -282,7 +282,7 @@ export function BranchPanels({
             <Link
               href={panel.href}
               transitionTypes={["nav-forward"]}
-              className="shadow-card focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="group shadow-card focus-visible:ring-ring focus-visible:ring-offset-background relative block size-full overflow-hidden rounded-2xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               onPointerEnter={(e) => {
                 /* Mouse only. A touch "enter" fires just before the tap that
                    is already navigating, so reacting to it would flip the
@@ -506,10 +506,24 @@ export function BranchPanels({
                 phone (a 195px viewport, an 87px open panel), where the word
                 already overflows its box and the chip landed on top of "lie".
                 A 320 phone is 208px of open panel and keeps it. Measured,
-                both — this is the one place the handle can do harm. */}
+                both — this is the one place the handle can do harm.
+
+                It is the same disc-and-glyph language as the bell in the
+                opposite corner, so it wears the same edge: `shadow-sheet`,
+                the 1px tinted outline plus halo, because a bare white disc
+                measured 1.43:1 against the parchment at its weakest arc — a
+                cold review caught it. Solid fill, not /90: the photograph
+                showing through the disc read as a smear, not as glass.
+
+                And it answers the link's press. `group-active` inverts it to
+                ink with a white arrow for as long as the finger is down —
+                the one acknowledgement an already-open panel gives before it
+                navigates, since the global tap highlight is off.
+                `group-hover` does the same for a mouse; it compiles under
+                `@media (hover: hover)` and is never the only signal. */}
               <motion.span
                 aria-hidden="true"
-                className="bg-background/90 text-foreground short:right-3 short:bottom-3 short:size-8 absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full max-[300px]:hidden"
+                className="bg-background text-foreground shadow-sheet group-hover:bg-foreground group-hover:text-background group-active:bg-foreground group-active:text-background short:right-3 short:bottom-3 short:size-8 absolute right-4 bottom-4 flex size-10 items-center justify-center rounded-full transition-colors duration-150 max-[300px]:hidden"
                 initial={false}
                 animate={{ opacity: open ? 1 : 0, scale: open ? 1 : 0.6 }}
                 transition={move}
