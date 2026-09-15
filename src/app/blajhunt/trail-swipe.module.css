@@ -28,6 +28,11 @@
    on ACTIONS only. Field white, plate neutral, chips neutral, and the one blue
    in view is the button you are meant to press.
 
+   Since 15 Sep, late, not even that: the Maps control is an outlined ink
+   disc (see the component — the user found the one blue aggressive on so
+   quiet a card), so there is no sky on the cards at all. The neutral field
+   and plates stay, for the reason above.
+
    SPEC 6.1b is trivially satisfied now -- near-black ink on --background. */
 .field {
   background-image: linear-gradient(

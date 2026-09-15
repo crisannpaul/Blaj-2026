@@ -1077,9 +1077,23 @@ export default function TrailSwipe({
                           huge and ugly and asked for a small button with a
                           map glyph. It is a 48px disc — 48 not 44, because
                           the neighbour cards draw at 0.96 and 44 × 0.96 is
-                          under the floor — in the one blue the card spends
-                          on actions, with `MapPin` in it. Named for a screen
-                          reader; no visible label, by the user's choice.
+                          under the floor — with `MapPin` in it. Named for a
+                          screen reader; no visible label, by the user's
+                          choice.
+
+                          OUTLINED INK, NOT SKY. It was `bg-primary` for an
+                          hour, the one blue the card spends on actions, and
+                          on a white card on a white field the user read it
+                          as „aggressive” and „in your face”. Adding colour
+                          around it to soften it is the move this page has
+                          already made and reverted (blue on blue on blue —
+                          see `.field` in the module). So the disc wears the
+                          chrome of the two arrows above the track instead:
+                          `--border-strong` ring, ink glyph, card fill — one
+                          kind of round control on the page, and no sky on
+                          the card at all. Gold, on the points and in the
+                          drawing, is the card's only colour, which is what
+                          the hunt's colour is for.
 
                           The row wraps, so at 320 the two stops with two
                           chips (188px of chips in a 220px row) drop the
@@ -1112,7 +1126,7 @@ export default function TrailSwipe({
                             target="_blank"
                             rel="noreferrer noopener"
                             aria-label="Deschide în Google Maps"
-                            className="bg-primary text-primary-foreground focus-visible:ring-ring focus-visible:ring-offset-card ml-auto inline-flex size-12 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-[1.04] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.95]"
+                            className="border-border-strong bg-card text-foreground focus-visible:ring-ring focus-visible:ring-offset-card active:bg-foreground/5 ml-auto inline-flex size-12 shrink-0 items-center justify-center rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                           >
                             <MapPin className="size-6" />
                           </a>
