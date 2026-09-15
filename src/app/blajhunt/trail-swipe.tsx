@@ -13,9 +13,13 @@ import styles from "./trail-swipe.module.css";
  *
  * The vertical trail shows six things at once and gives each of them a card
  * 315px wide and about 150px tall. This shows ONE, which buys back enough room
- * to fold the stop's own page into the card: the drawing at full size, the
- * standfirst, a paragraph of context, the proofs, the points and the Maps
- * link. The detail page stays for the rest of the history.
+ * to fold the stop's own page into the card — and since 15 Sep the card has
+ * TWO FACES to do it with. The front is the roadmap: the drawing at full
+ * size, the title, a two-line standfirst, the proofs, the points and the Maps
+ * button, at the same place on every card. The back is the place's history,
+ * condensed to the card (`place.back`). A tap turns it; each newly centred
+ * card turns over and back once by itself, so the back gets found. The detail
+ * page stays for the rest of the history. See "The back of the card" below.
  *
  * ── The road runs UNDER the cards ───────────────────────────────────────────
  * The route is one continuous wave spanning the whole track, painted beneath
@@ -135,6 +139,36 @@ const bendAt = (i: number) =>
 const TOP = 12;
 
 /**
+ * The arrival peek: how long after a stop becomes the centred one its card
+ * turns over and back.
+ *
+ * `active` flips at the MIDPOINT of the travel, not at the end — it is
+ * nearest-centre — so on an arrow click the card is still moving for ~310ms of
+ * this, and on a flick for ~200. What is left is how long the card RESTS,
+ * front up, before it turns itself away, and a cold review measured the first
+ * value (420) at 133ms of rest: "not a pause, the tail of the scroll", with
+ * the Maps button — the one control that matters on the day — turned away for
+ * the next 1.4s on every one of ten arrivals. 1000 leaves ~700ms of rest,
+ * long enough to reach for the button and press it; the peek then reads as
+ * something the card does after you have arrived rather than as part of the
+ * arriving. The length of the turn itself is PEEK_MS, mirrored by `.peek` in
+ * the module.
+ */
+const PEEK_DELAY = 1000;
+const PEEK_MS = 1200;
+
+/**
+ * The part of the peek during which the BACK is the face showing, as a
+ * fraction of PEEK_MS: the keyframes cross 90deg a little past a quarter of
+ * the way in and a little before a fifth of the way from the end. A tap during
+ * the peek is read against this: what you see is what you get. Tap the back
+ * while it is showing and the card stays on the back; tap the front while it
+ * is turning away and the card comes straight back, because that tap was
+ * almost certainly reaching for something on the front.
+ */
+const PEEK_BACK_WINDOW = [0.22, 0.82] as const;
+
+/**
  * Dashes, not dots, and few of them.
  *
  * TWO THINGS MAKE THESE NUMBERS UNGUESSABLE, and the first version of this
@@ -243,6 +277,31 @@ const Arrow = ({ className }: { className?: string }) => (
   </svg>
 );
 
+/**
+ * The turn-over mark on both faces of a stop card: two halves mirrored about
+ * a dashed axis — a FLIP, which is what happens. The first version was a
+ * three-quarter arc with an arrowhead, and a cold review read it as what it
+ * is everywhere else: reload. One drawing for both directions, because the
+ * gesture is the same either way; the label beside it says which way.
+ */
+const TurnMark = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    className={className}
+  >
+    <path d="m3 7 5 5-5 5V7" />
+    <path d="m21 7-5 5 5 5V7" />
+    <path d="M12 20v2M12 14v2M12 8v2M12 2v2" />
+  </svg>
+);
+
 type SwipeNode =
   | { kind: "terminal"; terminal: BlajhuntTerminal; tone: "ink" | "sun" }
   | { kind: "step"; step: BlajhuntStop; number: number };
@@ -266,6 +325,105 @@ export default function TrailSwipe({
   const trackRef = useRef<HTMLOListElement>(null);
   const slideRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [active, setActive] = useState(0);
+
+  /* ── The back of the card ────────────────────────────────────────────────
+     Exactly one card is turned at a time and it is the one you turned:
+     `flipped` is an index, not a set. A card that leaves the centre goes back
+     to its front by itself — `arrive` below resets both values whenever a
+     different slide becomes the nearest — so every arrival starts the same
+     way, front up.
+
+     `peek` is the arrival flourish. The moment a new stop is centred its card
+     turns over and back once, so a first-time visitor learns there is a back
+     without being told. It is a CSS animation (`.peek` in the module): the
+     class goes on after PEEK_DELAY and comes off on animationend, and a tap
+     during it cancels it and turns the card for real. Not under reduced
+     motion — there the turn button on each face is the whole affordance,
+     which is also why that button is visible rather than hover-only.
+
+     `arrive` is called from the measure loop, at the moment the nearest slide
+     changes — an event callback, not an effect body, which is what the React
+     Compiler's lint asks for and also simply where the information is. Which
+     kind of node the slide holds is read off the element (`data-kind`), so
+     this needs nothing from `nodes`, which is rebuilt every render. */
+  const [flipped, setFlipped] = useState<number | null>(null);
+  const [peek, setPeek] = useState<number | null>(null);
+  const peekTimer = useRef(0);
+  const peekStart = useRef(0);
+
+  const arrive = useCallback((i: number) => {
+    window.clearTimeout(peekTimer.current);
+    setFlipped(null);
+    setPeek(null);
+    if (slideRefs.current[i]?.dataset.kind !== "step") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    peekTimer.current = window.setTimeout(() => {
+      peekStart.current = performance.now();
+      setPeek(i);
+    }, PEEK_DELAY);
+  }, []);
+
+  /** Is the back the face showing right now, PEEK_MS-fractions in? Only
+      ever called from a tap, hence the callback — a clock read in a plain
+      render-scoped helper is what the React Compiler's purity rule stops. */
+  const peekShowsBack = useCallback(() => {
+    const f = (performance.now() - peekStart.current) / PEEK_MS;
+    return f > PEEK_BACK_WINDOW[0] && f < PEEK_BACK_WINDOW[1];
+  }, []);
+
+  /* ── The scroll cue on the back ────────────────────────────────────────
+     At 320px the back's text box scrolls (see the note on it below), and a
+     box that scrolls with no sign of it reads as a card cut off mid-sentence
+     — mobile scrollbars are invisible at rest. `data-more` says which edge
+     has more behind it and the module fades that edge. Written straight
+     onto the element: it changes on every scroll of a box a visitor is
+     reading and has no business going through React state. */
+  const cueScroll = useCallback((el: HTMLElement) => {
+    const scrolls = el.scrollHeight - el.clientHeight > 1;
+    const above = el.scrollTop > 1;
+    const below = el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+    el.dataset.more = !scrolls ? "" : above && below ? "both" : above ? "top" : "bottom";
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const all = () =>
+      track.querySelectorAll<HTMLElement>("[data-scrollbox]").forEach(cueScroll);
+    all();
+    window.addEventListener("resize", all);
+    return () => window.removeEventListener("resize", all);
+  }, [cueScroll]);
+
+  /* Turning with the BUTTON moves focus to the other face's button, so a
+     keyboard user is not left focused on an element that just went inert.
+     Turning with a tap on the card body does not — there is nothing focused
+     to lose. The face is looked up by data attribute after React commits. */
+  const focusAfterTurn = useRef<{ index: number; face: "front" | "back" } | null>(
+    null,
+  );
+
+  const turn = useCallback((i: number, viaButton = false) => {
+    window.clearTimeout(peekTimer.current);
+    setPeek(null);
+    setFlipped((prev) => {
+      const next = prev === i ? null : i;
+      if (viaButton) {
+        focusAfterTurn.current = { index: i, face: next === i ? "back" : "front" };
+      }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const want = focusAfterTurn.current;
+    if (!want) return;
+    focusAfterTurn.current = null;
+    const slide = slideRefs.current[want.index];
+    slide
+      ?.querySelector<HTMLButtonElement>(`[data-face="${want.face}"] [data-turn]`)
+      ?.focus();
+  }, [flipped]);
 
   /**
    * Which slide is in the MIDDLE — measured, not observed.
@@ -321,6 +479,7 @@ export default function TrailSwipe({
     if (!track) return;
 
     let raf = 0;
+    let lastBest = -1;
     const measure = () => {
       raf = 0;
       const box = track.getBoundingClientRect();
@@ -349,7 +508,11 @@ export default function TrailSwipe({
         el.style.setProperty("--t", t.toFixed(4));
       });
 
-      setActive((prev) => (prev === best ? prev : best));
+      if (best !== lastBest) {
+        lastBest = best;
+        arrive(best);
+      }
+      setActive(best);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(measure);
@@ -362,8 +525,9 @@ export default function TrailSwipe({
       track.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
+      window.clearTimeout(peekTimer.current);
     };
-  }, []);
+  }, [arrive]);
 
   /**
    * Travel to a slide, on our own clock.
@@ -578,6 +742,7 @@ export default function TrailSwipe({
                  catch a card scaled past its own box; the scale tops out at 1
                  now, so nothing but the shadow lands down here — and the
                  track clips this axis, so it has to fit. */
+              data-kind={node.kind}
               className={cn(styles.slide, "relative flex flex-col pb-7")}
               style={{ paddingTop: TOP }}
             >
@@ -668,242 +833,402 @@ export default function TrailSwipe({
                   ) : null}
                 </div>
               ) : (
-                <article
+                /* ── A two-faced card ────────────────────────────────────
+                   The FRONT is the roadmap's card as it was: the drawing,
+                   the title, a two-line standfirst, the proofs and the Maps
+                   button. The BACK is the place's history, condensed to fit
+                   (`place.back`); the stop's own page stays for the rest.
+
+                   Why there is a back. The front used to carry the first
+                   paragraph of history clamped to three lines under a
+                   standfirst that ran one to four, so the proof chips sat at
+                   a different height on every card and the Maps button —
+                   `mt-auto`, so at least IT held still — had a different
+                   amount of air above it each time. Fixing the standfirst to
+                   two lines puts the chips and the button at the SAME y on
+                   all ten cards; the history that was squeezed out goes on
+                   the back, where it gets the whole card instead of three
+                   lines of it.
+
+                   Three layers, one job each:
+                     .card / .scene (this div)  the width, the --t scale and
+                                                the perspective. Never rotates.
+                     .flip (the article)        preserve-3d and the rotation:
+                                                what the peek animates and what
+                                                a tap turns.
+                     .face x2                   the paint — background, border,
+                                                radius, shadow. backface-
+                                                visibility hides whichever one
+                                                faces away.
+                   The scale and the rotation are on DIFFERENT elements on
+                   purpose: `.card` writes `transform` from --t, and a
+                   rotation on the same property would have to be composed
+                   with it by hand.
+
+                   The face that is turned away is `inert` as well as hidden
+                   from assistive tech: its link and button must not be
+                   reachable by Tab or by a screen reader while the other
+                   face is the one being shown. React 19 renders the boolean
+                   as the bare attribute. */
+                <div
                   className={cn(
                     styles.card,
-                    styles.lift,
-                    /* flex-1: every card fills its slide, so all ten are the
-                       same height and `mt-auto` on the Maps button lands
-                       it at the SAME y on every stop. Card heights ran
-                       391-480px otherwise — title wrap plus whether the
-                       stop has proof chips — and the one control the card
-                       exists for moved under the thumb on every swipe. */
-                    "bg-card relative mx-auto flex flex-1 flex-col rounded-[var(--radius)] border p-5",
-                    sun ? "border-border-strong" : "border-border",
-                    /* STACKING ONLY. Both the size and the shadow are
-                       continuous now and live in the module, on --t.
-
-                       This branch used to also carry `scale-[1.06]` against
-                       `scale-100`, and that was a real defect rather than a
-                       duplicate: Tailwind v4's `scale-*` sets the standalone
-                       `scale` property, `.card` sets `transform`, and the two
-                       COMPOSE. The centred card measured 1.06 x 1.06 = 1.1236
-                       — 538px rendering at 604px — with half of the lift
-                       arriving as a step at the midpoint. That step is what
-                       felt mechanical, and the 30px it added past the slide is
-                       what gave the track vertical scroll and clipped the Maps
-                       button. See the note on `.card` in the module.
-
-                       `shadow-card` / `shadow-sm` went with it, and they were
-                       already dead: `.lift` is unlayered so it outranks a
-                       Tailwind utility, and it was the shadow being painted.
-
-                       Still no dimming. The off-centre cards were once
-                       `opacity-70`, which looked right and was not: ink.js
-                       measured 3.28:1 on the proof chips, 3.57:1 on the Maps
-                       button and 3.73:1 on the body copy, all under the 4.5
-                       floor, on cards a desktop reader will actually read.
-                       `audit.js` said "contrast failures: none" throughout,
-                       because opacity is invisible to a CSS-derived number.
-                       Emphasis that costs legibility is not emphasis. */
+                    styles.scene,
+                    "relative mx-auto flex flex-1 flex-col",
                     isActive ? "z-10" : "",
                   )}
                 >
-                  {/* The drawing at a size worth looking at. One card per
-                      screen is what buys the room for it: on the vertical
-                      trail this had to be a 44px tile wedged beside the title,
-                      because a full-width card had no room for anything else.
-
-                      88px in a 112px plate, up from 72 in 96. The drawings
-                      carry more detail than they used to — four arches under
-                      four windows on `college`, a five-lobed canopy on
-                      `school` — and detail that cannot be resolved is just
-                      noise. Costs 16px of card height, and because this trail
-                      is a horizontal carousel that is 16px ONCE, not once per
-                      card: measured 1808px to 1824px at 390px (+0.88%) and
-                      1686px to 1702px at 1440 (+0.95%). The vertical trail
-                      this replaced would have paid it ten times over.
-
-                      No text colour on the plate any more: the glyph paints
-                      itself with the `--glyph-gold-*` gilt and no longer
-                      inherits `currentColor`. `text-contrast-text/70` here was
-                      what made the drawings olive, and leaving it would be a
-                      dead class that reads as though it still governs them.
-
-                      The wrapper is here so the station badge can sit on the
-                      plate's corner. The badge is a SIBLING of the plate, not a
-                      child: the plate is aria-hidden — it is decoration — and
-                      the stop's number is not. */}
-                  <div className="relative">
+                  <article
+                    aria-label={`Oprirea ${String(node.number).padStart(2, "0")}: ${node.step.title}`}
+                    className={cn(
+                      styles.flip,
+                      "relative flex flex-1 flex-col",
+                      flipped === i && styles.flipped,
+                      peek === i && styles.peek,
+                    )}
+                    /* A tap anywhere on the card turns it — except on the
+                       things that are already links or buttons, which keep
+                       their own job. A tap on a card that is NOT the centred
+                       one brings it to the centre instead: on a desktop three
+                       cards are in view, and turning a card at 0.96 scale off
+                       to one side is not what anyone meant. */
+                    onClick={(e) => {
+                      if ((e.target as Element).closest("a, button")) return;
+                      if (i !== active) {
+                        goTo(i);
+                        return;
+                      }
+                      /* Mid-peek, the tap is read against the face that is
+                         showing — see PEEK_BACK_WINDOW. */
+                      if (peek === i && !peekShowsBack()) {
+                        window.clearTimeout(peekTimer.current);
+                        setPeek(null);
+                        return;
+                      }
+                      turn(i);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape" && flipped === i) turn(i, true);
+                    }}
+                    onAnimationEnd={(e) => {
+                      if (e.target === e.currentTarget) {
+                        setPeek((p) => (p === i ? null : p));
+                      }
+                    }}
+                  >
+                    {/* ── Front ─────────────────────────────────────── */}
                     <div
-                      aria-hidden="true"
+                      data-face="front"
+                      inert={flipped === i}
+                      aria-hidden={flipped === i}
                       className={cn(
-                        styles.plate,
-                        "border-border flex h-28 items-center justify-center rounded-[calc(var(--radius)-2px)] border",
+                        styles.face,
+                        styles.lift,
+                        "bg-card relative flex min-h-[30rem] flex-1 flex-col rounded-[var(--radius)] border p-5",
+                        sun ? "border-border-strong" : "border-border",
                       )}
                     >
-                      <StopGlyph
-                        name={glyph ?? "cathedral"}
-                        className="size-[5.5rem] [stroke-width:1.5]"
-                      />
-                    </div>
-                    {/* The station number. Near-black, not sky: it was one of
-                        the three blues stacked here, and it is a label rather
-                        than an action. `sun` stops keep the gold, because that
-                        tone is what marks the finale.
+                      {/* ── The card is 30rem tall, and the PLATE takes up
+                          the slack ──────────────────────────────────────
+                          The front's own content comes to about 400px, and
+                          a back that size holds seven lines of history —
+                          two sentences, not a story. 30rem (480px) is what
+                          the card measured before the standfirst was fixed
+                          at two lines, and it gives the back fourteen lines
+                          at body size, which is a place's history in two
+                          short paragraphs.
 
-                        Size and colour in a template literal, never through
-                        cn(): tailwind-merge does not know --text-ui exists,
-                        reads `text-ui` as a colour and drops one of the pair. */}
-                    <span
-                      className={`bg-card border-border-strong font-ui text-ui absolute top-2.5 left-2.5 flex size-8 items-center justify-center rounded-full border leading-none font-semibold tabular-nums ${
-                        sun ? "text-contrast-text" : "text-foreground"
-                      }`}
-                    >
-                      {String(node.number).padStart(2, "0")}
-                    </span>
-                    {/* The score, opposite the number, ON the plate.
+                          Where the extra goes matters. Left as air between
+                          the standfirst and the chips it is a hollow band on
+                          every card (GUIDELINES 4). Given to the plate it is
+                          a bigger drawing — the card's subject — and it is
+                          the same move the two terminals make with THEIR
+                          plates: `flex-1` on the decorative panel, content
+                          pinned where it belongs. A one-line title makes its
+                          plate 21px taller rather than opening a gap under
+                          itself.
 
-                        It used to sit at the end of the proof-chip row under
-                        `ml-auto`. That worked on eight cards and broke on two:
-                        when two chips fill the row, flex-wrap drops the pill
-                        onto a second line ALONE, right-aligned against nothing,
-                        and the row went from 27.6px to ~61px. Card heights then
-                        ran 433-482px, so the Maps button moved ~51px between
-                        consecutive stops — the thumb target shifting every time
-                        you advance, on the one control the card exists for.
+                          128px, up from 88 in the 112px plate this was: the
+                          plate is now ~220px and an 88px mark in it read as a
+                          stamp in a frame. The stroke drops 1.5 -> 1.15 in
+                          user units so the rendered weight stays near 3px
+                          rather than growing with the size.
 
-                        Up here it cannot wrap, the row below holds only proofs,
-                        every card loses a row of height, and the plate stops
-                        being lopsided: number left, drawing centred, score
-                        right. */}
-                    {typeof node.step.points === "number" ? (
-                      <span className="bg-contrast text-foreground font-ui text-ui absolute top-2.5 right-2.5 rounded-full px-2.5 py-1 leading-none font-semibold tabular-nums">
-                        {node.step.points}&nbsp;p
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <h3 className="text-h3 text-card-foreground relative mt-4">
-                    {place ? (
-                      /* A stretched link SCOPED TO THE HEADING, not to the
-                         card. On the vertical trail the whole card is the
-                         target, because there the card is a teaser and the
-                         page behind it is the only place it goes. This card is
-                         a destination — it holds a Maps button and its own
-                         text — so a card-wide overlay would swallow both.
-
-                         The overlay is needed all the same: a single-line
-                         title like "Casa Maniu" is a 25px tap target, which
-                         tier 1 flagged on six of the ten cards and which is
-                         under the 44px floor by a lot. The overlay takes it to
-                         the full card width and, because the growth is a
-                         pseudo-element rather than padding, the text does not
-                         move. The 12px it gains above lands in the gap under
-                         the plate; the 12px below lands on the top edge of the
-                         standfirst, which is not interactive, so nothing is
-                         stolen from anything.
-
-                         -inset-y-3, not -2.5. The overlay is sized off the
-                         H3's line box, which is 21px — NOT the 25px the anchor
-                         itself reports, and not the 25px audit.js prints. 2.5
-                         (10px a side) gives 41px and quietly misses the floor;
-                         3 gives 45px. Measured with elementFromPoint, because
-                         neither number is visible from the CSS. */
-                      <Link
-                        href={`/blajhunt/${place.slug}`}
-                        /* THE RING IS ON THE ::after, NOT ON THE LINK.
-                           The link is inline, so on a title that wraps — three
-                           of the ten do at 390px — Chromium paints a ring
-                           around EACH line fragment. The two fragments overlap
-                           by about 4px and both dark edges land on top of the
-                           words, so focusing the card made its own title the
-                           hardest thing on it to read. A cold review caught it;
-                           `audit.js` cannot see it, because nothing about the
-                           declared CSS is wrong.
-
-                           The overlay is already a single absolutely
-                           positioned box covering the whole hit area, so
-                           ringing that instead gives exactly one rectangle
-                           around exactly the thing that is clickable. */
-                        className="focus-visible:after:ring-ring rounded-sm after:absolute after:inset-x-0 after:-inset-y-3 after:rounded-md after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
-                      >
-                        {node.step.title}
-                        <span
+                          The wrapper is here so the station badge can sit on
+                          the plate's corner. The badge is a SIBLING of the
+                          plate, not a child: the plate is aria-hidden — it is
+                          decoration — and the stop's number is not. */}
+                      <div className="relative flex flex-1 flex-col">
+                        <div
                           aria-hidden="true"
-                          className="text-contrast-text ml-1.5 inline-block"
+                          className={cn(
+                            styles.plate,
+                            "border-border flex min-h-28 flex-1 items-center justify-center rounded-[calc(var(--radius)-2px)] border",
+                          )}
                         >
-                          &#8599;
+                          <StopGlyph
+                            name={glyph ?? "cathedral"}
+                            className="size-32 [stroke-width:1.15]"
+                          />
+                        </div>
+                        {/* The station number. Near-black, not sky: a label,
+                            not an action. `sun` stops keep the gold, because
+                            that tone is what marks the finale.
+
+                            Size and colour in a template literal, never
+                            through cn(): tailwind-merge does not know
+                            --text-ui exists, reads `text-ui` as a colour and
+                            drops one of the pair. */}
+                        <span
+                          className={`bg-card border-border-strong font-ui text-ui absolute top-2.5 left-2.5 flex size-8 items-center justify-center rounded-full border leading-none font-semibold tabular-nums ${
+                            sun ? "text-contrast-text" : "text-foreground"
+                          }`}
+                        >
+                          {String(node.number).padStart(2, "0")}
                         </span>
-                      </Link>
-                    ) : (
-                      node.step.title
-                    )}
-                  </h3>
+                        {/* The score, opposite the number, ON the plate, where
+                            it cannot wrap onto a line of its own the way it did
+                            at the end of the chip row. */}
+                        {typeof node.step.points === "number" ? (
+                          <span className="bg-contrast text-foreground font-ui text-ui absolute top-2.5 right-2.5 rounded-full px-2.5 py-1 leading-none font-semibold tabular-nums">
+                            {node.step.points}&nbsp;p
+                          </span>
+                        ) : null}
+                        {/* The way to the back, ON the plate's bottom corner,
+                            a labelled pill: mark + "Povestea". It started as
+                            a borderless 20px arc at the end of the chip row,
+                            and a cold review measured it as the lowest-chrome
+                            thing on the card — 0px border, transparent fill,
+                            next to two bordered chips and a solid CTA — and
+                            read the arc as reload. A label can only live up
+                            here: in the chip row, "POVESTEA" plus two chips
+                            is 300px against a 280px row at 390.
 
-                  {place ? (
-                    /* font-medium, not a sixth type size — the ramp is
-                       five steps and adding one is a defect. Weight plus the
-                       gap below is enough to split the lead off the history;
-                       they were the same size, same leading and 1.44:1 apart
-                       in colour, which read as seven undifferentiated lines. */
-                    <p className="text-foreground/80 mt-2 font-medium">
-                      {place.standfirst}
-                    </p>
-                  ) : null}
+                            32px tall, not 36: on the shortest plate (196px at
+                            320, a three-line title) the glyph's ground line
+                            sits at y=149 and this pill's top at 154. 36 would
+                            touch it. The 44px hit box is the ::after overlay,
+                            6px above and below, which lands on plate and on
+                            card padding — nothing else is under it.
 
-                  {/* One paragraph of the place's own history, clamped. The
-                      rest is a tap away on the stop's page — the card is meant
-                      to be read standing in the street, not studied. */}
-                  {/* mt-4, not mt-2.5. 10px is off the 4/8/12/16 scale, and
-                      it also tied the history to the lead as tightly as the
-                      lead is tied to the title — related things have to sit
-                      closer than unrelated ones. */}
-                  {place?.body[0] ? (
-                    <p className="text-muted-foreground mt-4 line-clamp-3">
-                      {place.body[0]}
-                    </p>
-                  ) : (
-                    <p className="text-muted-foreground mt-4">
-                      {node.step.description}
-                    </p>
-                  )}
+                            Visible, bordered at --border-strong (3:1, the
+                            UI-border floor) — it is the keyboard's and the
+                            reduced-motion visitor's way to the back, and the
+                            only standing sign that there is one. */}
+                        <button
+                          type="button"
+                          data-turn
+                          onClick={() => turn(i, true)}
+                          aria-label="Întoarce cardul: povestea locului"
+                          className="border-border-strong bg-card text-foreground font-ui text-ui focus-visible:after:ring-ring active:bg-foreground/5 absolute right-2.5 bottom-2.5 flex h-8 items-center gap-1.5 rounded-full border pr-3 pl-2.5 font-semibold tracking-[0.08em] uppercase transition-colors after:absolute after:inset-x-0 after:-inset-y-1.5 after:rounded-full after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
+                        >
+                          <TurnMark className="size-4" />
+                          Povestea
+                        </button>
+                      </div>
 
-                  {/* Proofs only, and the row is gone entirely when a stop
-                      has none — an empty flex row still spends its margin. */}
-                  {node.step.proofs?.length ? (
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                      <ul className="flex flex-wrap gap-2">
-                        {node.step.proofs.map((proof) => (
-                          <li
-                            key={proof}
-                            /* Neutral. These were border-brand/45 on
-                               bg-brand/5 with brand ink — a third blue, on a
-                               card that already had a blue plate above it and
-                               a blue button below it, for a chip that only
-                               labels what proof the stop wants. --muted-
-                               foreground on --muted is 7.4:1. */
-                            className="border-border bg-muted text-muted-foreground font-ui text-ui rounded-full border px-2.5 py-0.5 font-medium tracking-[0.08em] uppercase"
+                      <h3 className="text-h3 text-card-foreground relative mt-4">
+                        {place ? (
+                          /* A stretched link SCOPED TO THE HEADING, not to the
+                             card — the card is a destination in its own right
+                             now, with a Maps button and a back of its own, so
+                             a card-wide overlay would swallow both.
+
+                             The overlay exists because a single-line title is
+                             a 25px tap target, under the 44px floor. -inset-y-3
+                             takes the H3's 21px line box to 45px; 2.5 gives 41
+                             and quietly misses. Measured with elementFromPoint.
+
+                             THE RING IS ON THE ::after, NOT ON THE LINK: the
+                             link is inline, so on a wrapped title Chromium
+                             would ring each line fragment and the two rings
+                             would land on the words. The overlay is one box
+                             covering the whole hit area, so ringing that gives
+                             exactly one rectangle around exactly the target. */
+                          <Link
+                            href={`/blajhunt/${place.slug}`}
+                            className="focus-visible:after:ring-ring rounded-sm after:absolute after:inset-x-0 after:-inset-y-3 after:rounded-md after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
                           >
-                            {proof}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
+                            {node.step.title}
+                            <span
+                              aria-hidden="true"
+                              className="text-contrast-text ml-1.5 inline-block"
+                            >
+                              &#8599;
+                            </span>
+                          </Link>
+                        ) : (
+                          node.step.title
+                        )}
+                      </h3>
 
-                  {place ? (
-                    <a
-                      href={mapsUrl(place)}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="bg-primary text-primary-foreground font-ui focus-visible:ring-ring focus-visible:ring-offset-card mt-auto inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-base font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
+                      {/* TWO LINES. The copy in blajhunt-places.ts is written
+                          to fill two lines at 390px (64-73 characters against
+                          a ~37ch measure) and the box reserves two
+                          (`min-h-[2lh]`). This is the line that used to run
+                          one to four and take the whole bottom of the card
+                          with it.
+
+                          Clamped at THREE, not two: at 320px the measure is
+                          ~29ch and the same copy needs a third line, and a
+                          clamp at two put an ellipsis on every card there.
+                          The third line costs the chips and the button
+                          nothing — the bottom group is `mt-auto` and the
+                          plate above absorbs the 24px — so the clamp is only
+                          a belt against copy that runs away, not what holds
+                          the layout still.
+
+                          font-medium, not a sixth type size — the ramp is
+                          five steps and adding one is a defect. */}
+                      <p className="text-foreground/80 mt-3 line-clamp-3 min-h-[2lh] font-medium">
+                        {place?.standfirst ?? node.step.description}
+                      </p>
+
+                      {/* The bottom group: the proof chips, the Maps button
+                          under them. `mt-auto` on the GROUP, so the whole
+                          thing sits at the same y on every card — the chips
+                          used to be in flow above an `mt-auto` button, which
+                          is exactly how they ended up at a different height
+                          on each stop.
+
+                          The row keeps its height (`min-h-7`) on the one stop
+                          with no proofs, so the Maps button does not climb
+                          28px on that card alone. */}
+                      <div className="mt-auto pt-4">
+                        <div className="flex min-h-7 items-center">
+                          {/* Neutral chips: they only label what proof the
+                              stop wants. --muted-foreground on --muted is
+                              7.4:1. */}
+                          {node.step.proofs?.length ? (
+                            <ul className="flex flex-wrap gap-2">
+                              {node.step.proofs.map((proof) => (
+                                <li
+                                  key={proof}
+                                  className="border-border bg-muted text-muted-foreground font-ui text-ui rounded-full border px-2.5 py-0.5 font-medium tracking-[0.08em] uppercase"
+                                >
+                                  {proof}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </div>
+
+                        {place ? (
+                          <a
+                            href={mapsUrl(place)}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="bg-primary text-primary-foreground font-ui focus-visible:ring-ring focus-visible:ring-offset-card mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-base font-semibold transition-transform hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.97]"
+                          >
+                            Deschide în Maps
+                            <span aria-hidden="true">&#8599;</span>
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    {/* ── Back ──────────────────────────────────────────
+                        Absolute over the front, so the front alone sets the
+                        card's height and the back gets exactly that much.
+                        The text box scrolls if it must — see the note on it
+                        below — so a `back` that outgrows the card is still
+                        readable rather than cut at the edge. */}
+                    <div
+                      data-face="back"
+                      inert={flipped !== i}
+                      aria-hidden={flipped !== i}
+                      className={cn(
+                        styles.face,
+                        styles.back,
+                        styles.lift,
+                        "bg-card absolute inset-0 flex flex-col rounded-[var(--radius)] border p-5",
+                        sun ? "border-border-strong" : "border-border",
+                      )}
                     >
-                      Deschide în Maps
-                      <span aria-hidden="true">&#8599;</span>
-                    </a>
-                  ) : null}
-                </article>
+                      {/* The header carries the number and the points —
+                          the two things a captain is tracking, and the two
+                          things the back was missing — with the way back on
+                          the right. Same badge and pill as the plate's
+                          corners, so the two faces read as one card. The
+                          pill is the front's, relabelled: same mark, same
+                          chrome, "Înapoi". */}
+                      <div className="flex h-8 items-center gap-2">
+                        <span
+                          className={`bg-card border-border-strong font-ui text-ui flex size-8 items-center justify-center rounded-full border leading-none font-semibold tabular-nums ${
+                            sun ? "text-contrast-text" : "text-foreground"
+                          }`}
+                        >
+                          {String(node.number).padStart(2, "0")}
+                        </span>
+                        {typeof node.step.points === "number" ? (
+                          <span className="bg-contrast text-foreground font-ui text-ui rounded-full px-2.5 py-1 leading-none font-semibold tabular-nums">
+                            {node.step.points}&nbsp;p
+                          </span>
+                        ) : null}
+                        <button
+                          type="button"
+                          data-turn
+                          onClick={() => turn(i, true)}
+                          aria-label="Întoarce cardul: înapoi la oprire"
+                          className="border-border-strong bg-card text-foreground font-ui text-ui focus-visible:after:ring-ring active:bg-foreground/5 relative ml-auto flex h-8 items-center gap-1.5 rounded-full border pr-3 pl-2.5 font-semibold tracking-[0.08em] uppercase transition-colors after:absolute after:inset-x-0 after:-inset-y-1.5 after:rounded-full after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
+                        >
+                          <TurnMark className="size-4" />
+                          Înapoi
+                        </button>
+                      </div>
+                      {/* The title is the way to the stop's page from this
+                          side, exactly as it is on the front — same stretched
+                          overlay, same mark. It replaced a "Citește tot" row
+                          under the text, which cost 52px of a box the
+                          history needs. */}
+                      <p className="text-h3 text-card-foreground relative mt-3">
+                        {place ? (
+                          <Link
+                            href={`/blajhunt/${place.slug}`}
+                            className="focus-visible:after:ring-ring rounded-sm after:absolute after:inset-x-0 after:-inset-y-3 after:rounded-md after:content-[''] focus-visible:outline-none focus-visible:after:ring-2"
+                          >
+                            {node.step.title}
+                            <span
+                              aria-hidden="true"
+                              className="text-contrast-text ml-1.5 inline-block"
+                            >
+                              &#8599;
+                            </span>
+                          </Link>
+                        ) : (
+                          node.step.title
+                        )}
+                      </p>
+                      {/* leading-normal (1.5) rather than the body's 1.6:
+                          fourteen lines in a card is a block, not a page,
+                          and the tighter set is what makes the two
+                          paragraphs fit at 390px. Every `back` in
+                          blajhunt-places.ts is written against that box and
+                          measured to fit at 390 and 1440. At 320px the
+                          measure drops to ~29ch and the longest fall a few
+                          lines short, so the box scrolls rather than clips:
+                          overflow-y auto, nothing hidden, nothing spilling
+                          out of a rotated face. */}
+                      <div
+                        data-scrollbox
+                        onScroll={(e) => cueScroll(e.currentTarget)}
+                        className={cn(
+                          styles.scrollbox,
+                          "mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain",
+                        )}
+                      >
+                        {(place?.back ?? [node.step.description]).map((para) => (
+                          <p
+                            key={para.slice(0, 32)}
+                            className="text-foreground/90 leading-normal"
+                          >
+                            {para}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </article>
+                </div>
               )}
             </li>
           );

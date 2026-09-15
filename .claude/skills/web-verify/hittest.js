@@ -41,6 +41,12 @@ const ROUTES = (process.env.ROUTES || process.argv[3] || "/")
       const results = await page.evaluate(() =>
         [...document.querySelectorAll("a[href], button, [role=button], input, select")]
           .map((el) => {
+            // An element inside an `inert` subtree is not interactive by
+            // definition — the browser drops its pointer events and its focus.
+            // The turned-away face of a /blajhunt stop card is one: its link
+            // and button sit exactly under the face that is showing, and
+            // reporting them as covered would be reporting the design.
+            if (el.closest("[inert]")) return null;
             const r = el.getBoundingClientRect();
             if (!r.width || !r.height) return null;
             const cx = r.x + r.width / 2;

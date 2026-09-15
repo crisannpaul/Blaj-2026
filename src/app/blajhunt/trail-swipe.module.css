@@ -300,3 +300,134 @@
   height: var(--field-h);
   pointer-events: none;
 }
+
+/* ── The turn ───────────────────────────────────────────────────────────────
+   Every stop card has two faces. The FRONT is the roadmap's card; the BACK is
+   the place's history condensed to the same box. The card turns when tapped,
+   and turns over and back once, by itself, each time a new stop arrives in
+   the centre — that peek is how a visitor finds out there is a back at all.
+
+   Three elements, and the split is load-bearing:
+
+     .scene   is `.card` — the element the --t scale already lives on. It
+              gets the perspective and NOTHING that rotates. Perspective
+              applies to an element's children, so the scale on this element
+              and the rotation on the next are two transforms on two boxes
+              that never have to be composed by hand.
+     .flip    rotates. preserve-3d so its two children keep their depth.
+     .face    is each side. backface-visibility hides whichever is turned
+              away, and the back is pre-rotated 180deg so that it faces the
+              viewer exactly when the parent has turned.
+
+   ── Perspective 1800px, and why not the usual 1000 ─────────────────────────
+   The track clips vertically (`overflow-y: hidden`, see `.track`), and the
+   slide keeps only 12px of padding above the card. Under perspective the
+   near edge of a turning card grows: at 45deg a 320px-wide card is 113px
+   closer to the viewer at its near edge, so at 1000px it renders 1.127x
+   tall there — 25px past the top of its box, and 13px of that clipped by
+   the track for a few frames every turn. 1800px brings the same moment to
+   1.067x, 13px, of which about 1px is lost. Shallow enough to stay inside,
+   deep enough that it still reads as a card turning rather than squashing. */
+.scene {
+  perspective: 1800px;
+}
+
+.flip {
+  transform-style: preserve-3d;
+  transition: transform 640ms cubic-bezier(0.2, 0.7, 0.15, 1);
+  cursor: pointer;
+  /* No double-tap zoom on a surface that expects taps. Pan and pinch are
+     untouched, so the track still swipes through it. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+.face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+/* The arrival peek. Over and back in 1.2s: 40% of it going, 20% resting on
+   the back — long enough to see that there are words there, not long enough
+   to start reading them — and 40% returning. The timing function applies per
+   keyframe segment, so each turn eases on its own. `both` so the card sits
+   at 0deg on either side of the run rather than snapping to the transition's
+   own value at the boundaries. 1200 is PEEK_MS in the component, which reads
+   a tap during the run against it — change both or neither. It was 1400,
+   and after a 1000ms rest that is as long as a card may stay turned away
+   from someone reaching for its Maps button. */
+.peek {
+  animation: peek 1200ms cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+
+@keyframes peek {
+  0% {
+    transform: rotateY(0deg);
+  }
+  40% {
+    transform: rotateY(180deg);
+  }
+  60% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The turn still happens — it is a state change the visitor asked for —
+     but it swaps rather than rotates. The peek does not run at all: the
+     component checks the same query before arming it, and this is the belt
+     for the class arriving anyway. The turn button on each face is the
+     affordance in its place. */
+  .flip {
+    transition: none;
+  }
+  .peek {
+    animation: none;
+  }
+}
+
+
+/* ── The scroll cue ─────────────────────────────────────────────────────────
+   The back's text box scrolls when it must (320px, most stops). A box that
+   scrolls with no sign of it reads as a card cut off mid-sentence — mobile
+   scrollbars are invisible at rest — so the edge with more behind it fades
+   out. The component writes `data-more` on every scroll and on resize; this
+   only paints it. Any opaque colour works in a mask, and --foreground is one
+   the tokens already have, so no raw value is introduced here. */
+.scrollbox[data-more="bottom"] {
+  -webkit-mask-image: linear-gradient(to bottom, var(--foreground) calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to bottom, var(--foreground) calc(100% - 2.5rem), transparent);
+}
+
+.scrollbox[data-more="top"] {
+  -webkit-mask-image: linear-gradient(to top, var(--foreground) calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to top, var(--foreground) calc(100% - 2.5rem), transparent);
+}
+
+.scrollbox[data-more="both"] {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--foreground) 2.5rem,
+    var(--foreground) calc(100% - 2.5rem),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--foreground) 2.5rem,
+    var(--foreground) calc(100% - 2.5rem),
+    transparent
+  );
+}

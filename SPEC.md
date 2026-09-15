@@ -108,7 +108,7 @@ docs/                         the three .docx sources, and docs/ateliere/ — te
 | Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip); **and since 15 Sep the organizers' welcome letter is behind a bell** in the top-right corner — a badge until read, tap to open the letter as a modal sheet, tap to close; the fold itself is one unscrollable screen again (it carried the letter as a card for one evening, 14 Sep — D15). The **Blajhunt panel got its own artwork on 14 Sep**, the same treasure-map illustration as the hunt's card so the two read as one thing; the workshops panel is still placeholder |
 | `/ateliere` | **built** — full-bleed light stage carousel, **twelve cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the eleven workshops, numbered **01–12 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks, and **twelve settled thumbnails** from `poze-org/` — no card is a stock frame. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
 | `/ateliere/[slug]` | **built** — the workshop sheet: photograph first, then kicker, title, tagline, hook, a ruled facts list with a Maps search link, the disabled signup control with its note, the full description, tags, a native-ratio photo strip, prev/next and a route back to the list. Two-column with a sticky photograph above lg |
-| `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14 |
+| `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14. **Since 15 Sep every stop card is two-faced**: the front is the roadmap (drawing, title, a two-line standfirst, proof chips, Maps), the back is the place's history condensed to the card; a tap turns it, and each newly centred card turns over and back once so the back gets found. All ten cards are 480px with the chips and the Maps button at the same y |
 | `/blajhunt-legacy` | **built, dead** — the vertical roadmap `/blajhunt` used to be, kept only so the two can still be compared. Nothing links to it; delete once nobody wants it |
 | Blajhunt guide | still the static file at `/blajhunt.html`. It and `/blajhunt` now list **different stops** — see section 10.1 |
 | Backend | not started. Nothing below section 5 exists yet |
@@ -644,9 +644,11 @@ only on `/blajhunt-legacy`; it is kept in step, not designed against.
 
 **The palette does the work the greys were doing.** Points pills are
 `--contrast` (gold) with near-black ink, every one of them and not just the
-finale; proof chips are `--brand-text` on a 5% `--brand` wash inside a
-`--brand/45` border; the route's dots are `--brand-text/45`. Measured rendered
-contrast: chips 5.89:1, pills 12.58:1, card copy 7.81:1. The page's worst value
+finale; proof chips were `--brand-text` on a 5% `--brand` wash inside a
+`--brand/45` border (**neutral since 9 Sep** — `--muted-foreground` on `--muted`,
+7.4:1, see that day's entry; sky is spent on actions only); the route's dots
+are `--brand-text/45`. Measured rendered contrast at the time: chips 5.89:1,
+pills 12.58:1, card copy 7.81:1. The page's worst value
 is still the hero kicker at 5.17:1 (1440) / 5.56:1 (390), which is inherited
 from the sky field and not from any of this.
 
@@ -914,7 +916,15 @@ Known false positives on this page — do not chase:
   separately measured at 0 — the track scrolls, which is the point. Same class as the marquee
   above.
 
-- `tap targets < 44px: 7` on `/blajhunt` — same class, **but it was not purely a false
+- `hittest.js` **skips anything inside an `inert` subtree, since 15 Sep.** The turned-away face
+  of a stop card holds a link and a button that sit exactly under the face being shown; the
+  browser drops their pointer events and their focus, so reporting them as covered would be
+  reporting the design. The flip side: a control that goes `inert` by mistake now vanishes from
+  the probe's count instead of failing it, so a count that drops between runs is a finding.
+
+- `tap targets < 44px: 7` on `/blajhunt` (**34 since 15 Sep** — the card's back carries the title
+  link too, and each face a 32px turn pill whose 44px hit is the same kind of
+  `::after` overlay) — same class, **but it was not purely a false
   positive and checking is what found the difference.** That page scopes the stretched link to the
   `<h3>` rather than the card (the card is a destination there, holding its own Maps button, so a
   card-wide overlay would swallow it). Hit-testing said all ten links receive clicks, which is the
@@ -969,7 +979,7 @@ Known false positives on this page — do not chase:
 | A4 | Confirmed event name — "Inter-eparhială" or "Arhieparhială"? — now asked as row AC-01 of the copy-review document (A9) | organizers | every heading (!) |
 | A9 | **The real copy, everywhere.** The organizers want the placeholder text replaced site-wide, so every visitor-facing string — 209 rows — went out on 13 Sep as `docs/copy/Blaj 2026 - Textele site-ului.docx`, a fill-in form generated by `scripts/copy/` (keep / replace / delete per row, new text in a shaded cell, the page's phone screenshot beside each chapter). Everything the site cannot answer itself is flagged ⚠ on its row: A4, the two "Sala ...." rooms, A7's missing location, the Maps searches that could be coordinates, the eight `check` stop histories (A6), the tenth stop with no task. When it comes back, `parse_docx.py` reads it into `changes.json` and the changes are applied from there | organizers | every page |
 | A5 | Nothing, for the roadmap — the ten stop glyphs are **drawn and shipped** (`src/components/ui/stop-glyphs.tsx`). Listed so it is on the record that this page has no outstanding asset dependency, unlike the two variants that lost. They are invented archetypes; if anyone ever wants them checked against the real buildings that is a nice-to-have, not a blocker | — | done |
-| A6 | **Fact-check the ten stop pages.** `src/lib/blajhunt-places.ts` carries a paragraph or three of history per stop, written from general knowledge by Claude — not from a source in this repo and not by anyone who has stood in front of the buildings. Each entry is flagged `confidence: "solid"` or `"check"`, and every `"check"` entry has a `verify` line naming exactly what to confirm. **8 of 10 are `check`.** | organizers | **before the site is public** (!) |
+| A6 | **Fact-check the ten stop pages.** `src/lib/blajhunt-places.ts` carries a paragraph or three of history per stop, written from general knowledge by Claude — not from a source in this repo and not by anyone who has stood in front of the buildings. Each entry is flagged `confidence: "solid"` or `"check"`, and every `"check"` entry has a `verify` line naming exactly what to confirm. **8 of 10 are `check`.** Since 15 Sep each entry also carries `back`, the same history condensed for the card's reverse on `/blajhunt` — written from `body` and nothing else, so one check covers both | organizers | **before the site is public** (!) |
 | A7 | Real coordinates for the ten stops, if wanted. The Maps buttons currently run a *search* for the building's name rather than dropping a pin, because a wrong pin sends a team across town on the day. A search is safe but imprecise | organizers | nice-to-have |
 | A5 | Program / schedule of the day | organizers | new section |
 | A6 | Contact — phone and email for the day | organizers | footer |
@@ -1203,6 +1213,117 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 ---
 
 ## 14. Changelog
+
+- **2026-09-15, afternoon (the stop cards turn over)** — the user's ask, from a
+  screenshot of three `/blajhunt` cards: „because of the descriptions there is
+  uneven spacing there. i'd prefer all the cards have the same size,
+  descriptions trimmed/expanded as we need them, but the button, and the
+  răspuns/foto things to be evenly spaced above the button.” And the new idea:
+  „a double sided card” — the front as it was, „the glyph/small description so
+  it fits, the solution types (foto/răspuns), the maps button”; on the back
+  „the real description, regenerated so it fits on the whole card (factually,
+  no hallucination)”; the stop page stays; „when swiping and a new card comes
+  on screen, we briefly flip it on the back and then back on the front”; a tap
+  turns it, another turns it back. Built on branch `worktree-blajhunt-flip` and
+  served on **:3003** — **not :3000**, which was showing the letter's phase
+  two from the main checkout (entry above, uncommitted) and would have lost it.
+
+  **What was wrong, measured.** The front carried the standfirst at whatever
+  length it came (one to four lines at 390) and the first history paragraph
+  clamped to three, with the chips in flow above an `mt-auto` Maps button. So
+  the button held still and everything above it did not: the chip row landed
+  at a different height on every card. The screenshot showed it in three.
+
+  **Front.** Drawing on its plate, number badge and points pill as before;
+  title link; the standfirst fixed at **two lines** — `min-h-[2lh]` reserved,
+  clamped at three as a belt, and the copy in `blajhunt-places.ts` rewritten to
+  64–73 characters so each fills two lines at 390 without clamping (the
+  `/blajhunt/[slug]` pages show the same line); then a bottom group under
+  `mt-auto` holding the chip row and the Maps button. The way to the back is a
+  labelled pill on the plate's bottom corner — a flip mark and „Povestea”,
+  bordered at `--border-strong`, 32px tall with a 44px hit via `::after`. The
+  card is `min-h-[30rem]` and **the plate takes the slack** (`flex-1`, the
+  terminals' own trick), so a one-line title makes its drawing 21px taller
+  rather than opening a gap under itself; the glyph went 88 → 128px in a plate
+  that is now ~220px, stroke 1.5 → 1.15 user units to hold the weight.
+  Measured with `offsetTop`, unscaled: **every card 480px, chips at y=371,
+  Maps at y=410, on all ten, at 320, 390 and 1440.**
+
+  **Back.** A header with the number badge, the points pill and the „Înapoi”
+  pill; the title link (same stretched overlay as the front, and the way to
+  the stop page from this side); and `place.back`: two short paragraphs,
+  387–445 characters, **written from `body` and nothing else** so
+  the `confidence` flag covers both — no claim exists on a card that does not
+  exist on its page. Leading 1.5 rather than the body's 1.6. Fits on all ten
+  at 390 and 1440 (`scrollHeight == clientHeight`); at 320 the measure drops
+  to ~29ch and the box **scrolls** by 14–126px rather than clipping. Getting
+  there took two rounds of trimming measured live with a fit-check that
+  injects candidate copy into the running page — a rebuild per guess would
+  have been the slow way.
+
+  **The turn.** Three layers, one job each: `.card`/`.scene` (the existing
+  `--t` scale, plus `perspective: 1800px`; never rotates) › `article.flip`
+  (`preserve-3d`, 640ms) › two `.face`s (`backface-visibility: hidden`, the
+  back pre-rotated). Perspective 1800 not 1000 because the track clips
+  vertically and the slide keeps 12px above the card: at 1000 the near edge of
+  a turning card overshoots its box by 25px mid-turn, at 1800 by 13. The
+  turned-away face is `inert` and `aria-hidden`. A tap anywhere on the card
+  body turns it, links and buttons excepted; a tap on a card that is not the
+  centred one centres it instead (three are in view on a desktop). The pill on
+  each face is the keyboard's and the reduced-motion visitor's way, focus
+  crosses to the other face's pill on use, Escape turns back. **The peek** is armed by
+  `arrive()` inside the measure loop the moment the nearest slide changes —
+  an event callback, which is what the React Compiler lint insists on and
+  also simply where the information is — 1000ms later, which is ~700ms of rest after the travel, as a 1200ms CSS
+  keyframe (40% over, 20% resting, 40% back); a tap during it is read against
+  the face that is showing — tap the back and the card stays on it, tap the
+  front as it turns away and it comes straight back. It fires on **every** arrival, as asked; once-per-session is
+  one ref away if it grates. Under `prefers-reduced-motion` there is no peek
+  and the turn is an instant swap — verified in a `reducedMotion: "reduce"`
+  context: transform `none` 2.6s after arrival, `matrix3d(-1…)` after the
+  button, back face not inert, focus on its button. Tab order per card: turn →
+  title → Maps — DOM order is visual order, the pill sits on the plate — front
+  faces only.
+
+  **Two gotchas worth the ink.** (1) `hittest.js` counted the hidden face's
+  link and button as covered, which they are, by design — it now skips `inert`
+  subtrees (6.2). (2) The turn control began as an icon at the end of the chip row,
+  and at 320 two cards' chip rows still wrapped after a fix sized from widths
+  read off a neighbour drawn at 0.96 — 4% short: CĂUTARE + RĂSPUNS + the
+  button came to 224 in a 220px row. **Read layout off `offsetWidth`, not
+  `getBoundingClientRect`, on anything under a transform.** The control left
+  the row for the plate in the review pass and the chips are at their old
+  padding again. (3) `line-clamp-2` on the standfirst hid that four of the
+  ten were three lines at 390 — the measurement read the clamped height and
+  called it two. The clamp is three now, a belt only, and the four were
+  trimmed to a measured two lines with the clamp lifted.
+
+  **Verified:** build clean; `audit.js` at 390/768/1440 — no overflow, no
+  contrast failures, no console errors; tap targets 34 — the 14 title links and
+  the 20 turn pills, all the overlay class (6.2); `hittest.js` 0 unreachable on `/blajhunt` and a stop page; the
+  peek captured frame by frame at 390 with nothing clipped mid-turn.
+  **Cold review** (Opus, cold, 75 tool uses): six findings. Fixed — the peek
+  landed 133ms after the track settled and kept the Maps button turned away
+  for 1.4s on every arrival (BLOCKING): now a 1000ms delay (~700ms of rest),
+  a 1200ms turn, and a tap during the turn is read against the face showing;
+  the turn control was a borderless 19px arc that read as *reload*: now a
+  bordered, labelled pill — „Povestea” on the plate's bottom corner,
+  „Înapoi” in the back's header — with a flip mark, 44px hit via overlay;
+  the back had no number and no points: its header carries both now, the
+  plate's own badge and pill; the 320 scroll box had no cue: the edge with
+  more behind it fades (`data-more`, written on scroll); the title's focus
+  ring overdrew the standfirst by 4px: the gap is 12px now. Left as they are
+  — at 1440 the centred card and its neighbour carry equal-weight CTAs (NIT;
+  the no-dimming decision of 9 Sep stands and the audience is on phones), and
+  the back keeps 68–151px of air under its text at 768/1440: the copy is
+  written to fill 390 and the height is the front's, which spends the same
+  air on its plate.
+
+  **Not done here:** :3000 still serves the main checkout (see above); Vercel
+  is behind until someone ships. Tunables, all in one place: `PEEK_DELAY`
+  (1000ms), `PEEK_MS` (1200) and `PEEK_BACK_WINDOW` in `trail-swipe.tsx`; the
+  peek's 1200ms and 40/20/40, the 640ms turn and the 1800px perspective in
+  the module.
 
 - **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
   in `poze-org` the morning after the document, so the stock frame comes out
