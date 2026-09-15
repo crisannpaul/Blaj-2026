@@ -55,9 +55,10 @@ export interface DiagonalMarqueeCarouselProps {
   cardClassName?: string;
   fadeClassName?: string;
   /** The 64px edge softener along the bottom, below lg. On by default; a page
-   *  that pins this band to the viewport as a sticky backdrop turns it off,
-   *  because pinned, it whitens the last 64px of EVERY screen — including the
-   *  one where the welcome letter's top edge has to read against something.
+   *  that pins this band to the viewport as a sticky backdrop should turn it
+   *  off, because pinned, it whitens the last 64px of EVERY screen. The
+   *  landing did exactly that for one evening (14 Sep, the letter card) and
+   *  no longer does; the prop stays for the next page that needs it.
    *  @default true */
   bottomFade?: boolean;
 }

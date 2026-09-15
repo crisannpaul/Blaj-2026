@@ -27,8 +27,14 @@ import { Heart } from "lucide-react";
  *
  * There is no kicker. The first cut had „Cuvânt de bun venit” above the
  * salutation as site chrome, so the card read as a letter at a glance; the
- * user cut it. The salutation does that job on its own — and it is now what
- * peeks under the fold on a phone, see `page.tsx`.
+ * user cut it. The salutation does that job on its own.
+ *
+ * WHERE IT SHOWS: behind the bell (`letter-bell.tsx`), in a modal sheet,
+ * since 15 Sep. It was a card on the fold itself for one evening — beside
+ * the copy on a desktop, a second scrolling screen on a phone — and the
+ * user reverted that: the fold is one screen again and the letter is a
+ * message you open. This component is the paper either way; the sheet
+ * around it is phase one and the way it arrives is phase two.
  *
  * Every string in LETTER is in the copy inventory as AC-07 to AC-13
  * (`scripts/copy/inventory.mjs`), pinned by exact text: change one here,
@@ -93,15 +99,15 @@ const LETTER: {
  * the reading surface of 948 characters of running text. Paper does not move
  * while you read it. The band still runs around the card, as on the fold.
  *
- * `shadow-sheet`, not `shadow-card`: the card's top edge is what peeks under
- * the fold, and `shadow-card` has no halo above the box — see globals.css.
+ * `shadow-sheet`, not `shadow-card`: a layered shadow with a halo all round,
+ * which `shadow-card` does not have — see globals.css. It was chosen when the
+ * card's top edge peeked under the fold; in the sheet it is what lifts the
+ * paper off the backdrop.
  *
  * Padding steps up with the viewport — 20 / 24 / 32 — because the measure
- * does: at 390 the card is 358 wide and 20px a side leaves ~40ch; at `xl` the
- * card is 484–512 and 32px leaves ~55ch, inside the 45–75 band. The top is 24
- * even at 390: the landing shows this card's top 60px under the fold — the
- * padding and the whole salutation line — as the scroll cue, and the
- * geometry there is `page.tsx`'s to keep.
+ * does: at 390 the card is 358 wide and 20px a side leaves ~40ch; at `xl`
+ * the card is 512 and 32px leaves ~55ch, inside the 45–75 band. The top is
+ * 24 at 390 so the close control in the sheet's corner has air.
  */
 export function WelcomeLetter({ className = "" }: { className?: string }) {
   return (

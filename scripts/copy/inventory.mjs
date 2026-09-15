@@ -122,13 +122,13 @@ add("AC-04", {
   ...SEC_AC,
   element: "Textul de prezentare (paragraful de sub dată)",
   current:
-    "La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi împreună în Mica Romă.",
+    "La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi împreună — rugăciune, voie bună, ateliere, prieteni noi și un oraș de descoperit.",
   src: lit(
     F.home,
-    '"La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia " +\n    "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +\n    "împreună în Mica Romă."',
+    '"La invitația Preafericitului Părinte Claudiu, tinerii din Arhieparhia " +\n    "de Alba Iulia și Făgăraș și din Eparhia de Cluj-Gherla petrec o zi " +\n    "împreună — rugăciune, voie bună, ateliere, prieteni noi și un oraș " +\n    "de descoperit."',
   ),
   deletable: true,
-  note: "Prima propoziție a scrisorii de bun venit; restul scrisorii este cardul de mai jos (AC-07…AC-13). Spațiul e limitat: pe telefon încap circa 220 de caractere (4–5 rânduri). Un text mai lung împinge titlul în afara ecranului.",
+  note: "Textul de prezentare de sub dată; scrisoarea de bun venit este cardul de mai jos (AC-07…AC-13). Spațiul e limitat: pe telefon încap circa 220 de caractere (4–5 rânduri). Un text mai lung împinge titlul în afara ecranului.",
 });
 add("AC-05", {
   ...SEC_AC,
