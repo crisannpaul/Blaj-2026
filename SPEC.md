@@ -1259,12 +1259,30 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
      pair shares the copy's measure or sits on its own narrower one has never
      been decided; right now neither reads as chosen.
 
-  Verified on master after the merge: build clean, `tsc` and `eslint` clean;
-  `audit.js` at 390/768/1440 — no overflow, no contrast failures, no text
-  under 12px, no tap target under 44px, no console errors; `ink.js` all pass,
-  the title at 18.96:1 worst over the marquee; `hittest.js` 3 interactive, 0
-  unreachable at both widths. :3000 rebuilt and restarted, served build
-  confirmed by grep. **Vercel is behind until someone deploys it.**
+  Verified on master after the merge: build clean, `tsc` clean, `eslint`
+  clean, the copy inventory 269 rows and green (the title literal pin holds —
+  the string is still one `CONTENT.title`); `audit.js` at 390/768/1440 — no
+  overflow, no contrast failures, no text under 12px, no tap target under
+  44px, no img without dimensions, no console errors; `ink.js` title 18.98:1
+  worst over the marquee; `hittest.js` 3 interactive / 0 unreachable on `/`
+  at both widths and clean on `/ateliere`. :3000 rebuilt, restarted and
+  confirmed by grep — the weight pair served, no `lucide-arrow-right`, no
+  `tabular-nums`, the uncommitted phase-two banner still in place.
+  **Vercel is behind until someone deploys it.**
+
+  **`ink.js` is flaky on this page, and it is the harness at fault.** One run
+  in three reports a 23px open-panel label letter at 2.97:1 against a 4.5
+  floor; the other two say all pass. The cause is the branch pair's own
+  auto-alternation: `SWAP_MS` is 1500 and `ink.js` waits ~1500ms between
+  its two screenshots — the normal one and the ink-set-to-transparent one —
+  with no `reducedMotion` and nothing to stop the swap, so when a swap falls
+  between the two frames the glyph-core pixels it compares are no longer the
+  same pixels and the ratio is arithmetic on two different pictures. It is
+  **not a regression**: `git diff a0b62ea HEAD -- branch-panels.tsx` is one
+  comment line, so the panels behave exactly as they did before this pass.
+  Re-run before believing a failure here, or stop the alternation first. This
+  is the failure mode SPEC 6.2 and CLAUDE.md both warn about — a confidently
+  wrong measurement — showing up in the harness itself.
 
 - **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
   in `poze-org` the morning after the document, so the stock frame comes out
