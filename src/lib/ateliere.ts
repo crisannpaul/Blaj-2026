@@ -61,10 +61,12 @@
  *
  * ── A12, which arrived alone on 15 Sep ──────────────────────────────────────
  * ESCAPE MODE came as a document with no photographs at all — nothing in
- * poze-raw, nothing in poze-org — so it sits on a stock frame and says so, and
- * it is the only workshop with no gallery on its page. Its GPS link is an
- * address rather than a point, like A3's and A11's. Everything else in it is
- * internally consistent: 13:45 + 90 minutes lands exactly on its stated 15:15.
+ * poze-raw, nothing in poze-org. Its card artwork followed the next morning,
+ * so only the GALLERY is still missing: it is the one workshop whose page has
+ * no photo strip, because a gallery needs photographs of the thing and none
+ * were ever sent. Its GPS link is an address rather than a point, like A3's
+ * and A11's. Everything else in it is internally consistent: 13:45 + 90
+ * minutes lands exactly on its stated 15:15.
  *
  * ── What the resend did NOT settle (SPEC 10.8, 10.9) ────────────────────────
  *   - A11 still has no "Locația:" line at all. Its room name here is read off
@@ -504,10 +506,7 @@ export const ATELIERE: readonly Atelier[] = [
       "Vino! Intră în joc! Pune întrebări! Fă alegeri! Ai 90 de minute. 5 misiuni. 1 singur cod. Ai curaj să intri? Misiunea începe cu tine.",
     ],
     tags: [],
-    // No photograph and no artwork: the document arrived alone, with nothing in
-    // poze-raw either. Stock frame and says so, like the other four before it.
-    image: "/ateliere/2.jpg",
-    imagePlaceholder: true,
+    image: "/ateliere/escape-mode.webp",
     accent: "sky",
   },
 ];

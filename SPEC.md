@@ -50,7 +50,8 @@ src/app/                      layout.tsx (fonts, metadata, viewport), page.tsx, 
                               blajhunt-legacy/page.tsx — the vertical roadmap D14 replaced.
                                 Unlinked, kept for reference, due for deletion
 src/components/ui/            branch-panels.tsx (the landing fold's two branches)
-                              welcome-letter.tsx (the organizers' welcome letter — the card on /)
+                              welcome-letter.tsx (the organizers' welcome letter, the paper)
+                              letter-bell.tsx (the bell on / that opens the letter as a sheet)
                               diagonal-marquee-carousel.tsx (landing background)
                               hero-carousel.tsx (workshops stage)
                               how-it-works.tsx (the numbered trail on /blajhunt)
@@ -81,9 +82,10 @@ public/placeholder/           1.jpg 2.jpg 3.jpg — Unsplash landscapes, PLACEHO
                               is still referenced, by the Blajhunt branch panel
 public/ateliere/              <slug>.webp — the REAL workshop cards (A3), 720x960, or the
                               source's own size up to 960x1280 when it comes from poze-org.
-                              All eleven are settled artwork since 14 Sep, the Blajhunt's
-                              included. 1.jpg-6.jpg are Unsplash stock frames, unreferenced
-                              now but kept for the next gap (see STOCK in scripts/photos.js).
+                              All twelve are settled artwork since 15 Sep. 1.jpg-6.jpg are
+                              Unsplash stock frames, unreferenced now but kept for the next
+                              gap — STOCK in scripts/photos.js has emptied and refilled four
+                              times in eight days, so they are not dead weight.
                               <slug>-bg.webp — the 120x160 backdrop tier, one per workshop.
                               <slug>-N.webp — the detail-page galleries, all ten workshops.
                               <slug>-N.webp — detail-page gallery images, native ratio, sized to
@@ -103,8 +105,8 @@ docs/                         the three .docx sources, and docs/ateliere/ — te
 
 | Piece | State |
 |---|---|
-| Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip); **and since 14 Sep late the organizers' whole welcome letter is on it, as a card** — beside the copy from `xl`, under the fold on a phone, over the marquee pinned as a sticky backdrop (D15, closed). The **Blajhunt panel got its own artwork on 14 Sep**, the same treasure-map illustration as the hunt's card so the two read as one thing; the workshops panel is still placeholder |
-| `/ateliere` | **built** — full-bleed light stage carousel, **twelve cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the eleven workshops, numbered **01–12 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks; eleven settled thumbnails from `poze-org/`, and **A12 on a stock frame** labelled *foto în curând*, the only card that is not the organizers' or the user's own image. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
+| Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip); **and since 15 Sep the organizers' welcome letter is behind a bell** in the top-right corner — a badge until read, tap to open the letter as a modal sheet, tap to close; the fold itself is one unscrollable screen again (it carried the letter as a card for one evening, 14 Sep — D15). The **Blajhunt panel got its own artwork on 14 Sep**, the same treasure-map illustration as the hunt's card so the two read as one thing; the workshops panel is still placeholder |
+| `/ateliere` | **built** — full-bleed light stage carousel, **twelve cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the eleven workshops, numbered **01–12 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks, and **twelve settled thumbnails** from `poze-org/` — no card is a stock frame. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
 | `/ateliere/[slug]` | **built** — the workshop sheet: photograph first, then kicker, title, tagline, hook, a ruled facts list with a Maps search link, the disabled signup control with its note, the full description, tags, a native-ratio photo strip, prev/next and a route back to the list. Two-column with a sticky photograph above lg |
 | `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14 |
 | `/blajhunt-legacy` | **built, dead** — the vertical roadmap `/blajhunt` used to be, kept only so the two can still be compared. Nothing links to it; delete once nobody wants it |
@@ -963,7 +965,7 @@ Known false positives on this page — do not chase:
 |---|---|---|---|
 | ~~A1~~ | ~~8-12 photos from past meetings, landscape, min 1600px~~ — **delivered 8 Sep**: eleven 2048x1367 photographs, in `docs/poze-intc/`, re-encoded to `public/arhiva/`. Live in the marquee | organizers | done |
 | A2 | 1 hero photo, wide, safe to crop hard on mobile | organizers | reserve, if the marquee ever gets a still fallback |
-| ~~A3~~ | ~~Workshop list: title, leader, description, location, time, capacity~~ — **delivered 8 Sep** for A2–A7 and A9, then **A8, A10 and A11 on 14 Sep**, closing the gap: ten .docx in `docs/ateliere/` plus 31 photographs in `docs/ateliere/poze-raw/`, typed into `src/lib/ateliere.ts`. **A12 (ESCAPE MODE) followed on 15 Sep**, alone and with no photographs of any kind. A1 is the hunt, which since 14 Sep has its own card at the head of the strip, so the site's numbering and the organizers' are now the same thing: A1–A12 = 01–12. **All ten resent 14 Sep 17:2x with a room and a `[GPS: ...]` link**, which closes everything this row had been owed since 8 Sep: every room is named (A7 and A10 had no location at all before), coordinates arrived for eight of ten, A8's seat count was corrected to 40, A11's slots cut to 50 minutes and A10 moved off 13:30. All ten thumbnails are in. **Still owed:** a photograph or artwork for **A12**, which came with none and sits on a stock frame; plus two small source gaps — A11 has a GPS link but no `Locația:` line, so its room name is read off the link (section 10.9), and A10's document still ends on "Întâlnire la ??" although its room is now named (section 10.8) | organizers | A12 art, 2 minor |
+| ~~A3~~ | ~~Workshop list: title, leader, description, location, time, capacity~~ — **delivered 8 Sep** for A2–A7 and A9, then **A8, A10 and A11 on 14 Sep**, closing the gap: ten .docx in `docs/ateliere/` plus 31 photographs in `docs/ateliere/poze-raw/`, typed into `src/lib/ateliere.ts`. **A12 (ESCAPE MODE) followed on 15 Sep**, alone and with no photographs of any kind. A1 is the hunt, which since 14 Sep has its own card at the head of the strip, so the site's numbering and the organizers' are now the same thing: A1–A12 = 01–12. **All ten resent 14 Sep 17:2x with a room and a `[GPS: ...]` link**, which closes everything this row had been owed since 8 Sep: every room is named (A7 and A10 had no location at all before), coordinates arrived for eight of ten, A8's seat count was corrected to 40, A11's slots cut to 50 minutes and A10 moved off 13:30. All twelve card thumbnails are in, A12's arriving the morning after its document. **Still owed:** photographs OF A12 — it is the one workshop with no gallery on its page, because none were ever sent; plus two small source gaps — A11 has a GPS link but no `Locația:` line, so its room name is read off the link (section 10.9), and A10's document still ends on "Întâlnire la ??" although its room is now named (section 10.8) | organizers | A12 gallery, 2 minor |
 | A4 | Confirmed event name — "Inter-eparhială" or "Arhieparhială"? — now asked as row AC-01 of the copy-review document (A9) | organizers | every heading (!) |
 | A9 | **The real copy, everywhere.** The organizers want the placeholder text replaced site-wide, so every visitor-facing string — 209 rows — went out on 13 Sep as `docs/copy/Blaj 2026 - Textele site-ului.docx`, a fill-in form generated by `scripts/copy/` (keep / replace / delete per row, new text in a shaded cell, the page's phone screenshot beside each chapter). Everything the site cannot answer itself is flagged ⚠ on its row: A4, the two "Sala ...." rooms, A7's missing location, the Maps searches that could be coordinates, the eight `check` stop histories (A6), the tenth stop with no task. When it comes back, `parse_docx.py` reads it into `changes.json` and the changes are applied from there | organizers | every page |
 | A5 | Nothing, for the roadmap — the ten stop glyphs are **drawn and shipped** (`src/components/ui/stop-glyphs.tsx`). Listed so it is on the record that this page has no outstanding asset dependency, unlike the two variants that lost. They are invented archetypes; if anyone ever wants them checked against the real buildings that is a nice-to-have, not a blocker | — | done |
@@ -1171,8 +1173,8 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | D7 | Final video: uploaded through the platform, or handed to staff on site? (13.1) | organizers | 13 Sep |
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
-| ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below. **Scope grew 14 Sep late**, knowingly: the band is now a sticky backdrop behind the whole landing page, welcome letter included — 948 characters of running text on an opaque card with the photographs moving around it. Same deviation, more page; `prefers-reduced-motion` still stops it dead | user | done |
-| ~~D15~~ | ~~The organizers' welcome letter (948 ch) does not fit the hero slot; where does the rest go?~~ — **decided 14 Sep, late: a card of its own on `/`.** Beside the copy from `xl`, under the fold on a phone, the marquee as a sticky backdrop; the panels did not shrink and the fold did not move. Built as `/scrisoare` on `worktree-letter`, judged by the user through six cuts and a cold review, then promoted to `page.tsx`. The lead is the letter's first sentence; the rest is verbatim in `welcome-letter.tsx` — one link and a heart icon are the only edits — and pinned in the inventory as AC-07…AC-13 | user | done |
+| ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below. (Its scope grew for one evening, 14 Sep, when the band was a sticky backdrop behind the letter card; the 15 Sep revert put it back to the fold alone. Behind the open letter sheet it is dimmed by the backdrop and inert) | user | done |
+| D15 | ~~The organizers' welcome letter (948 ch) does not fit the hero slot; where does the rest go?~~ — **14 Sep, late: a card of its own on `/`** (beside the copy from `xl`, under the fold on a phone, sticky marquee), built as `/scrisoare`, promoted and deployed. **Reverted 15 Sep by the user:** „useless, no one's gonna read it, the mobile version looks completely ass.” The letter is a **notification** now — a bell with a badge in the top-right of the fold (`letter-bell.tsx`), which opens `welcome-letter.tsx` in a native modal sheet; the fold is one unscrollable screen again. **Phase two, open: how the letter arrives** — envelope, bell-to-sheet morph, iOS-style banner that expands in place, or a draggable bottom sheet. The user wants inspiration; the plain sheet is scaffolding | user | phase two |
 | ~~D16~~ | ~~«Intereparhială» or «Arhieparhială»?~~ — **decided 14 Sep by the user: Intereparhială.** The returned copy sheet had changed „Tineretului” to „Tinerilor” and left „Intereparhială” untouched, which was not the same as confirming it; the user confirmed it separately. The supratitlu reads **Întâlnirea Intereparhială a Tinerilor** | user | done |
 
 ---
@@ -1201,6 +1203,78 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 ---
 
 ## 14. Changelog
+
+- **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
+  in `poze-org` the morning after the document, so the stock frame comes out
+  and `STOCK` is empty for the fourth time in eight days. **No card on the
+  strip is a placeholder any more**; *foto în curând* appears nowhere.
+
+  A12 is still the only workshop page with **no gallery**: photographs of the
+  card are one thing, photographs of the workshop another, and none of the
+  latter were ever sent. That is what row A3 still owes.
+
+  The document's own file had a fresh mtime and a LibreOffice lock beside it,
+  so it was re-extracted and diffed rather than assumed unchanged — the text is
+  byte-identical, someone just had it open. Worth the ten seconds: A12's
+  numbers are the one set in this project that have never contradicted
+  themselves, and a silent edit would have been easy to miss.
+
+  Verified: build clean; `audit.js` clean at 390/768/1440 on the stage — no
+  overflow, no contrast failures, no console errors; `ink.js` all pass, the
+  headline at 16.60:1 over the new field.
+
+
+- **2026-09-15 (the letter becomes a notification: fold reverted, bell added)** —
+  the user's verdict on the card: „it's useless, no one's gonna read it, the
+  mobile version looks completely ass, the rest looks nice.” Their plan, agreed:
+  revert the landing to the one-screen fold (keeping the restored lead), add a
+  bell on the edge of the screen that opens the letter and closes with another
+  tap, the page unscrollable again — phase one; how the letter is presented,
+  phase two. Done in the main checkout: `page.tsx` is the pre-letter fold again
+  (`min-h-[100svh]`, marquee as its own absolute layer, `overflow-hidden`,
+  bottom-anchored copy, no sticky backdrop, no card, no peek), plus
+  `letter-bell.tsx`: a 56px white circle, `fixed` top-right under the notch,
+  lucide `Bell`, a 20px `--destructive` badge reading „1” until the letter has
+  been opened once (localStorage, guarded; first paint always unread so server
+  and client agree). Tap → a native `<dialog>` via `showModal()` — focus trap,
+  Esc, `inert`, `::backdrop` for free — framing `welcome-letter.tsx` as a
+  sheet capped at 85svh that scrolls inside itself (`overscroll-contain`);
+  close by Esc, backdrop tap (a click on the dialog whose point is outside the
+  sheet's box) or an X in the corner. Last in the DOM after the panels so the
+  keyboard reaches the calls to action first. `--destructive` for the badge is
+  deliberate: the one red in the palette, and a notification count is the one
+  place red is the honest choice; `bg-contrast` is one class away.
+  Measured: page scroll 0 at 390x844, 375x667 and 1440x900 with the sheet
+  closed and open; bell at x=318 y=16 (56x56) on the phone, badge 20x20; the
+  sheet 717px tall at 390 (scrolls inside), 567 at 375, 620 at 1440 (no
+  scroll); badge gone after open and still gone after reload; Esc, backdrop
+  and X all close; focus inside the dialog on open. `audit.js` clean at
+  390/768/1440, 0 tap targets under 44; `hittest.js` 3 interactive, 0
+  unreachable. `:3000` rebuilt and restarted. **Not deployed:** the bell is up
+  for the user's eye first; production still serves the 15 Sep letter card.
+  The `bottomFade` marquee prop and `--shadow-sheet` stay (the sheet uses the
+  shadow; the prop is documented for the next sticky page).
+
+- **2026-09-15 (the lead goes back to what the site said)** — „before the merge,
+  the landing page text was a lil different … here's what it was”, with a
+  screenshot: the invitation sentence with the programme list folded on —
+  „…petrec o zi împreună — rugăciune, voie bună, ateliere, prieteni noi și un
+  oraș de descoperit.” — 213 characters. The letter work had cut the lead to
+  the letter's own first sentence (163) because the list repeats the letter's
+  second paragraph; the user wants the lead they know. Restored verbatim from
+  the screenshot (no commit ever carried this exact wording: 04e73da has the
+  14 Sep sheet's „în Mica Romă — rugăciune, ateliere, prieteni noi…”, which
+  adds „în Mica Romă” and lacks „voie bună” — the user's wording wins, and the
+  sheet's version is one string away if the organizers object). The two
+  comment blocks in `page.tsx` that argued for the short lead now say so, the
+  inventory's AC-04 pin follows (drift check clean, 267 rows with the A12
+  rows), and the 60px salutation peek survives the extra line — measured:
+  390x844 lead 5 lines (128px), panels end at y=760, card at 784, peek 60;
+  375x667 lead 6 lines, panels 583, card 607, peek 60; 320x568 lead 7 lines
+  and the fold overflows by 52px as it always has there; 1440 and 1920 lead
+  3 lines, no page scroll, card at x=832 / 1312. `audit.js` clean at
+  390/768/1440. `:3000` rebuilt and restarted, the served HTML checked for the
+  new lead; production redeployed from the main checkout and verified live.
 
 - **2026-09-15 (A12: ESCAPE MODE)** — a twelfth card and an eleventh workshop.
   `A12_Escape_mode.docx` arrived alone: an escape-room-shaped session on mental
