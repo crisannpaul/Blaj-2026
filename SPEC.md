@@ -108,7 +108,7 @@ docs/                         the three .docx sources, and docs/ateliere/ — te
 | Landing page | one fold: marquee background — **real archive photography since 8 Sep** — title, description, and the **two branch panels** — one open, one a spine, alternating until the visitor touches anything. **Copy is the organizers' own since 14 Sep** (copy-review round trip); **and since 15 Sep the organizers' welcome letter is behind a bell** in the top-right corner — a badge until read, tap to open the letter as a modal sheet, tap to close; the fold itself is one unscrollable screen again (it carried the letter as a card for one evening, 14 Sep — D15). The **Blajhunt panel got its own artwork on 14 Sep**, the same treasure-map illustration as the hunt's card so the two read as one thing; the workshops panel is still placeholder |
 | `/ateliere` | **built** — full-bleed light stage carousel, **twelve cards**: the **Blajhunt at the head as Atelier 01** (A1, `HUNT_CARD`) and then the eleven workshops, numbered **01–12 — the organizers' own numbering**, which the site prints directly since the hunt joined the strip and closed the last offset. Real titles, durations, seats and hooks, and **twelve settled thumbnails** from `poze-org/` — no card is a stock frame. The CTA is *Detalii* → the workshop's own page, except the hunt's, which reads *Vezi traseul* and leaves for `/blajhunt`. The focused card is mirrored into the URL hash |
 | `/ateliere/[slug]` | **built** — the workshop sheet: photograph first, then kicker, title, tagline, hook, a ruled facts list with a Maps search link, the disabled signup control with its note, the full description, tags, a native-ratio photo strip, prev/next and a route back to the list. Two-column with a sticky photograph above lg |
-| `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14. **Since 15 Sep every stop card is two-faced**: the front is the roadmap (drawing, title, a two-line standfirst, proof chips and a 48px outlined Maps disc), the back is the place's WHOLE history — `body`, the stop page's own text, the direction being to retire the stop pages — with nothing on the back but the text, and no buttons on either face: a tap or Enter turns it, and each newly centred card turns over and back once so the back gets found. All ten cards are 480px with the chips and the Maps button at the same y. **Open:** three histories (01, 02, 08) outgrow the back at 390 and scroll — see the 15 Sep late entry |
+| `/blajhunt` | **built** — roadmap only: the ten stops, their points and what each hands in. No rules, no hints, no answers. Horizontal, one stop per screen, since D14. **Since 15 Sep every stop card is two-faced**: the front is the roadmap (drawing, title, a two-line standfirst, proof chips and a grey pin-and-arrow pill for Maps), the back is the place's WHOLE history — `body`, the stop page's own text, the direction being to retire the stop pages — with nothing on the back but the text, and no buttons on either face: a tap or Enter turns it, and each newly centred card turns over and back once so the back gets found. All ten cards are 480px with the chips and the Maps button at the same y. **Open:** three histories (01, 02, 08) outgrow the back at 390 and scroll — see the 15 Sep late entry |
 | `/blajhunt-legacy` | **built, dead** — the vertical roadmap `/blajhunt` used to be, kept only so the two can still be compared. Nothing links to it; delete once nobody wants it |
 | Blajhunt guide | still the static file at `/blajhunt.html`. It and `/blajhunt` now list **different stops** — see section 10.1 |
 | Backend | not started. Nothing below section 5 exists yet |
@@ -1213,6 +1213,22 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 ---
 
 ## 14. Changelog
+
+- **2026-09-15, latest (the Maps pill: grey, pin and arrow)** — the user, on
+  the outlined disc: „now the pin is the blackest color from all the page,
+  still looks like ass, let's use the grey for it, and can we make that
+  button like a map and an arrow like -> or the pin and an arrow, so that it
+  signifies the fact that it's a button and it takes you somewhere?” Both
+  done. The glyphs are `--border-strong` — the ring's own grey, 3.5:1 on
+  white, over the 3:1 floor for a graphic and the tone of the trailhead's
+  pin — not `--muted-foreground`, which at 7.4:1 is still nearly ink; if it
+  reads too faint, that is the one-class alternative. The disc is a **72 ×
+  48 pill**: `MapPin` then `Arrow` (the prev/next arrows' own glyph, at
+  16px), the pin for where, the arrow for going there. At 390 the pill fits
+  beside the chips on all ten (278px row); at 320 it drops under them on
+  four stops now (01, 02, 04, 06), not two — the pill is 24px wider than
+  the disc. `audit.js` clean at 390/768/1440, same 7 title-link tap
+  targets; `hittest.js` 0 unreachable.
 
 - **2026-09-15, later still (the Maps disc loses its blue)** — the user, on
   the desktop view: „i just don't like the way that blue looks like there on

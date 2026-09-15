@@ -1075,34 +1075,42 @@ export default function TrailSwipe({
                           The Maps control was a full-width 48px bar under
                           the chips, „Deschide în Maps”; the user called it
                           huge and ugly and asked for a small button with a
-                          map glyph. It is a 48px disc — 48 not 44, because
+                          map glyph. It is a 48px pill — 48 not 44, because
                           the neighbour cards draw at 0.96 and 44 × 0.96 is
-                          under the floor — with `MapPin` in it. Named for a
-                          screen reader; no visible label, by the user's
-                          choice.
+                          under the floor — holding `MapPin` and `Arrow`:
+                          the pin says where, the arrow says it takes you
+                          there, which a pin alone did not („so that it
+                          signifies the fact that it's a button and it takes
+                          you somewhere”). Named for a screen reader; no
+                          visible label, by the user's choice.
 
-                          OUTLINED INK, NOT SKY. It was `bg-primary` for an
-                          hour, the one blue the card spends on actions, and
-                          on a white card on a white field the user read it
-                          as „aggressive” and „in your face”. Adding colour
-                          around it to soften it is the move this page has
-                          already made and reverted (blue on blue on blue —
-                          see `.field` in the module). So the disc wears the
-                          chrome of the two arrows above the track instead:
-                          `--border-strong` ring, ink glyph, card fill — one
-                          kind of round control on the page, and no sky on
-                          the card at all. Gold, on the points and in the
-                          drawing, is the card's only colour, which is what
-                          the hunt's colour is for.
+                          OUTLINED GREY — NOT SKY, AND NOT INK. It was
+                          `bg-primary` for an hour, the one blue the card
+                          spends on actions, and on a white card on a white
+                          field the user read it as „aggressive” and „in
+                          your face”. Adding colour around it to soften it
+                          is the move this page has already made and
+                          reverted (blue on blue on blue — see `.field` in
+                          the module). So the pill wears the chrome of the
+                          two arrows above the track instead, a
+                          `--border-strong` ring on the card's fill — and
+                          its glyphs are that same grey, not ink: an ink pin
+                          was, in the user's words, the blackest thing on
+                          the page. `--border-strong` on white is 3.5:1,
+                          over the 3:1 floor for a graphic, and it is the
+                          tone of the trailhead's pin two slides back. No
+                          sky on the card at all; gold, on the points and in
+                          the drawing, is its only colour, which is what the
+                          hunt's colour is for.
 
                           The row wraps, so at 320 the two stops with two
                           chips (188px of chips in a 220px row) drop the
-                          button to a second line, right-aligned, rather
-                          than overflow; at 390 the row is 278px and all ten
-                          are one line. On the one stop with no proofs the
-                          button stands alone at the right, at the same y as
-                          everywhere else: the row's `min-h-12` is the
-                          button's own height. */}
+                          pill to a second line, right-aligned, rather than
+                          overflow; at 390 the row is 278px and the pill
+                          fits beside the chips on all ten. On the one stop
+                          with no proofs the pill stands alone at the right,
+                          at the same y as everywhere else: the row's
+                          `min-h-12` is its own height. */}
                       <div className="mt-auto flex min-h-12 flex-wrap items-center gap-2 pt-4">
                         {/* Neutral chips: they only label what proof the
                             stop wants. --muted-foreground on --muted is
@@ -1126,9 +1134,10 @@ export default function TrailSwipe({
                             target="_blank"
                             rel="noreferrer noopener"
                             aria-label="Deschide în Google Maps"
-                            className="border-border-strong bg-card text-foreground focus-visible:ring-ring focus-visible:ring-offset-card active:bg-foreground/5 ml-auto inline-flex size-12 shrink-0 items-center justify-center rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                            className="border-border-strong bg-card text-border-strong focus-visible:ring-ring focus-visible:ring-offset-card active:bg-foreground/5 ml-auto inline-flex h-12 shrink-0 items-center gap-1 rounded-full border pr-3.5 pl-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                           >
                             <MapPin className="size-6" />
+                            <Arrow className="size-4" />
                           </a>
                         ) : null}
                       </div>
