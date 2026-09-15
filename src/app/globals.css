@@ -48,6 +48,7 @@
 
   --color-contrast: var(--contrast);
   --color-contrast-text: var(--contrast-text);
+  --color-heart: var(--heart);
   --color-scrim: var(--scrim);
 
   --shadow-card: 0 1px 2px rgb(var(--scrim) / 0.07), 0 10px 30px -14px rgb(var(--scrim) / 0.22);
@@ -123,6 +124,14 @@
   --brand-text: #00698f;
   --contrast: #fdc700;
   --contrast-text: #6f5600;
+
+  /* The heart that signs the welcome letter and fronts its notification —
+     Twemoji's ❤️ red, because the user asked for "actually red, like a
+     heart emoji" after sky and brand-strong. NOT an accent: it is one glyph
+     in two places, and it is the only red on the site besides
+     --destructive, which stays for errors and the unread badge. 4.6:1 on
+     white, over the 3:1 floor for a graphic. */
+  --heart: #dd2e44;
 
   /* The gilt on the ten Blajhunt stop glyphs, top of the drawing to the ground
      line. Read only by `stop-glyphs.tsx`, through a `userSpaceOnUse` gradient

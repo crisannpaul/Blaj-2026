@@ -51,7 +51,8 @@ src/app/                      layout.tsx (fonts, metadata, viewport), page.tsx, 
                                 Unlinked, kept for reference, due for deletion
 src/components/ui/            branch-panels.tsx (the landing fold's two branches)
                               welcome-letter.tsx (the organizers' welcome letter, the paper)
-                              letter-bell.tsx (the bell on / that opens the letter as a sheet)
+                              letter-bell.tsx (the bell and the iOS-style notification on /
+                                that delivers the letter and expands into it)
                               diagonal-marquee-carousel.tsx (landing background)
                               hero-carousel.tsx (workshops stage)
                               how-it-works.tsx (the numbered trail on /blajhunt)
@@ -1174,7 +1175,7 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
 | ~~D8~~ | ~~Palette~~ — **decided 4 Sep**: Sunlit Sky, light only, no second palette | user | done |
 | D9 | Skip-to-content link is a Vercel MUST but there is no nav to skip yet. Add it with the header, or now? | us | with the header |
 | ~~D10~~ | ~~Marquee pause control~~ — **decided 4 Sep**: removed on request. Accepted deviation, see below. (Its scope grew for one evening, 14 Sep, when the band was a sticky backdrop behind the letter card; the 15 Sep revert put it back to the fold alone. Behind the open letter sheet it is dimmed by the backdrop and inert) | user | done |
-| D15 | ~~The organizers' welcome letter (948 ch) does not fit the hero slot; where does the rest go?~~ — **14 Sep, late: a card of its own on `/`** (beside the copy from `xl`, under the fold on a phone, sticky marquee), built as `/scrisoare`, promoted and deployed. **Reverted 15 Sep by the user:** „useless, no one's gonna read it, the mobile version looks completely ass.” The letter is a **notification** now — a bell with a badge in the top-right of the fold (`letter-bell.tsx`), which opens `welcome-letter.tsx` in a native modal sheet; the fold is one unscrollable screen again. **Phase two, open: how the letter arrives** — envelope, bell-to-sheet morph, iOS-style banner that expands in place, or a draggable bottom sheet. The user wants inspiration; the plain sheet is scaffolding | user | phase two |
+| D15 | ~~The organizers' welcome letter (948 ch) does not fit the hero slot; where does the rest go?~~ — **14 Sep, late: a card of its own on `/`** (beside the copy from `xl`, under the fold on a phone, sticky marquee), built as `/scrisoare`, promoted and deployed. **Reverted 15 Sep by the user:** „useless, no one's gonna read it, the mobile version looks completely ass.” The letter is a **notification** now — a bell with a badge in the top-right of the fold (`letter-bell.tsx`), which opens `welcome-letter.tsx` in a native modal sheet; the fold is one unscrollable screen again. **Phase two, 15 Sep: the user picked the iOS-style notification** — a banner drops in from the top edge on first visit (sender, two-line preview, „acum”), a tap expands it in place into the letter, ✕ / Esc / swipe-up put it away; the bell re-delivers it. Built on `:3000` for the user's eye; the plain sheet is gone | user | user's eye |
 | ~~D16~~ | ~~«Intereparhială» or «Arhieparhială»?~~ — **decided 14 Sep by the user: Intereparhială.** The returned copy sheet had changed „Tineretului” to „Tinerilor” and left „Intereparhială” untouched, which was not the same as confirming it; the user confirmed it separately. The supratitlu reads **Întâlnirea Intereparhială a Tinerilor** | user | done |
 
 ---
@@ -1286,6 +1287,102 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   Re-run before believing a failure here, or stop the alternation first. This
   is the failure mode SPEC 6.2 and CLAUDE.md both warn about — a confidently
   wrong measurement — showing up in the harness itself.
+
+- **2026-09-15 (polish: an emoji-red heart, and the letter no longer hiccups
+  when it opens)** — „make the heart actually red, like a heart emoji. and
+  when the letter opens … it looks like it has a hiccup, the text scrolls up
+  for a second then it extends and comes back down.”
+  - **`--heart: #dd2e44`**, a new token (Twemoji's ❤️), registered as
+    `--color-heart`. The signature heart is fill and stroke alike in it — an
+    emoji heart has no outline — and the notification's icon is now a pale
+    `bg-heart/12` squircle with the red heart, in place of sky. One glyph in
+    two places, not an accent; `--destructive` stays for errors and the badge.
+    4.6:1 on white.
+  - **The hiccup had two causes, and the frame probe found both.** First,
+    framer's `layout` projection grows a box by scaling it with transforms
+    and counter-scaling the children — with a scrolling letter inside, the
+    text visibly jumped. Replaced by a MASK: the content is laid out at its
+    final size the moment the stage flips (measured in a layout effect,
+    re-measured on resize) and the box's `height` animates over it, the way
+    iOS unfolds a notification; width on a desktop rides a 300ms CSS
+    transition. `height` is a layout property (vercel: never), but it is one
+    element, once per open, and the only way the text stays put — the same
+    argument the branch panels make for `flexGrow`. Second, and the actual
+    „scrolls up then comes back”: `focus()` on the scroll region, called
+    while the box was still growing, made the browser scroll the
+    overflow-hidden box to bring the focused element into view — by exactly
+    the 16px header — and the offset collapsed to 0 the frame the box reached
+    full height. Per-frame: grabber at y=−8 until 312ms, then 8. Fix:
+    `focus({ preventScroll: true })`. After both: salutation top 48..48px at
+    390x844 and 56..56 at 1440x900 across the whole 700ms, box 92→689 /
+    92→737 with a small spring overshoot. Behaviour regression unchanged:
+    first-visit arrival, expand, Esc/swipe/✕, badge, auto-leave, reduced
+    motion all pass; `audit.js` clean. `:3000` rebuilt and restarted; still
+    **not committed, not deployed** — phase two is one look away.
+  - **Then two more, from the user's screenshots.** „Heart not aligned
+    properly”: the banner's icon squircle was `items-start` against a
+    three-line text block, so it floated above the text's middle — the icon
+    was dead-centre in its own square (10px inset on all sides, measured),
+    which is why the first instinct (re-centre the SVG) was wrong. iOS
+    centres the app icon on the text; `items-center` now, icon mid-y = text
+    mid-y = 52 at 390 and 1440. „Wtf is this spacing”: ~100px of blank paper
+    under the signature on a desktop, because the box measured its content
+    while still 24rem wide — the letter wrapped longer there — and kept that
+    height after the 300ms width transition reflowed the text shorter at
+    32rem. The inner content is now pinned to the open width from the first
+    frame and the box reveals it in both axes; open box 636 = content 636 at
+    1440 and 1920, 0px blank. The phone was never affected (its box is capped
+    and scrolls). `audit.js` clean.
+  - **And on the iPhone: „this black outline” around the banner and the
+    bell.** The `:focus-visible` ring — our near-black `--ring` — painted by
+    iOS Safari on PROGRAMMATIC focus after a tap, where desktop Chrome paints
+    nothing: the bell tap moved focus into the banner, the ✕ moved it back to
+    the bell. Focus now moves only for keyboard interactions — a click with
+    `MouseEvent.detail === 0` is Enter/Space, Esc is a key — so keyboard and
+    screen-reader users keep the APG focus management and nobody who tapped
+    gets a ring. Verified: after pointer taps `document.activeElement` stays
+    on `body` at every step; after Enter it is the banner, then the sheet,
+    then (Esc) the bell. Same round: the sender line is **„Arhieparhia de
+    Alba Iulia și Făgăraș”** (AC-15, a constant) instead of the Biroul's full
+    name, which truncated to „…și a C…” on a phone; „acum” is a constant too
+    (AC-14 re-pinned — its JSX-indentation pin broke the moment the markup
+    nested deeper, exactly the brittleness the inventory exists to catch).
+    269 rows, clean.
+
+- **2026-09-15 (phase two: the letter arrives like a phone notification)** —
+  „yes, looks good for now. commit, deploy and for phase 2 let's try the ios
+  style thing.” Phase one committed (`a0b62ea`) and deployed to production —
+  verified: bell and dialog live, sticky backdrop gone. Then `letter-bell.tsx`
+  rewritten around three stages, `closed → banner → open`, on framer-motion
+  (already a dependency): on a FIRST VISIT the banner drops in 900ms after
+  load — sender (the signature's first line), a two-line preview (salutation
+  + first paragraph, both read from `LETTER`, now exported), „acum” (AC-14) —
+  and leaves on its own 8s later if untouched, the bell keeping its badge; a
+  tap grows the same box in place into the letter (`layout` projection, no
+  height animation; children carry `layout` so their text is not stretched
+  mid-flight; `WelcomeLetter frame={false}` because the box is the frame);
+  ✕, Esc or a swipe up (drag on the banner or the open sheet's grabber only,
+  never on the scrolling body) put it away and the bell fades back with
+  focus; the bell re-delivers the banner. `role="status"` collapsed,
+  `role="dialog"` open, deliberately NOT modal — it sits over the page like
+  a notification. The bell LEAVES THE DOM while the notification is up
+  (AnimatePresence), because on a phone both want the same corner and an
+  opacity-0 control under the banner measured as „covered” in the hit-test.
+  Two things the harness caught that the eye would not: a swipe that ends
+  over the banner is followed by a native `click` — pointerdown and pointerup
+  on the same element, which followed the pointer — so the swipe-up OPENED
+  the letter; a `dragged` ref set in `onDragStart` and read in `onClick` now
+  swallows it. And Esc looked broken to a script that clicked the bell 600ms
+  after the key, inside the sheet's ~1s exit spring; a debug run showed the
+  state closed 100ms after the key and focus on the bell — the script now
+  waits for the exit like a person would.
+  Measured at 390x844 / 1440x900: banner 374x88 at (8,8) / 384x88 at
+  (1040,8); open 374x717, scrolls inside / 512x636, no scroll; page scroll 0
+  throughout; badge cleared on first open and no auto-banner after reload;
+  auto-leave: present at 1.5s, gone at 9.7s, badge kept; reduced motion still
+  delivers. `audit.js` clean at 390/768/1440, `hittest.js` 3 interactive,
+  0 unreachable. `:3000` rebuilt and restarted. **Not committed, not
+  deployed:** phase two is up for the user's eye.
 
 - **2026-09-15, later (A12's artwork)** — `escape-mode - Thumbnail.jpg` landed
   in `poze-org` the morning after the document, so the stock frame comes out
