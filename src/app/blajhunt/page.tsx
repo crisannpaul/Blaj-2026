@@ -18,7 +18,7 @@ export const metadata = {
 };
 
 /**
- * The Blajhunt roadmap — **D14 decided 5 Sep: the horizontal treatment won**
+ * The Blajhunt roadmap — **decided 5 Sep: the horizontal treatment won**
  * and this is now the route itself, not a variant. It was built at
  * /blajhunt-swipe; the vertical original it replaced is parked, unlinked, at
  * /blajhunt-legacy for reference and is due for deletion.

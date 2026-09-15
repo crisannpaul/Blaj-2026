@@ -15,8 +15,8 @@
 
 # next.js
 /.next/
-# Kept deliberately, though nothing writes here right now. The D13 and D14
-# creative runs each gave their parallel variant its own dist dir so the two
+# Kept deliberately, though nothing writes here right now. The 5 Sep creative
+# runs each gave their parallel variant its own dist dir so the two
 # servers could not serve each other mixed content; the `distDir` hook in
 # next.config.ts is reverted after every run, and this line is what stops the
 # next one leaking a build directory into the repo before anyone remembers.
@@ -47,7 +47,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Event source documents: Treasurehunt.docx contains the ANSWERS to every task.
-# Never let it reach a public repo or a client bundle (SPEC section 13.9).
+# Never let it reach a public repo or a client bundle (see CLAUDE.md).
 # Remove this line only if the repo is private and you have decided that is fine.
 docs/
 

@@ -112,8 +112,8 @@ const wideNodeAt = (i: number) =>
  * thing noticed on a phone.
  *
  * The glyph now lives inside its card (see the card header below), so the gap
- * is back to carrying nothing but the route, and 112 is the value SPEC 6.1d
- * measured: enough for the connector to read as an S without the cards
+ * is back to carrying nothing but the route, and 112 is the measured value:
+ * enough for the connector to read as an S without the cards
  * drifting apart. Reverting it also gave back the 391px the mid-gap placement
  * had cost at 390px.
  */

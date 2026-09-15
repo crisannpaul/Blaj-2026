@@ -28,7 +28,8 @@ export const metadata = { title: "Ateliere" };
  * rather than hex — the palette lives in globals.css and nowhere else. They
  * can be this bright because the stage is light and the ink is dark: the
  * grade washes toward --stage, so the luminance floor does not depend on the
- * accent (SPEC 6.1b). Verify any new accent with ink.js regardless.
+ * accent (the luminance rule in CLAUDE.md). Verify any new accent with
+ * ink.js regardless.
  */
 const ACCENT = { sky: "var(--brand)", gold: "var(--contrast)" } as const;
 

@@ -14,8 +14,8 @@ import { LetterBell } from "@/components/ui/letter-bell";
  *
  * The letter was ON the fold for one evening, 14 Sep: a card beside the copy
  * on a desktop and a second, scrolling screen under it on a phone, with the
- * marquee pinned as a sticky backdrop (SPEC D15 and the 14 Sep, late,
- * changelog have every number). The user reverted it on 15 Sep: the desktop
+ * marquee pinned as a sticky backdrop (commit 9b36e8f has every number).
+ * The user reverted it on 15 Sep: the desktop
  * was fine, the phone "looks completely ass", and nobody reads a wall of text
  * on a page whose job is routing to two branches. So the fold is what it was
  * — bottom-anchored copy, `min-h-[100svh]`, the marquee as its own absolute
@@ -32,8 +32,9 @@ import { LetterBell } from "@/components/ui/letter-bell";
  * converted to webp from the originals kept out of the bundle in `docs/`. They
  * are 1152x928, i.e. 5:4 — sized to the largest the open panel is ever painted
  * (390x288 CSS px, 1170x864 on a 3x phone) so nothing upscales. See the export
- * geometry table in SPEC before commissioning any replacement: the open panel's
- * ratio moves from 1.08 at 390 to 1.35 at lg, and `object-cover` centre-crops.
+ * geometry table in scripts/photos.js before commissioning any replacement:
+ * the open panel's ratio moves from 1.08 at 390 to 1.35 at lg, and
+ * `object-cover` centre-crops.
  *
  * The tint is what keeps them from reading as more of the marquee behind them.
  * Sky goes to the workshops because /ateliere already carries a sky cast, and

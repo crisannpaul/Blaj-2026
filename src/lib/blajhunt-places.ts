@@ -27,7 +27,7 @@
  *             verified. `verify` says exactly what to confirm.
  *
  * **Everything marked "check" needs an organizer to confirm it before the site
- * goes public.** SPEC section 7 tracks this as an open content dependency. Do
+ * goes public.** TODO.md tracks this as an open content dependency. Do
  * not quietly promote an entry to "solid" — promote it when someone has
  * actually checked, and say who.
  *

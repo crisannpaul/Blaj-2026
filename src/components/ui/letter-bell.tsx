@@ -20,7 +20,7 @@ import { LETTER, WelcomeLetter } from "@/components/ui/welcome-letter";
  * THE BELL AND THE NOTIFICATION. The organizers' welcome letter, delivered
  * the way a phone delivers a message.
  *
- * The letter lived on the fold for one evening (a card — SPEC D15, 14 Sep)
+ * The letter lived on the fold for one evening (a card — 14 Sep, 9b36e8f)
  * and the user reverted it on 15 Sep: nobody reads a wall of text on a page
  * whose job is routing to two branches, and on a phone it wrecked the fold.
  * Phase one was a bell that opened the letter in a plain modal sheet. This is

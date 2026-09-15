@@ -147,7 +147,8 @@ add("AC-06", {
 });
 
 // The welcome letter — the rest of what came back as AC-04 on 14 Sep, as a
-// card of its own on the landing page (SPEC D15). Verbatim from the returned
+// card of its own on the landing page (14 Sep; a sheet behind a bell since
+// 15 Sep, see letter-bell.tsx). Verbatim from the returned
 // document, with two edits the user asked for: one phrase is a link to the
 // workshops, and the closing "<3" is a heart icon. Pinned by exact text in
 // welcome-letter.tsx; the multi-line paragraphs are the file's own

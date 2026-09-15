@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  *  - Keyframes moved to globals.css. The original injected a <style> tag via
  *    dangerouslySetInnerHTML on every mount; in the stylesheet they parse once
  *    and prefers-reduced-motion can reach them.
- *  - NO pause control, by explicit decision (SPEC D10). The Vercel baseline
+ *  - NO pause control, by explicit decision (CLAUDE.md). The Vercel baseline
  *    makes one a MUST for autoplay motion over 5s alongside content, and so
  *    does WCAG 2.2.2. `prefers-reduced-motion: reduce` still stops the loop
  *    dead, which is what carries the accessibility case now. Do not re-add a
@@ -64,10 +64,14 @@ export interface DiagonalMarqueeCarouselProps {
 }
 
 /**
- * The archive — eleven photographs from a past meeting. SPEC A1, delivered.
+ * The archive — eleven photographs from a past meeting, sent 8 Sep.
  *
  * The originals live in `docs/poze-intc/`, which never ships; `public/arhiva/`
- * holds two WebP tiers re-encoded from them by the recipe in SPEC 6.1.
+ * holds two WebP tiers (800w, 1120w) re-encoded from them with `sharp`:
+ * `.blur(0.75)` then `quality: 55`. The pre-blur is the lever that pays on
+ * dense crowd shots — quality alone took the worst frame from 54KB to 40KB,
+ * blur-then-quality to 33KB — and it is invisible at a card's painted size
+ * behind the wash on a moving, rotated band. Whole archive on a phone: 351KB.
  *
  * **The order is the deal, and it is deliberate.** Mean luminance alternates
  * high/low and no two neighbours share a subject, so a row never reads as two
@@ -124,7 +128,16 @@ const DEFAULT_CARDS: CardItem[] = ARCHIVE.map(({ n, title }, i) => ({
  * the target device, and closing it would mean shipping every phone a bigger
  * tier. Left open knowingly.
  *
- * All measured, none reasoned; the table is in SPEC 6.1. **A card size change
+ * Measured transfer for the whole archive, per device class:
+ *
+ *   phone 320/390, DPR2 and DPR3 ........ 11 files   351KB   800w
+ *   phone 390, DPR3.5 ................... 11 files   578KB   1120w
+ *   tablet 768 DPR2, sm 700 DPR2 ........ 11 files   351KB   800w
+ *   laptop 1024 DPR2 .................... 22 files   930KB   both (the split above)
+ *   laptop 1280 DPR2, desktop 1440 DPR2 . 11 files   578KB   1120w
+ *   desktop 1440/2560 DPR1 .............. 11 files   351KB   800w
+ *
+ * All measured, none reasoned. **A card size change
  * is also a tier change** — move either and re-measure the real transfer per
  * device class rather than re-deriving it on paper.
  */

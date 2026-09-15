@@ -68,7 +68,7 @@
  * and A11's. Everything else in it is internally consistent: 13:45 + 90
  * minutes lands exactly on its stated 15:15.
  *
- * ── What the resend did NOT settle (SPEC 10.8, 10.9) ────────────────────────
+ * ── What the resend did NOT settle (both in TODO.md) ────────────────────────
  *   - A11 still has no "Locația:" line at all. Its room name here is read off
  *     the GPS link, which is a place URL for the Biblioteca de Teologie
  *     Greco-Catolică. The pin is the organizers'; the words are not.
@@ -409,7 +409,7 @@ export const ATELIERE: readonly Atelier[] = [
     // organizers moved it to 13:45 on 14 Sep. The room arrived in the same
     // resend. The document's closing line still reads "Întâlnire la ??" — left
     // over from the draft that had no location, since the room is now named
-    // twelve lines above it. Nothing is printed from it. See SPEC 10.8.
+    // twelve lines above it. Nothing is printed from it. Listed in TODO.md.
     location: "Piața 1848 nr. 1, Sala clasei a V-a – Liceu",
     mapsQuery: "46.173778,23.923528",
     body: [
@@ -455,7 +455,7 @@ export const ATELIERE: readonly Atelier[] = [
     // all — the 14 Sep resend added a GPS link and nothing else, and that link
     // is a place URL naming the Biblioteca de Teologie Greco-Catolică. The
     // name below is read off it, so the search is the authoritative half and
-    // the label is the guess. Confirm with the organizers. See SPEC 10.9.
+    // the label is the guess. Confirm with the organizers. Listed in TODO.md.
     location: "Biblioteca de Teologie Greco-Catolică",
     mapsQuery: "Biblioteca de Teologie Greco-Catolică Blaj",
     body: [

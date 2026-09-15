@@ -17,7 +17,7 @@
  * are looking for without saying where it is or what it turns out to be —
  * keep them that way.
  *
- * Three things the two source documents do not agree on (SPEC D3):
+ * Three things the two source documents do not agree on (open, TODO.md):
  *   - Muzeul Curiei has a fully written task in Treasurehunt.docx but is not
  *     among the ten stops in the regulation.
  *   - Protopopiatul Blaj is among the ten and has no task written anywhere.
