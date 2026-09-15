@@ -113,7 +113,14 @@ const CONTENT = {
  * voice to the fold's focal point without spending a colour, a ramp step or
  * a pixel of height, which is what "authored, not templated" costs at its
  * cheapest. Outfit loads as a variable font (no `weight` in layout.tsx), so
- * 300 is already on the page.
+ * every step between is already on the page and none of this costs a request.
+ *
+ * THE WORD IS 500, NOT 600. It shipped at `font-semibold` and the user came
+ * back with „that Blaj is a lil too bold”. 500 against the year's 300 keeps a
+ * 200-step gap, which is what makes the pair read as two voices; 450 was
+ * looked at too and closes the gap to 150, where at a glance the line starts
+ * to read as one weight and the idea evaporates. Below 500 is not a smaller
+ * version of this, it is a different title.
  *
  * The separator is whatever whitespace the string carries — a NO-BREAK SPACE,
  * per the Vercel baseline for brand names — and it is put back between the two
@@ -205,7 +212,7 @@ export default function Home() {
                 letters. -0.035em is the step where it reads as a word again
                 without the "aj" pair touching. */}
               <span
-                className="text-display short:text-h2 mt-3 short:mt-2 block font-semibold tracking-[-0.035em]"
+                className="text-display short:text-h2 mt-3 short:mt-2 block font-medium tracking-[-0.035em]"
                 translate="no"
               >
                 {TITLE_WORD}

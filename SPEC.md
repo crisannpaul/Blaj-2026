@@ -1213,9 +1213,12 @@ The event is **19 September 2026** — 15 days out from 2026-09-04. Tight but fi
   style. i like it, the rest is ass.” So master carries the title and nothing
   else, and this entry records the other two so they are not re-proposed.
 
-  **Shipped — the title is a weight pair.** „Blaj” stays semibold; „2026” is
-  Outfit 300 (`font-light`; the variable font is already loaded, so this costs
-  no request). Still ONE string in `CONTENT`, because the copy inventory
+  **Shipped — the title is a weight pair.** „Blaj” is Outfit 500
+  (`font-medium`) and „2026” is Outfit 300 (`font-light`); the variable font
+  is already loaded, so neither costs a request. **The word shipped at 600 and
+  came down the same evening** — „that Blaj is a lil too bold”. 500 against 300
+  keeps the 200-step gap the pair needs to read as two voices; 450 was rendered
+  and rejected here because a 150-step gap reads as one weight at a glance. Still ONE string in `CONTENT`, because the copy inventory
   asserts the literal — it is split at render, on `\s` rather than on a space
   character, **because the separator is U+00A0**. A split on U+0020 found
   nothing, `slice(0, -1)` returned the whole string, and the fold rendered
